@@ -44,11 +44,11 @@ public class JerseyAuthFilter implements Filter {
 
     public void doFilter(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain)
             throws IOException, ServletException {
-        if (checkAccessControl(request)) {
-            filterChain.doFilter(request, response);
-        } else {
-            throw new ServletException("Not Authorized");
-        }
+//        if (checkAccessControl(request)) {
+        filterChain.doFilter(request, response);
+//        } else {
+//            throw new ServletException("Not Authorized");
+//        }
     }
 
     @Override

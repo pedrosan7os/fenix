@@ -39,6 +39,8 @@ import net.sourceforge.fenixedu.domain.person.RoleType;
 import net.sourceforge.fenixedu.domain.phd.PhdIndividualProgramProcess;
 import net.sourceforge.fenixedu.domain.phd.PhdIndividualProgramProcessNumber;
 import net.sourceforge.fenixedu.domain.photograph.PictureMode;
+import net.sourceforge.fenixedu.domain.research.ResearchInterest;
+import net.sourceforge.fenixedu.domain.research.ResearchInterest.ResearchInterestComparator;
 import net.sourceforge.fenixedu.domain.research.result.publication.PreferredPublication;
 import net.sourceforge.fenixedu.domain.research.result.publication.PreferredPublication.PreferredComparator;
 import net.sourceforge.fenixedu.domain.research.result.publication.ResearchResultPublication;
@@ -480,7 +482,7 @@ public class JerseyServices {
     @Produces(MediaType.TEXT_PLAIN)
     @Path("userAliasses")
     public String userAliasses(@QueryParam("username") final String username) throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         final Person person = Person.readPersonByUsername(username);
         if (person != null) {
             final StringBuilder builder = new StringBuilder(username);
@@ -502,4 +504,31 @@ public class JerseyServices {
         }
     }
 
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("researchInterests")
+    public String readResearchInterests() {
+        JsonArray array = new JsonArray();
+
+        for (final User user : Bennu.getInstance().getUserSet()) {
+            Person person = user.getPerson();
+            if (person != null && !person.getResearchInterestsSet().isEmpty()) {
+                JsonArray interests = new JsonArray();
+                TreeSet<ResearchInterest> sorted = new TreeSet<>(new ResearchInterestComparator());
+                sorted.addAll(person.getResearchInterestsSet());
+                for (ResearchInterest interest : sorted) {
+                    JsonObject title = new JsonObject();
+                    for (Language language : interest.getInterest().getAllLanguages()) {
+                        title.addProperty(language.name(), interest.getInterest().getContent(language));
+                    }
+                    interests.add(title);
+                }
+                JsonObject object = new JsonObject();
+                object.addProperty("researcher", user.getUsername());
+                object.add("interests", interests);
+                array.add(object);
+            }
+        }
+        return array.toString();
+    }
 }

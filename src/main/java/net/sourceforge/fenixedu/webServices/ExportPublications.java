@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.sourceforge.fenixedu.domain.Person;
+import net.sourceforge.fenixedu.domain.research.Prize;
 import net.sourceforge.fenixedu.domain.research.activity.EventEdition;
 import net.sourceforge.fenixedu.domain.research.activity.JournalIssue;
 import net.sourceforge.fenixedu.domain.research.activity.ResearchEvent;
@@ -14,6 +16,7 @@ import net.sourceforge.fenixedu.domain.research.result.ResearchResult;
 import net.sourceforge.fenixedu.domain.research.result.ResearchResultDocumentFile;
 import net.sourceforge.fenixedu.domain.research.result.ResultParticipation;
 import net.sourceforge.fenixedu.domain.research.result.ResultParticipation.ResultParticipationRole;
+import net.sourceforge.fenixedu.domain.research.result.patent.ResearchResultPatent;
 import net.sourceforge.fenixedu.domain.research.result.publication.Article;
 import net.sourceforge.fenixedu.domain.research.result.publication.Book;
 import net.sourceforge.fenixedu.domain.research.result.publication.BookPart;
@@ -30,10 +33,14 @@ import net.sourceforge.fenixedu.domain.research.result.publication.Thesis.Thesis
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeFieldType;
 import org.joda.time.LocalDate;
+import org.joda.time.Partial;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pt.ist.sotis.conversion.ConversionException;
+import pt.ist.sotis.conversion.SotisMarshaller;
 import pt.utl.ist.fenix.tools.util.i18n.Language;
 import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
 import pt.utl.ist.sotis.bibtex.Fieldtype;
@@ -41,8 +48,6 @@ import pt.utl.ist.sotis.bibtex.Item;
 import pt.utl.ist.sotis.bibtex.Item.Property;
 import pt.utl.ist.sotis.bibtex.Items;
 import pt.utl.ist.sotis.bibtex.Itemtype;
-import pt.utl.ist.sotis.conversion.ConversionException;
-import pt.utl.ist.sotis.conversion.SotisMarshaller;
 
 public class ExportPublications {
 
@@ -59,32 +64,68 @@ public class ExportPublications {
             Set<EventEdition> eventEditions = new HashSet<EventEdition>();
 
             for (ResearchResult result : Bennu.getInstance().getResultsSet()) {
+                String type = result.getClass().getSimpleName().toLowerCase();
+                type =
+                        type.replace("bookpart", "inbook").replace("otherpublication", "misc")
+                                .replace("technicalreport", "techreport").replace("thesis", "dissertation")
+                                .replace("researchresultpatent", "patent");
+                Item item =
+                        marshaller.insertItem(items, result.getExternalId(), Itemtype.fromValue(type),
+                                result.getLastModificationDate());
+                Map<ResultParticipationRole, Property> entityProperties = new HashMap<ResultParticipationRole, Property>();
+                for (ResultParticipation participation : result.getOrderedResultParticipations()) {
+                    if (!entityProperties.containsKey(participation.getRole())) {
+                        entityProperties.put(participation.getRole(),
+                                marshaller.insertField(item, Fieldtype.valueOf(participation.getRole().name().toUpperCase())));
+                    }
+                    marshaller.insertEntity(entityProperties.get(participation.getRole()), participation.getPerson().getName(),
+                            participation.getPersonOrder(), participation.getPerson().getUsername());
+                }
+                if (result.getCountry() != null) {
+                    marshaller.insertText(marshaller.insertField(item, Fieldtype.COUNTRY), result.getCountry().getName(), null,
+                            null);
+                }
+                if (multilanguageHasNonEmptyContent(result.getNote())) {
+                    marshaller.insertText(marshaller.insertField(item, Fieldtype.NOTE), extractBestMLS(result.getNote()), null,
+                            null);
+                }
+                if (StringUtils.isNotBlank(result.getTitle())) {
+                    marshaller.insertText(marshaller.insertField(item, Fieldtype.TITLE), result.getTitle(), null, null);
+                }
+                if (StringUtils.isNotBlank(result.getUrl())) {
+                    marshaller.insertUri(marshaller.insertField(item, Fieldtype.URL), result.getUrl(), null);
+                }
+                if (result instanceof ResearchResultPatent) {
+                    ResearchResultPatent patent = (ResearchResultPatent) result;
+                    if (patent.getApprovalDate() != null) {
+                        Partial date = patent.getApprovalDate();
+                        marshaller.insertDate(marshaller.insertField(item, Fieldtype.APPROVALDATE),
+                                date.get(DateTimeFieldType.year()), date.get(DateTimeFieldType.monthOfYear()), null);
+                    }
+                    if (patent.getRegistrationDate() != null) {
+                        Partial date = patent.getRegistrationDate();
+                        marshaller.insertDate(marshaller.insertField(item, Fieldtype.REGISTRATIONDATE),
+                                date.get(DateTimeFieldType.year()), date.get(DateTimeFieldType.monthOfYear()), null);
+                    }
+                    if (patent.getLocal() != null) {
+                        marshaller.insertText(marshaller.insertField(item, Fieldtype.LOCATION), patent.getLocal(), null, null);
+                    }
+                    if (patent.getPatentNumber() != null) {
+                        marshaller.insertText(marshaller.insertField(item, Fieldtype.NUMBER), patent.getPatentNumber(), null,
+                                null);
+                    }
+                    if (patent.getPatentStatus() != null) {
+                        marshaller.insertText(marshaller.insertField(item, Fieldtype.PATENTSTATUS), patent.getPatentStatus()
+                                .name(), null, null);
+                    }
+                    if (patent.getPatentType() != null) {
+                        marshaller.insertText(marshaller.insertField(item, Fieldtype.SCOPE), patent.getPatentType().name(), null,
+                                null);
+                    }
+                }
                 if (result instanceof ResearchResultPublication) {
                     ResearchResultPublication publication = (ResearchResultPublication) result;
-                    String type = publication.getClass().getSimpleName().toLowerCase();
-                    type =
-                            type.replace("bookpart", "inbook").replace("otherpublication", "misc")
-                                    .replace("technicalreport", "techreport").replace("thesis", "dissertation");
                     try {
-                        Item item =
-                                marshaller.insertItem(items, publication.getExternalId(), Itemtype.fromValue(type),
-                                        publication.getLastModificationDate());
-                        Map<ResultParticipationRole, Property> entityProperties =
-                                new HashMap<ResultParticipationRole, Property>();
-                        for (ResultParticipation participation : publication.getOrderedResultParticipations()) {
-                            if (!entityProperties.containsKey(participation.getRole())) {
-                                entityProperties.put(
-                                        participation.getRole(),
-                                        marshaller.insertField(item,
-                                                Fieldtype.valueOf(participation.getRole().name().toUpperCase())));
-                            }
-                            marshaller.insertEntity(entityProperties.get(participation.getRole()), participation.getPerson()
-                                    .getName(), participation.getPersonOrder(), participation.getPerson().getIstUsername());
-                        }
-                        if (publication.hasCountry()) {
-                            marshaller.insertText(marshaller.insertField(item, Fieldtype.COUNTRY), publication.getCountry()
-                                    .getName(), null, null);
-                        }
                         if (StringUtils.isNotBlank(publication.getOrganization())) {
                             marshaller.insertText(marshaller.insertField(item, Fieldtype.ORGANIZATION),
                                     publication.getOrganization(), null, null);
@@ -93,20 +134,9 @@ public class ExportPublications {
                             marshaller.insertText(marshaller.insertField(item, Fieldtype.KEYWORDS),
                                     extractBestMLS(publication.getKeywords()), null, null);
                         }
-                        if (multilanguageHasNonEmptyContent(publication.getNote())) {
-                            marshaller.insertText(marshaller.insertField(item, Fieldtype.NOTE),
-                                    extractBestMLS(publication.getNote()), null, null);
-                        }
                         if (StringUtils.isNotBlank(publication.getPublisher())) {
                             marshaller.insertEntity(marshaller.insertField(item, Fieldtype.PUBLISHER),
                                     publication.getPublisher(), null, null);
-                        }
-                        if (StringUtils.isNotBlank(publication.getTitle())) {
-                            marshaller.insertText(marshaller.insertField(item, Fieldtype.TITLE), publication.getTitle(), null,
-                                    null);
-                        }
-                        if (StringUtils.isNotBlank(publication.getUrl())) {
-                            marshaller.insertUri(marshaller.insertField(item, Fieldtype.URL), publication.getUrl(), null);
                         }
                         if (!(publication instanceof Inproceedings || publication instanceof Proceedings)) {
                             if (!(publication instanceof Article)) {
@@ -197,7 +227,7 @@ public class ExportPublications {
                                 marshaller.insertText(marshaller.insertField(item, Fieldtype.SCOPE), conferenceArticle.getScope()
                                         .name(), null, null);
                             }
-                            if (conferenceArticle.hasEventConferenceArticlesAssociation()) {
+                            if (conferenceArticle.getEventConferenceArticlesAssociation() != null) {
                                 EventEdition eventEdition =
                                         conferenceArticle.getEventConferenceArticlesAssociation().getEventEdition();
                                 marshaller.insertItemRef(marshaller.insertField(item, Fieldtype.EVENT),
@@ -396,6 +426,34 @@ public class ExportPublications {
                     if (StringUtils.isNotBlank(edition.getEvent().getUrl())) {
                         marshaller.insertUri(marshaller.insertField(item, Fieldtype.URL), edition.getEvent().getUrl(), null);
                     }
+                }
+            }
+
+            for (Prize prize : Bennu.getInstance().getPrizesSet()) {
+                Item item =
+                        marshaller.insertItem(items, prize.getExternalId(),
+                                Itemtype.fromValue(Prize.class.getSimpleName().toLowerCase()), new DateTime());
+                if (multilanguageHasNonEmptyContent(prize.getName())) {
+                    marshaller.insertText(marshaller.insertField(item, Fieldtype.TITLE), extractBestMLS(prize.getName()), null,
+                            null);
+                }
+                if (multilanguageHasNonEmptyContent(prize.getDescription())) {
+                    marshaller.insertText(marshaller.insertField(item, Fieldtype.NOTE), extractBestMLS(prize.getDescription()),
+                            null, null);
+                }
+                if (prize.getYear() != null) {
+                    marshaller.insertDate(marshaller.insertField(item, Fieldtype.DATE), prize.getYear(), null, null);
+                }
+                if (prize.getPeople() != null && !prize.getPeople().isEmpty()) {
+                    Property field = marshaller.insertField(item, Fieldtype.AUTHOR);
+                    int i = 0;
+                    for (Person person : prize.getPeople()) {
+                        marshaller.insertEntity(field, person.getName(), i++, person.getUsername());
+                    }
+                }
+                if (prize.getResearchResult() != null) {
+                    marshaller.insertItemRef(marshaller.insertField(item, Fieldtype.REFERENCE), prize.getResearchResult()
+                            .getTitle(), prize.getResearchResult().getExternalId(), null);
                 }
             }
             return marshaller.marshallToByteArray(items);

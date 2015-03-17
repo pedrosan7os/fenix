@@ -118,7 +118,6 @@ public class AdministrativeOffice extends AdministrativeOffice_Base {
         DomainException.throwWhenDeleteBlocked(getDeletionBlockers());
 
         setUnit(null);
-        setServiceAgreementTemplate(null);
         setRootDomainObject(null);
         deleteDomainObject();
     }
@@ -133,12 +132,6 @@ public class AdministrativeOffice extends AdministrativeOffice_Base {
             blockers.add(BundleUtil.getString(Bundle.APPLICATION, "error.AdministrativeOffice.cannot.delete"));
         }
         if (!getRectorateSubmissionBatchSet().isEmpty()) {
-            blockers.add(BundleUtil.getString(Bundle.APPLICATION, "error.AdministrativeOffice.cannot.delete"));
-        }
-        if (!getEventsSet().isEmpty()) {
-            blockers.add(BundleUtil.getString(Bundle.APPLICATION, "error.AdministrativeOffice.cannot.delete"));
-        }
-        if (!getEventReportQueueJobSet().isEmpty()) {
             blockers.add(BundleUtil.getString(Bundle.APPLICATION, "error.AdministrativeOffice.cannot.delete"));
         }
         if (!getAcademicAuthorizationGroupSet().isEmpty()) {

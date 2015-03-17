@@ -239,7 +239,7 @@ public class StandaloneIndividualCandidacyProcess extends StandaloneIndividualCa
                 throw new PreConditionNotValidException();
             }
 
-            if (process.getCandidacy().getEvent() == null || process.getCandidacy().getEvent().isCancelled()) {
+            if (process.getCandidacy().getAccountingEvent() == null || process.getCandidacy().getAccountingEvent().isCancelled()) {
                 return;
             }
 

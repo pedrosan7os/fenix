@@ -30,10 +30,6 @@ import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.PhotoState;
 import org.fenixedu.academic.domain.Photograph;
-import org.fenixedu.academic.domain.accounting.EventType;
-import org.fenixedu.academic.domain.accounting.PostingRule;
-import org.fenixedu.academic.domain.accounting.events.insurance.InsuranceEvent;
-import org.fenixedu.academic.domain.accounting.paymentCodes.IndividualCandidacyPaymentCode;
 import org.fenixedu.academic.domain.candidacy.Ingression;
 import org.fenixedu.academic.domain.caseHandling.Activity;
 import org.fenixedu.academic.domain.caseHandling.StartActivity;
@@ -47,7 +43,6 @@ import org.fenixedu.academic.domain.phd.PhdProgram;
 import org.fenixedu.academic.domain.phd.PhdProgramCandidacyProcessState;
 import org.fenixedu.academic.domain.phd.PhdProgramFocusArea;
 import org.fenixedu.academic.domain.phd.PhdProgramProcessDocument;
-import org.fenixedu.academic.domain.phd.PhdProgramServiceAgreementTemplate;
 import org.fenixedu.academic.domain.phd.alert.PhdFinalProofRequestAlert;
 import org.fenixedu.academic.domain.phd.alert.PhdPublicPresentationSeminarAlert;
 import org.fenixedu.academic.domain.phd.alert.PhdRegistrationFormalizationAlert;
@@ -70,7 +65,6 @@ import org.fenixedu.academic.domain.phd.candidacy.activities.RequestRatifyCandid
 import org.fenixedu.academic.domain.phd.candidacy.activities.UploadCandidacyReview;
 import org.fenixedu.academic.domain.phd.candidacy.activities.UploadDocuments;
 import org.fenixedu.academic.domain.phd.candidacy.activities.ValidatedByCandidate;
-import org.fenixedu.academic.domain.phd.debts.PhdRegistrationFee;
 import org.fenixedu.academic.domain.student.PersonalIngressionData;
 import org.fenixedu.academic.domain.student.PrecedentDegreeInformation;
 import org.fenixedu.academic.domain.student.Registration;
@@ -215,14 +209,6 @@ public class PhdProgramCandidacyProcess extends PhdProgramCandidacyProcess_Base 
 
     public boolean isPublicCandidacy() {
         return getCandidacyHashCode() != null;
-    }
-
-    public IndividualCandidacyPaymentCode getAssociatedPaymentCode() {
-        if (getEvent() == null) {
-            return null;
-        }
-
-        return getEvent().getAssociatedPaymentCode();
     }
 
     public boolean hasPaymentCodeToPay() {

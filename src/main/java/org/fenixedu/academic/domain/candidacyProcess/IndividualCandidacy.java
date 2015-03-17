@@ -140,7 +140,7 @@ abstract public class IndividualCandidacy extends IndividualCandidacy_Base {
     }
 
     public boolean hasAnyPayment() {
-        return getEvent() != null && getEvent().hasAnyPayments();
+        return getAccountingEvent() != null && getAccountingEvent().hasAnyPayments();
     }
 
     public void editPersonalCandidacyInformation(final PersonBean personBean) {
@@ -152,11 +152,10 @@ abstract public class IndividualCandidacy extends IndividualCandidacy_Base {
     }
 
     public void cancel(final Person person) {
-        checkRulesToCancel();
         setState(IndividualCandidacyState.CANCELLED);
         setResponsible(person.getUsername());
-        if (getEvent() != null) {
-            getEvent().cancel("IndividualCandidacy.canceled");
+        if (getAccountingEvent() != null) {
+            getAccountingEvent().cancel();
         }
     }
 
@@ -168,12 +167,6 @@ abstract public class IndividualCandidacy extends IndividualCandidacy_Base {
     public void revertToStandBy(final Person person) {
         setState(IndividualCandidacyState.STAND_BY);
         setResponsible(person.getUsername());
-    }
-
-    protected void checkRulesToCancel() {
-        if (getEvent() != null && hasAnyPayment()) {
-            throw new DomainException("error.IndividualCandidacy.cannot.cancel.candidacy.with.payments");
-        }
     }
 
     public Person getResponsiblePerson() {
@@ -201,7 +194,7 @@ abstract public class IndividualCandidacy extends IndividualCandidacy_Base {
     }
 
     public boolean isDebtPayed() {
-        return getEvent() == null || (getEvent() != null && getEvent().isClosed());
+        return getAccountingEvent() == null || getAccountingEvent().isClosed();
     }
 
     public boolean isFor(final ExecutionInterval executionInterval) {

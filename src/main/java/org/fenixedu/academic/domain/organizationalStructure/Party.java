@@ -36,8 +36,6 @@ import org.fenixedu.academic.domain.CompetenceCourse;
 import org.fenixedu.academic.domain.Country;
 import org.fenixedu.academic.domain.DomainObjectUtil;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.accounting.Account;
-import org.fenixedu.academic.domain.accounting.AccountType;
 import org.fenixedu.academic.domain.contacts.EmailAddress;
 import org.fenixedu.academic.domain.contacts.MobilePhone;
 import org.fenixedu.academic.domain.contacts.PartyContact;
@@ -106,8 +104,6 @@ public abstract class Party extends Party_Base implements Comparable<Party> {
     public Party() {
         super();
         setRootDomainObject(Bennu.getInstance());
-        createAccount(AccountType.INTERNAL);
-        createAccount(AccountType.EXTERNAL);
     }
 
     @Deprecated
@@ -130,17 +126,6 @@ public abstract class Party extends Party_Base implements Comparable<Party> {
         super.setNationality(country);
     }
 
-    public Account createAccount(AccountType accountType) {
-        checkAccountsFor(accountType);
-        return new Account(accountType, this);
-    }
-
-    private void checkAccountsFor(AccountType accountType) {
-        if (getAccountBy(accountType) != null) {
-            throw new DomainException("error.party.accounts.accountType.already.exist");
-        }
-    }
-
     @SuppressWarnings("unchecked")
     public static <T extends Party> Set<T> getPartysSet(Class<T> input) {
         Set<T> partySet = new HashSet<T>();
@@ -152,23 +137,6 @@ public abstract class Party extends Party_Base implements Comparable<Party> {
         }
 
         return partySet;
-    }
-
-    public Account getAccountBy(AccountType accountType) {
-        for (final Account account : getAccountsSet()) {
-            if (account.getAccountType() == accountType) {
-                return account;
-            }
-        }
-        return null;
-    }
-
-    public Account getInternalAccount() {
-        return getAccountBy(AccountType.INTERNAL);
-    }
-
-    public Account getExternalAccount() {
-        return getAccountBy(AccountType.EXTERNAL);
     }
 
     public PartyTypeEnum getType() {
@@ -429,9 +397,6 @@ public abstract class Party extends Party_Base implements Comparable<Party> {
     protected void delete() {
         DomainException.throwWhenDeleteBlocked(getDeletionBlockers());
 
-        for (; !getAccountsSet().isEmpty(); getAccountsSet().iterator().next().delete()) {
-            ;
-        }
         for (; !getPartyContactsSet().isEmpty(); getPartyContactsSet().iterator().next().deleteWithoutCheckRules()) {
             ;
         }

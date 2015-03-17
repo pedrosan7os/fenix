@@ -1,0 +1,28 @@
+package org.fenixedu.academic.accounting.domain;
+
+class AccountingEvent {
+}
+
+class StudentCandidacyAccountingEvent extends AccountingEvent {
+}
+
+class IndividualCandidacyAccountingEvent extends AccountingEvent {
+}
+
+relation StudentCandidacyAccountingEventLink {
+    StudentCandidacyAccountingEvent playsRole accountingEvent {
+        multiplicity 0..1;
+    }
+    .org.fenixedu.academic.domain.candidacy.Candidacy playsRole candidacy {
+        multiplicity 1..1;
+    }
+}
+
+relation IndividualCandidacyAccountingEventLink {
+    IndividualCandidacyAccountingEvent playsRole accountingEvent {
+        multiplicity 0..1;
+    }
+    .org.fenixedu.academic.domain.candidacyProcess.IndividualCandidacy playsRole candidacy {
+        multiplicity 1..1;
+    }
+}

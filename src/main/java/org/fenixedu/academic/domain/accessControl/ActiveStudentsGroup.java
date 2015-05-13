@@ -20,10 +20,8 @@ package org.fenixedu.academic.domain.accessControl;
 
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.phd.PhdIndividualProgramProcess;
 import org.fenixedu.academic.domain.student.Student;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.bennu.core.annotation.GroupOperator;
@@ -45,12 +43,8 @@ public class ActiveStudentsGroup extends GroupStrategy {
 
     @Override
     public Set<User> getMembers() {
-        return Stream
-                .concat(Bennu.getInstance().getPhdProgramsSet().stream()
-                        .flatMap(program -> program.getIndividualProgramProcessesSet().stream())
-                        .filter(PhdIndividualProgramProcess::isProcessActive).map(PhdIndividualProgramProcess::getPerson),
-                        Bennu.getInstance().getStudentsSet().stream().filter(Student::hasActiveRegistrations)
-                                .map(Student::getPerson)).map(Person::getUser).collect(Collectors.toSet());
+        return Bennu.getInstance().getStudentsSet().stream().filter(Student::hasActiveRegistrations).map(Student::getPerson)
+                .map(Person::getUser).collect(Collectors.toSet());
     }
 
     @Override
@@ -63,9 +57,7 @@ public class ActiveStudentsGroup extends GroupStrategy {
         if (user == null || user.getPerson() == null) {
             return false;
         }
-        return (user.getPerson().getStudent() != null && user.getPerson().getStudent().hasActiveRegistrations())
-                || user.getPerson().getPhdIndividualProgramProcessesSet().stream()
-                        .anyMatch(PhdIndividualProgramProcess::isProcessActive);
+        return (user.getPerson().getStudent() != null && user.getPerson().getStudent().hasActiveRegistrations());
     }
 
     @Override

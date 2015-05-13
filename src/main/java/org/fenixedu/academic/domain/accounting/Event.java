@@ -1079,10 +1079,6 @@ public abstract class Event extends Event_Base {
         return false;
     }
 
-    public boolean isPhdEvent() {
-        return false;
-    }
-
     public boolean isDfaRegistrationEvent() {
         return false;
     }
@@ -1092,10 +1088,6 @@ public abstract class Event extends Event_Base {
     }
 
     public boolean isSpecializationDegreeRegistrationEvent() {
-        return false;
-    }
-
-    public boolean isFctScholarshipPhdGratuityContribuitionEvent() {
         return false;
     }
 

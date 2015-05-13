@@ -198,11 +198,7 @@ public class RectorateDocumentSubmissionDispatchAction extends FenixDispatchActi
                 addCell("Apuramento", document instanceof IProgramConclusionRequest ? ((IProgramConclusionRequest) document)
                         .getProgramConclusion().getName().getContent() : null);
 
-                if (document.isRequestForRegistration()) {
-                    addCell("Tipo de Curso", ((DocumentRequest) document).getDegreeType().getName().getContent());
-                } else if (document.isRequestForPhd()) {
-                    addCell("Tipo de Curso", BundleUtil.getString(Bundle.PHD, "label.php.program"));
-                }
+                addCell("Tipo de Curso", ((DocumentRequest) document).getDegreeType().getName().getContent());
 
                 addCell("Nº de Aluno", document.getStudent().getNumber());
                 addCell("Nome", document.getPerson().getName());

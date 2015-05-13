@@ -29,9 +29,4 @@ public class CoordinatorApplication {
             accessGroup = ACCESS_GROUP)
     public static class CoordinatorManagementApp {
     }
-
-    @StrutsApplication(bundle = "PhdResources", path = "phd", titleKey = "label.phds", hint = HINT, accessGroup = ACCESS_GROUP)
-    public static class CoordinatorPhdApp {
-    }
-
 }

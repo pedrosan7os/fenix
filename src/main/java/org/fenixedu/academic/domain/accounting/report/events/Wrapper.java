@@ -22,7 +22,6 @@ import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOffice;
 
 public interface Wrapper {
-    public static final String PHD_PROGRAM_STUDIES = "Programa Doutoral";
     public static final String REGISTRATION_STUDIES = "Curso";
 
     public String getStudentNumber();
@@ -38,8 +37,6 @@ public interface Wrapper {
     public String getDegreeName();
 
     public String getDegreeType();
-
-    public String getPhdProgramName();
 
     public String getEnrolledECTS();
 

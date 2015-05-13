@@ -221,11 +221,6 @@ Documentation:
 		<property name="jcaptchaUrl" value="/publico/jcaptcha.do" />
 	</renderer>
 	
-	<!-- used to correctly present phd enum values -->
-	<renderer type="java.lang.Enum" layout="phd-enum-renderer" class="pt.ist.fenixWebFramework.renderers.EnumRenderer">
-    	<property name="bundle" value="PHD_RESOURCES"/>
-    </renderer>
-    
     <!-- Legacy Renderers -->
     <renderer mode="input" type="org.fenixedu.academic.util.MultiLanguageString" class="org.fenixedu.academic.ui.renderers.legacy.MultiLanguageStringInputRenderer"/>
 	<renderer mode="input" type="org.fenixedu.academic.util.MultiLanguageString" layout="area" class="org.fenixedu.academic.ui.renderers.legacy.MultiLanguageTextInputRenderer"/>

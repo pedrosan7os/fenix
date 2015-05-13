@@ -83,8 +83,6 @@ import org.fenixedu.academic.domain.person.IdDocument;
 import org.fenixedu.academic.domain.person.IdDocumentTypeObject;
 import org.fenixedu.academic.domain.person.MaritalStatus;
 import org.fenixedu.academic.domain.person.RoleType;
-import org.fenixedu.academic.domain.phd.alert.PhdAlertMessage;
-import org.fenixedu.academic.domain.phd.candidacy.PHDProgramCandidacy;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.RegistrationProtocol;
 import org.fenixedu.academic.dto.person.PersonBean;
@@ -482,8 +480,8 @@ public class Person extends Person_Base {
                 && getExportGroupingReceiversSet().isEmpty() && getAssociatedQualificationsSet().isEmpty()
                 && getAssociatedAlteredCurriculumsSet().isEmpty() && getEnrolmentEvaluationsSet().isEmpty()
                 && getExportGroupingSendersSet().isEmpty() && getResponsabilityTransactionsSet().isEmpty()
-                && getGuidesSet().isEmpty() && getTeacher() == null && getInternalParticipantsSet().isEmpty()
-                && getCreatedQualificationsSet().isEmpty() && getCreateJobsSet().isEmpty())) {
+                && getGuidesSet().isEmpty() && getTeacher() == null && getCreatedQualificationsSet().isEmpty() && getCreateJobsSet()
+                .isEmpty())) {
             blockers.add(BundleUtil.getString(Bundle.APPLICATION, "error.person.cannot.be.deleted"));
         }
     }
@@ -509,10 +507,6 @@ public class Person extends Person_Base {
     public StudentCandidacy getStudentCandidacyForExecutionDegree(final ExecutionDegree executionDegree) {
         for (final Candidacy candidacy : this.getCandidaciesSet()) {
             if (candidacy instanceof StudentCandidacy && candidacy.isActive()) {
-                if (candidacy instanceof PHDProgramCandidacy) {
-                    continue;
-                }
-
                 final StudentCandidacy studentCandidacy = (StudentCandidacy) candidacy;
                 if (studentCandidacy.getExecutionDegree().equals(executionDegree)) {
                     return studentCandidacy;
@@ -1339,22 +1333,6 @@ public class Person extends Person_Base {
 
     public boolean hasProfessorshipForExecutionCourse(final ExecutionCourse executionCourse) {
         return getProfessorshipByExecutionCourse(executionCourse) != null;
-    }
-
-    public Set<PhdAlertMessage> getUnreadedPhdAlertMessages() {
-        final Set<PhdAlertMessage> result = new HashSet<PhdAlertMessage>();
-
-        for (final PhdAlertMessage message : getPhdAlertMessagesSet()) {
-            if (!message.isReaded()) {
-                result.add(message);
-            }
-        }
-
-        return result;
-    }
-
-    public boolean isPhdStudent() {
-        return !getPhdIndividualProgramProcessesSet().isEmpty();
     }
 
     public RegistrationProtocol getOnlyRegistrationProtocol() {

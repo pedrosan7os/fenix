@@ -28,7 +28,6 @@ import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.degreeStructure.CycleType;
 import org.fenixedu.academic.domain.exceptions.DomainException;
-import org.fenixedu.academic.domain.phd.PhdProgram;
 import org.fenixedu.academic.domain.serviceRequests.RectorateSubmissionBatch;
 import org.fenixedu.academic.domain.serviceRequests.RectorateSubmissionState;
 import org.fenixedu.academic.util.Bundle;
@@ -158,14 +157,4 @@ public class AdministrativeOffice extends AdministrativeOffice_Base {
         }
         return current;
     }
-
-    public boolean getHasAnyPhdProgram() {
-        for (AcademicProgram program : getManagedAcademicProgramSet()) {
-            if (program instanceof PhdProgram) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 }

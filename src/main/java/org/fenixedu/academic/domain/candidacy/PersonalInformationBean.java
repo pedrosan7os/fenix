@@ -40,14 +40,11 @@ import org.fenixedu.academic.domain.organizationalStructure.AcademicalInstitutio
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.academic.domain.organizationalStructure.UnitName;
 import org.fenixedu.academic.domain.person.MaritalStatus;
-import org.fenixedu.academic.domain.phd.PhdIndividualProgramProcess;
 import org.fenixedu.academic.domain.raides.DegreeDesignation;
 import org.fenixedu.academic.domain.student.PersonalIngressionData;
 import org.fenixedu.academic.domain.student.PrecedentDegreeInformation;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.Student;
-import org.fenixedu.academic.util.Bundle;
-import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -71,7 +68,6 @@ public class PersonalInformationBean implements Serializable {
 
     static private final long serialVersionUID = 1144682974757187722L;
 
-    private PhdIndividualProgramProcess phdIndividualProgramProcess;
     private Registration registration;
     private Country countryOfResidence;
     private DistrictSubdivision districtSubdivisionOfResidence;
@@ -120,18 +116,8 @@ public class PersonalInformationBean implements Serializable {
         initFromLatestPersonalIngressionData();
     }
 
-    public PersonalInformationBean(PhdIndividualProgramProcess PhdProcess) {
-        setPhdIndividualProgramProcess(PhdProcess);
-
-        initFromLatestPersonalIngressionData();
-    }
-
     public PersonalInformationBean(PrecedentDegreeInformation degreeInfo) {
-        if (degreeInfo.getPhdIndividualProgramProcess() != null) {
-            setPhdIndividualProgramProcess(degreeInfo.getPhdIndividualProgramProcess());
-        } else {
-            setRegistration(degreeInfo.getRegistration());
-        }
+        setRegistration(degreeInfo.getRegistration());
         setSchoolLevel(degreeInfo.getSchoolLevel());
         setOtherSchoolLevel(degreeInfo.getOtherSchoolLevel());
         setConclusionGrade(degreeInfo.getConclusionGrade());
@@ -213,18 +199,6 @@ public class PersonalInformationBean implements Serializable {
 
     public boolean hasRegistration() {
         return getRegistration() != null;
-    }
-
-    public PhdIndividualProgramProcess getPhdIndividualProgramProcess() {
-        return phdIndividualProgramProcess;
-    }
-
-    public void setPhdIndividualProgramProcess(PhdIndividualProgramProcess phdIndividualProgramProcess) {
-        this.phdIndividualProgramProcess = phdIndividualProgramProcess;
-    }
-
-    public boolean hasPhdIndividualProgramProcess() {
-        return getPhdIndividualProgramProcess() != null;
     }
 
     public Country getCountryOfResidence() {
@@ -718,11 +692,7 @@ public class PersonalInformationBean implements Serializable {
         final Student student = getStudent();
         result.format("Student Number: %d\n", student.getNumber());
         result.format("Name: %s\n", student.getPerson().getName());
-        if (hasPhdIndividualProgramProcess()) {
-            result.format("Degree: %s\n", getPhdIndividualProgramProcess().getDisplayName());
-        } else {
-            result.format("Degree: %s\n", getRegistration().getDegree().getPresentationName());
-        }
+        result.format("Degree: %s\n", getRegistration().getDegree().getPresentationName());
 
         return result.toString();
     }
@@ -739,36 +709,16 @@ public class PersonalInformationBean implements Serializable {
 
         final PersonalInformationBean other = (PersonalInformationBean) obj;
 
-        if (hasPhdIndividualProgramProcess() && other.hasPhdIndividualProgramProcess()) {
-            return getPhdIndividualProgramProcess().equals(other.getPhdIndividualProgramProcess());
-        } else if (hasRegistration() && other.hasRegistration()) {
-            return getRegistration().equals(other.getRegistration());
-        } else {
-            return false;
-        }
+        return getRegistration().equals(other.getRegistration());
     }
 
     @Override
     public int hashCode() {
-        int result = 17;
-
-        if (hasPhdIndividualProgramProcess()) {
-            result = 37 * result + getPhdIndividualProgramProcess().hashCode();
-        } else {
-            result = 37 * result + getRegistration().hashCode();
-        }
-
-        return result;
+        return getRegistration().hashCode();
     }
 
     public String getDescription() {
-        if (hasPhdIndividualProgramProcess()) {
-            return BundleUtil.getString(Bundle.GEP, "label.personal.ingression.data.viewer.phd.program.name") + " "
-                    + BundleUtil.getString(Bundle.APPLICATION, "label.in") + " "
-                    + getPhdIndividualProgramProcess().getPhdProgram().getName().getContent();
-        } else {
-            return getRegistration().getDegreeNameWithDescription();
-        }
+        return getRegistration().getDegreeNameWithDescription();
     }
 
     public void setRaidesDegreeDesignation(DegreeDesignation raidesDegreeDesignation) {
@@ -864,19 +814,11 @@ public class PersonalInformationBean implements Serializable {
     }
 
     private PrecedentDegreeInformation getPrecedentDegreeInformation() {
-        if (hasPhdIndividualProgramProcess()) {
-            return getPhdIndividualProgramProcess().getPrecedentDegreeInformation(ExecutionYear.readCurrentExecutionYear());
-        } else {
-            return getRegistration().getPrecedentDegreeInformation(ExecutionYear.readCurrentExecutionYear());
-        }
+        return getRegistration().getPrecedentDegreeInformation(ExecutionYear.readCurrentExecutionYear());
     }
 
     public Student getStudent() {
-        if (hasPhdIndividualProgramProcess()) {
-            return getPhdIndividualProgramProcess().getPerson().getStudent();
-        } else {
-            return getRegistration().getStudent();
-        }
+        return getRegistration().getStudent();
     }
 
     @Atomic
@@ -886,11 +828,7 @@ public class PersonalInformationBean implements Serializable {
 
         if (precedentInfo == null) {
             precedentInfo = new PrecedentDegreeInformation();
-            if (hasPhdIndividualProgramProcess()) {
-                precedentInfo.setPhdIndividualProgramProcess(getPhdIndividualProgramProcess());
-            } else {
-                precedentInfo.setRegistration(getRegistration());
-            }
+            precedentInfo.setRegistration(getRegistration());
 
             ExecutionYear currentExecutionYear = ExecutionYear.readCurrentExecutionYear();
             personalData = getStudent().getPersonalIngressionDataByExecutionYear(currentExecutionYear);

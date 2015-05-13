@@ -40,14 +40,7 @@
 	</logic:notEmpty>
 		<fr:slot name="exportGratuityEvents" />
 		<fr:slot name="exportAcademicServiceRequestEvents" />
-
-	<logic:equal name="queueJob" property="forAdministrativeOffice.hasAnyPhdProgram" value="false">
-		<fr:slot name="exportIndividualCandidacyEvents" />
-	</logic:equal>
-	<logic:equal name="queueJob" property="forAdministrativeOffice.hasAnyPhdProgram" value="true">
-		<fr:slot name="exportPhdEvents" />
-	</logic:equal>
-
+        <fr:slot name="exportIndividualCandidacyEvents" />
 		<fr:slot name="exportResidenceEvents" />
 		<fr:slot name="exportOthers" />
 

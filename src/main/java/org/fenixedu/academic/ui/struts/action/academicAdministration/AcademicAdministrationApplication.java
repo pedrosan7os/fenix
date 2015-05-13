@@ -87,11 +87,6 @@ public class AcademicAdministrationApplication extends ForwardAction {
     public static class AcademicAdminCandidaciesApp {
     }
 
-    @StrutsApplication(bundle = "PhdResources", path = "phd", titleKey = "label.phds", hint = HINT,
-            accessGroup = "(academic(MANAGE_PHD_ENROLMENT_PERIODS) | academic(MANAGE_PHD_PROCESSES))")
-    public static class AcademicAdminPhdApp {
-    }
-
     @StrutsApplication(
             bundle = "ManagerResources",
             path = "executions",

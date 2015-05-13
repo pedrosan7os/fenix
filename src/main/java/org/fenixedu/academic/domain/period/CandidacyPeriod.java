@@ -88,10 +88,6 @@ abstract public class CandidacyPeriod extends CandidacyPeriod_Base {
         return contains(start) || contains(end);
     }
 
-    public boolean isPhdCandidacyPeriod() {
-        return false;
-    }
-
     public boolean isEpflCandidacyPeriod() {
         return false;
     }

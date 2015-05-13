@@ -29,10 +29,6 @@ public interface IAcademicServiceRequest {
 
     public Person getPerson();
 
-    public boolean isRequestForRegistration();
-
-    public boolean isRequestForPhd();
-
     public RegistryCode getRegistryCode();
 
     public boolean hasRegistryCode();

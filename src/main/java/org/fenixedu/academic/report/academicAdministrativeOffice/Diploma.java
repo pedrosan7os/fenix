@@ -105,17 +105,17 @@ public class Diploma extends AdministrativeOfficeDocument {
         String rectorGender, rectorGrant, presidentGender;
 
         if (president.isMale()) {
-            presidentGender = BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.phd.registryDiploma.presidentMale");
+            presidentGender = BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.registryDiploma.presidentMale");
         } else {
-            presidentGender = BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.phd.registryDiploma.presidentFemale");
+            presidentGender = BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.registryDiploma.presidentFemale");
         }
 
         if (principal.isMale()) {
-            rectorGender = BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.phd.registryDiploma.rectorMale");
-            rectorGrant = BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.phd.registryDiploma.presidentGrantMale");
+            rectorGender = BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.registryDiploma.rectorMale");
+            rectorGrant = BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.registryDiploma.presidentGrantMale");
         } else {
-            rectorGender = BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.phd.registryDiploma.rectorFemale");
-            rectorGrant = BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.phd.registryDiploma.presidentGrantFemale");
+            rectorGender = BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.registryDiploma.rectorFemale");
+            rectorGrant = BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.registryDiploma.presidentGrantFemale");
         }
         addParameter("theRector", rectorGender);
         addParameter("president", MessageFormat.format(presidentGender, institutionUnitName));

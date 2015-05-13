@@ -71,11 +71,6 @@ public class AdminFeeAndInsuranceEventWrapper implements Wrapper {
     }
 
     @Override
-    public String getPhdProgramName() {
-        return "--";
-    }
-
-    @Override
     public String getEnrolledECTS() {
         return "--";
     }

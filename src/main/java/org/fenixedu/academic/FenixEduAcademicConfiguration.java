@@ -56,9 +56,6 @@ public class FenixEduAcademicConfiguration {
         @ConfigurationProperty(key = "mail.smtp.name", description = "The name of the SMTP server used to send Emails")
         public String getMailSmtpName();
 
-        @ConfigurationProperty(key = "phd.public.candidacy.submission.link")
-        public String getPhdPublicCandidacySubmissionLink();
-
         @ConfigurationProperty(key = "raides.request.info", defaultValue = "false")
         public Boolean getRaidesRequestInfo();
 

@@ -55,7 +55,6 @@ import org.joda.time.format.PeriodFormatterBuilder;
         @Forward(name = "chooseCycleCourseGroupToEnrol", path = "/student/enrollment/bolonha/chooseCycleCourseGroupToEnrol.jsp"),
         @Forward(name = "welcome", path = "/student/enrollment/welcome.jsp"),
         @Forward(name = "chooseSemester", path = "/student/enrollment/chooseSemester.jsp"),
-        @Forward(name = "welcome-dea-degree", path = "/student/phdStudentEnrolment.do?method=showWelcome"),
         @Forward(name = "showEnrollmentInstructions", path = "/student/enrollment/bolonha/showEnrollmentInstructions.jsp"),
         @Forward(name = "enrollmentCannotProceed", path = "/student/enrollment/bolonha/enrollmentCannotProceed.jsp") })
 public class BolonhaStudentEnrollmentDispatchAction extends AbstractBolonhaStudentEnrollmentDA {
@@ -95,11 +94,7 @@ public class BolonhaStudentEnrollmentDispatchAction extends AbstractBolonhaStude
     }
 
     private ActionForward findForwardForRegistration(ActionMapping mapping, Registration registration) {
-        if (registration.getDegree().isDEA()) {
-            return mapping.findForward("welcome-dea-degree");
-        } else {
-            return mapping.findForward("welcome");
-        }
+        return mapping.findForward("welcome");
     }
 
     @Override

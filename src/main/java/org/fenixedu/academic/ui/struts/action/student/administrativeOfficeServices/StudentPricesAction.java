@@ -34,7 +34,6 @@ import org.fenixedu.academic.domain.accounting.EventType;
 import org.fenixedu.academic.domain.accounting.PostingRule;
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOffice;
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOfficeType;
-import org.fenixedu.academic.domain.phd.debts.ExternalScholarshipPhdGratuityContribuitionPR;
 import org.fenixedu.academic.ui.struts.action.base.FenixAction;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.struts.annotations.Forward;
@@ -72,10 +71,7 @@ public class StudentPricesAction extends FenixAction {
             if (office != null) {
                 final List<PostingRule> postingRules = new ArrayList<PostingRule>();
                 for (PostingRule postingRule : office.getServiceAgreementTemplate().getActiveVisiblePostingRules()) {
-                    if (!ExternalScholarshipPhdGratuityContribuitionPR.class.isAssignableFrom(postingRule.getClass())) {
-                        postingRules.add(postingRule);
-                    }
-
+                    postingRules.add(postingRule);
                 }
                 Collections.sort(postingRules, PostingRule.COMPARATOR_BY_EVENT_TYPE);
                 postingRulesByAdminOfficeType.put(officeType, postingRules);

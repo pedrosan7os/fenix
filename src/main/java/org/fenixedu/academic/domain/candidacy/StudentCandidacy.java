@@ -31,7 +31,6 @@ import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.accounting.PaymentCode;
 import org.fenixedu.academic.domain.accounting.paymentCodes.AccountingEventPaymentCode;
 import org.fenixedu.academic.domain.exceptions.DomainException;
-import org.fenixedu.academic.domain.phd.candidacy.PHDProgramCandidacy;
 import org.fenixedu.academic.domain.student.PrecedentDegreeInformation;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.joda.time.DateTime;
@@ -122,9 +121,7 @@ public abstract class StudentCandidacy extends StudentCandidacy_Base {
             return new SDCandidacy(studentPerson, executionDegree);
         }
         if (executionDegree.getDegree().getDegreeType().isAdvancedSpecializationDiploma()) {
-            // TODO: remove this after PHD Program candidacy is completed and
-            // data migrated
-            return new PHDProgramCandidacy(studentPerson, executionDegree);
+            return new DegreeCandidacy(studentPerson, executionDegree);
         }
         if (executionDegree.getDegree().getDegreeType().isAdvancedFormationDiploma()) {
             return new DFACandidacy(studentPerson, executionDegree);

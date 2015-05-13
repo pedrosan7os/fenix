@@ -102,12 +102,7 @@ public class DocumentRequestExcelUtils {
                 addCell(BundleUtil.getString(Bundle.APPLICATION, "label.programConclusion"),
                         programConclusion != null ? programConclusion.getName().getContent() : null);
 
-                if (document.isRequestForRegistration()) {
-                    addCell("Tipo de Curso", ((RegistrationAcademicServiceRequest) document).getDegreeType().getName()
-                            .getContent());
-                } else if (document.isRequestForPhd()) {
-                    addCell("Tipo de Estudos", "Programa doutoral");
-                }
+                addCell("Tipo de Curso", ((RegistrationAcademicServiceRequest) document).getDegreeType().getName().getContent());
                 addCell("Nº de Aluno", document.getStudent().getNumber());
                 addCell("Nome", document.getPerson().getName());
                 if (!(document.isDiploma())) {

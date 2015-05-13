@@ -39,7 +39,6 @@ public class GrantOwnerTypesProvider implements DataProvider {
             boolean isThirdCycle = false;
             boolean isFirstOrSecondCycle = false;
 
-            isThirdCycle = student.hasActivePhdProgramProcess();
             for (Registration registration : student.getActiveRegistrations()) {
                 isThirdCycle |= registration.isDEA();
                 isFirstOrSecondCycle |= registration.isDegreeOrBolonhaDegreeOrBolonhaIntegratedMasterDegree();

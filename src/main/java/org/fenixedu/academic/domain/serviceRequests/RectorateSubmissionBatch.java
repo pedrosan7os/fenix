@@ -84,7 +84,7 @@ public class RectorateSubmissionBatch extends RectorateSubmissionBatch_Base {
             RegistryCode code = null;
             if (request.isRegistryDiploma()) {
                 code = request.getRegistryCode();
-            } else if (request.isDiploma() && request.isRequestForRegistration()) {
+            } else if (request.isDiploma()) {
                 // FIXME: this can leave after all diplomas without registry
                 // diplomas are dealt with.
                 DiplomaRequest diploma = (DiplomaRequest) request;

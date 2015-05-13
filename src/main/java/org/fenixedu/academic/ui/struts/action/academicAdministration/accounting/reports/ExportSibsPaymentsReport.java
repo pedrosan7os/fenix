@@ -136,7 +136,6 @@ public class ExportSibsPaymentsReport extends FenixDispatchAction {
                         addCell(getString("label.reports.insurance"), line.getGraduationInsuranceTotalAmount());
                         addCell(getString("label.reports.proesp"), line.getSpecializationGratuityTotalAmount());
                         addCell(getString("label.reports.propmest"), line.getMasterDegreeGratuityTotalAmount());
-                        addCell(getString("label.reports.propdout"), line.getPhdGratuityTotalAmount());
                         addCell(getString("label.reports.propdfa"), line.getDfaGratuityTotalAmount());
                         addCell(getString("label.reports.pgrad.fee"), line.getAfterGraduationInsuranceTotalAmount());
                         addCell(getString("label.reports.residence"), line.getResidencePayment());
@@ -153,7 +152,6 @@ public class ExportSibsPaymentsReport extends FenixDispatchAction {
                         addCell(getString("label.reports.over23IndividualCandidacy"),
                                 line.getOver23IndividualCandidacyEventAmount());
                         addCell(getString("label.reports.institutionAffiliation"), line.getInstitutionAffiliationEventAmount());
-                        addCell(getString("label.reports.phdProgramCandidacy"), line.getPhdProgramCandidacyEventAmount());
                         addCell(getString("label.reports.rectorate"), line.getRectorateAmount());
                         addCell(getString("label.reports.totrans"), line.getTransactionsTotalAmount());
                         addCell(getString("label.reports.totarif"), line.getTotalCost());

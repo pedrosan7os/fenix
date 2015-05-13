@@ -35,8 +35,6 @@ public enum DocumentRequestType {
 
     DEGREE_FINALIZATION_CERTIFICATE(true, false, false, true, false, false),
 
-    PHD_FINALIZATION_CERTIFICATE(false, false),
-
     EXAM_DATE_CERTIFICATE(true, false),
 
     SCHOOL_REGISTRATION_DECLARATION(false, true),

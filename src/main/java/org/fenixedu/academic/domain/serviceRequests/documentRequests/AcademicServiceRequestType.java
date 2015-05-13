@@ -48,8 +48,6 @@ public enum AcademicServiceRequestType {
 
     PARTIAL_REGIME_REQUEST(true),
 
-    PHD_STUDENT_REINGRESSION(true),
-
     DUPLICATE_REQUEST(true),
 
     DIPLOMA_REQUEST(true),

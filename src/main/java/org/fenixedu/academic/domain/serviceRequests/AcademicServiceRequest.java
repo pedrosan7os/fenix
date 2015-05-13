@@ -689,14 +689,6 @@ abstract public class AcademicServiceRequest extends AcademicServiceRequest_Base
         return false;
     }
 
-    public boolean isRequestForPhd() {
-        return false;
-    }
-
-    public boolean isRequestForRegistration() {
-        return false;
-    }
-
     public boolean isFor(final ExecutionYear executionYear) {
         return getExecutionYear() != null && getExecutionYear().equals(executionYear);
     }

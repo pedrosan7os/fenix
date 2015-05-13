@@ -23,7 +23,6 @@ import java.math.BigDecimal;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.accounting.events.serviceRequests.AcademicServiceRequestEvent;
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOffice;
-import org.fenixedu.academic.domain.phd.serviceRequests.PhdAcademicServiceRequest;
 import org.fenixedu.academic.domain.serviceRequests.AcademicServiceRequest;
 import org.fenixedu.academic.domain.serviceRequests.RegistrationAcademicServiceRequest;
 import org.fenixedu.academic.domain.student.Registration;
@@ -60,11 +59,7 @@ public class AcademicServiceRequestEventWrapper implements Wrapper {
 
     @Override
     public String getRegistrationStartDate() {
-        if (request.isRequestForRegistration()) {
-            return ((RegistrationAcademicServiceRequest) request).getRegistration().getStartDate().toString("dd/MM/yyyy");
-        }
-
-        return "--";
+        return ((RegistrationAcademicServiceRequest) request).getRegistration().getStartDate().toString("dd/MM/yyyy");
     }
 
     @Override
@@ -74,67 +69,38 @@ public class AcademicServiceRequestEventWrapper implements Wrapper {
 
     @Override
     public String getDegreeName() {
-        if (request.isRequestForRegistration()) {
-            return ((RegistrationAcademicServiceRequest) request).getRegistration().getDegree().getNameI18N()
-                    .getContent(MultiLanguageString.pt);
-        }
-
-        return "--";
+        return ((RegistrationAcademicServiceRequest) request).getRegistration().getDegree().getNameI18N()
+                .getContent(MultiLanguageString.pt);
     }
 
     @Override
     public String getDegreeType() {
-        if (request.isRequestForRegistration()) {
-            return ((RegistrationAcademicServiceRequest) request).getRegistration().getDegreeType().getName().getContent();
-        }
-
-        return "--";
-    }
-
-    @Override
-    public String getPhdProgramName() {
-        if (request.isRequestForPhd()) {
-            return ((PhdAcademicServiceRequest) request).getPhdIndividualProgramProcess().getPhdProgram().getName()
-                    .getContent(MultiLanguageString.pt);
-        }
-
-        return "--";
+        return ((RegistrationAcademicServiceRequest) request).getRegistration().getDegreeType().getName().getContent();
     }
 
     @Override
     public String getEnrolledECTS() {
-        if (request.isRequestForRegistration()) {
-            Registration registration = ((RegistrationAcademicServiceRequest) request).getRegistration();
-            ExecutionYear executionYear = ExecutionYear.readByDateTime(request.getCreationDate());
+        Registration registration = ((RegistrationAcademicServiceRequest) request).getRegistration();
+        ExecutionYear executionYear = ExecutionYear.readByDateTime(request.getCreationDate());
 
-            return new BigDecimal(registration.getEnrolmentsEcts(executionYear)).toString();
-        }
-
-        return "--";
+        return new BigDecimal(registration.getEnrolmentsEcts(executionYear)).toString();
     }
 
     @Override
     public String getRegime() {
-        if (request.isRequestForRegistration()) {
-            Registration registration = ((RegistrationAcademicServiceRequest) request).getRegistration();
-            ExecutionYear executionYear = ExecutionYear.readByDateTime(request.getCreationDate());
+        Registration registration = ((RegistrationAcademicServiceRequest) request).getRegistration();
+        ExecutionYear executionYear = ExecutionYear.readByDateTime(request.getCreationDate());
 
-            return registration.getRegimeType(executionYear).getLocalizedName();
-        }
-
-        return "--";
+        return registration.getRegimeType(executionYear).getLocalizedName();
     }
 
     @Override
     public String getEnrolmentModel() {
-        if (request.isRequestForRegistration()) {
-            Registration registration = ((RegistrationAcademicServiceRequest) request).getRegistration();
-            ExecutionYear executionYear = ExecutionYear.readByDateTime(request.getCreationDate());
+        Registration registration = ((RegistrationAcademicServiceRequest) request).getRegistration();
+        ExecutionYear executionYear = ExecutionYear.readByDateTime(request.getCreationDate());
 
-            if (registration.getEnrolmentModelForExecutionYear(executionYear) != null) {
-                return registration.getEnrolmentModelForExecutionYear(executionYear).getLocalizedName();
-            }
-
+        if (registration.getEnrolmentModelForExecutionYear(executionYear) != null) {
+            return registration.getEnrolmentModelForExecutionYear(executionYear).getLocalizedName();
         }
 
         return "--";
@@ -152,13 +118,7 @@ public class AcademicServiceRequestEventWrapper implements Wrapper {
 
     @Override
     public String getStudiesType() {
-        if (request.isRequestForRegistration()) {
-            return Wrapper.REGISTRATION_STUDIES;
-        } else if (request.isRequestForPhd()) {
-            return Wrapper.PHD_PROGRAM_STUDIES;
-        }
-
-        return "--";
+        return Wrapper.REGISTRATION_STUDIES;
     }
 
     @Override

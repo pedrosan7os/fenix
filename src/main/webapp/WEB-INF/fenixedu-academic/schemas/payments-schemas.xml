@@ -299,18 +299,6 @@
     <slot name="reason" key="label.org.fenixedu.academic.dto.accounting.penaltyExemption.CreatePenaltyExemptionBean.reason" layout="longText" />
 </schema>
 
-<schema name="CreatePhdRegistrationFeePenaltyExemptionBean.edit" 
-		type="org.fenixedu.academic.dto.accounting.penaltyExemption.CreatePhdRegistrationFeePenaltyExemptionBean" 
-		bundle="APPLICATION_RESOURCES" >
-   	<slot name="justificationType" layout="radio-select" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator" 
-   	key="label.org.fenixedu.academic.dto.accounting.penaltyExemption.CreatePenaltyExemptionBean.justificationType">
-        <property name="providerClass" value="org.fenixedu.academic.ui.renderers.providers.payments.PenaltyExemptionTypeProviderForCreatePenaltyExemptionBean" />
-        <property name="saveOptions" value="true"/>
-    </slot>
-    <slot name="dispatchDate" key="label.org.fenixedu.academic.dto.accounting.penaltyExemption.CreatePenaltyExemptionBean.dispatchDate" />
-    <slot name="reason" key="label.org.fenixedu.academic.dto.accounting.penaltyExemption.CreatePenaltyExemptionBean.reason" layout="longText" />
-</schema>
-
 <schema name="CreateAdministrativeOfficeFeeAndInsurancePenaltyExemptionBean.edit" 
 		type="org.fenixedu.academic.dto.accounting.penaltyExemption.CreateAdministrativeOfficeFeeAndInsurancePenaltyExemptionBean" 
 		bundle="APPLICATION_RESOURCES">
@@ -357,13 +345,6 @@
 
 <schema name="ImprovementOfApprovedEnrolmentPenaltyExemption.view" 
 		type="org.fenixedu.academic.domain.accounting.events.ImprovementOfApprovedEnrolmentPenaltyExemption" 
-		bundle="APPLICATION_RESOURCES">
-	<slot name="description" key="label.org.fenixedu.academic.domain.accounting.events.PenaltyExemption.description" />
-    <slot name="reason" key="label.org.fenixedu.academic.domain.accounting.events.PenaltyExemption.reason" />
-</schema>
-
-<schema name="PhdRegistrationFeePenaltyExemption.view" 
-		type="org.fenixedu.academic.domain.phd.debts.PhdRegistrationFeePenaltyExemption" 
 		bundle="APPLICATION_RESOURCES">
 	<slot name="description" key="label.org.fenixedu.academic.domain.accounting.events.PenaltyExemption.description" />
     <slot name="reason" key="label.org.fenixedu.academic.domain.accounting.events.PenaltyExemption.reason" />

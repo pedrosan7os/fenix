@@ -45,7 +45,6 @@ import org.fenixedu.academic.domain.enrolment.IDegreeModuleToEvaluate;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.exceptions.EnrollmentDomainException;
 import org.fenixedu.academic.domain.person.RoleType;
-import org.fenixedu.academic.domain.phd.enrolments.PhdStudentCurricularPlanEnrolmentManager;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.Student;
 import org.fenixedu.academic.domain.studentCurriculum.StudentCurricularPlanEnrolmentPreConditions.EnrolmentPreConditionResult;
@@ -398,16 +397,11 @@ abstract public class StudentCurricularPlanEnrolment {
 
     static private Supplier<EnrolmentManagerFactory> ENROLMENT_MANAGER_FACTORY = () -> new EnrolmentManagerFactory() {
 
+        @Override
         public StudentCurricularPlanEnrolment createManager(final EnrolmentContext enrolmentContext) {
 
             if (enrolmentContext.isNormal()) {
-
-                if (enrolmentContext.isPhdDegree()) {
-                    return new PhdStudentCurricularPlanEnrolmentManager(enrolmentContext);
-                } else {
-                    return new StudentCurricularPlanEnrolmentManager(enrolmentContext);
-                }
-
+                return new StudentCurricularPlanEnrolmentManager(enrolmentContext);
             } else if (enrolmentContext.isImprovement()) {
                 return new StudentCurricularPlanImprovementOfApprovedEnrolmentManager(enrolmentContext);
 

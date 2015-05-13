@@ -23,18 +23,15 @@ import java.util.Set;
 
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.degreeStructure.ProgramConclusion;
-import org.fenixedu.academic.domain.phd.PhdIndividualProgramProcess;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.Student;
 import org.fenixedu.academic.dto.student.RegistrationConclusionBean;
-import org.fenixedu.academic.ui.struts.action.administrativeOffice.student.EditCandidacyInformationDA.ChooseRegistrationOrPhd;
-import org.fenixedu.academic.ui.struts.action.administrativeOffice.student.EditCandidacyInformationDA.PhdRegistrationWrapper;
-import org.fenixedu.bennu.core.security.Authenticate;
+import org.fenixedu.academic.ui.struts.action.administrativeOffice.student.EditCandidacyInformationDA.ChooseRegistration;
 
 import pt.ist.fenixWebFramework.renderers.DataProvider;
 import pt.ist.fenixWebFramework.renderers.components.converters.Converter;
 
-public class ActiveAndRecentRegistrationsAndPhds implements DataProvider {
+public class ActiveAndRecentRegistrations implements DataProvider {
 
     @Override
     public Converter getConverter() {
@@ -43,27 +40,14 @@ public class ActiveAndRecentRegistrationsAndPhds implements DataProvider {
 
     @Override
     public Object provide(Object source, Object current) {
-        ChooseRegistrationOrPhd chooseRegistrationOrPhd = (ChooseRegistrationOrPhd) source;
-        Student student = chooseRegistrationOrPhd.getStudent();
-        Set<PhdRegistrationWrapper> phdRegistrationWrapperResult = new HashSet<PhdRegistrationWrapper>();
+        ChooseRegistration chooseRegistration = (ChooseRegistration) source;
+        Student student = chooseRegistration.getStudent();
+        Set<Registration> registrationResult = new HashSet<Registration>();
         ExecutionYear currentExecutionYear = ExecutionYear.readCurrentExecutionYear();
 
-        for (final PhdIndividualProgramProcess phdProcess : student.getPerson().getPhdIndividualProgramProcessesSet()) {
-            if (!phdProcess.isAllowedToManageProcess(Authenticate.getUser())) {
-                continue;
-            }
-            if ((phdProcess.isProcessActive() && student.hasValidInsuranceEvent())) {
-                phdRegistrationWrapperResult.add(new PhdRegistrationWrapper(phdProcess));
-            } else if (phdProcess.isConcluded()) {
-                ExecutionYear conclusionYear = phdProcess.getConclusionYear();
-                if (matchesRecentExecutionYear(currentExecutionYear, conclusionYear)) {
-                    phdRegistrationWrapperResult.add(new PhdRegistrationWrapper(phdProcess));
-                }
-            }
-        }
         for (Registration registration : student.getActiveRegistrations()) {
             if (!registration.getDegreeType().isEmpty() && registration.isAllowedToManageRegistration()) {
-                phdRegistrationWrapperResult.add(new PhdRegistrationWrapper(registration));
+                registrationResult.add(registration);
             }
         }
 
@@ -81,12 +65,12 @@ public class ActiveAndRecentRegistrationsAndPhds implements DataProvider {
 
                                     ExecutionYear conclusionYear = conclusionBean.getConclusionYear();
                                     if (matchesRecentExecutionYear(currentExecutionYear, conclusionYear)) {
-                                        phdRegistrationWrapperResult.add(new PhdRegistrationWrapper(concludedRegistration));
+                                        registrationResult.add(concludedRegistration);
                                     }
                                 });
             }
         }
-        return phdRegistrationWrapperResult;
+        return registrationResult;
     }
 
     private boolean matchesRecentExecutionYear(ExecutionYear currentExecutionYear, ExecutionYear conclusionYear) {

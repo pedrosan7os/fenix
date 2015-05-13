@@ -149,10 +149,6 @@ public abstract class Exemption extends Exemption_Base {
         return false;
     }
 
-    public boolean isPhdEventExemption() {
-        return false;
-    }
-
     public boolean isSecondCycleIndividualCandidacyExemption() {
         return false;
     }

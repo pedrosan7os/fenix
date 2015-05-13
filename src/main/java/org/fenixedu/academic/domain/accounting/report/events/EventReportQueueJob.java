@@ -50,7 +50,6 @@ import org.fenixedu.academic.domain.accounting.events.serviceRequests.AcademicSe
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOffice;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.person.RoleType;
-import org.fenixedu.academic.domain.phd.debts.PhdEvent;
 import org.fenixedu.academic.predicate.AccessControl;
 import org.fenixedu.academic.util.ConnectionManager;
 import org.fenixedu.bennu.core.domain.Bennu;
@@ -85,7 +84,6 @@ public class EventReportQueueJob extends EventReportQueueJob_Base {
         setExportAcademicServiceRequestEvents(bean.getExportAcademicServiceRequestEvents());
         setExportAdministrativeOfficeFeeAndInsuranceEvents(bean.getExportAdminOfficeFeeAndInsuranceEvents());
         setExportIndividualCandidacyEvents(bean.getExportIndividualCandidacyEvents());
-        setExportPhdEvents(bean.getExportPhdEvents());
         setExportResidenceEvents(bean.getExportResidenceEvents());
         setExportOthers(bean.getExportOthers());
         setBeginDate(bean.getBeginDate());
@@ -269,7 +267,6 @@ public class EventReportQueueJob extends EventReportQueueJob_Base {
                 addCell("Tipo de matricula", bean.studiesType);
                 addCell("Nome do Curso", bean.degreeName);
                 addCell("Tipo de curso", bean.degreeType);
-                addCell("Programa doutoral", bean.phdProgramName);
                 addCell("ECTS inscritos", bean.enrolledECTS);
                 addCell("Regime", bean.regime);
                 addCell("Modelo de inscrição", bean.enrolmentModel);
@@ -383,7 +380,6 @@ public class EventReportQueueJob extends EventReportQueueJob_Base {
         bean.studiesType = wrapper.getStudiesType();
         bean.degreeName = wrapper.getDegreeName();
         bean.degreeType = wrapper.getDegreeType();
-        bean.phdProgramName = wrapper.getPhdProgramName();
         bean.enrolledECTS = wrapper.getEnrolledECTS();
         bean.regime = wrapper.getRegime();
         bean.enrolmentModel = wrapper.getEnrolmentModel();
@@ -418,7 +414,6 @@ public class EventReportQueueJob extends EventReportQueueJob_Base {
         public String studiesType;
         public String degreeName;
         public String degreeType;
-        public String phdProgramName;
         public String enrolledECTS;
         public String regime;
         public String enrolmentModel;
@@ -752,12 +747,8 @@ public class EventReportQueueJob extends EventReportQueueJob_Base {
                     (AdministrativeOfficeFeeAndInsuranceEvent) event) : null;
         } else if (event.isIndividualCandidacyEvent()) {
             return getExportIndividualCandidacyEvents() ? new IndividualCandidacyEventWrapper((IndividualCandidacyEvent) event) : null;
-        } else if (event.isPhdEvent()) {
-            return getExportPhdEvents() ? new PhdEventWrapper((PhdEvent) event) : null;
         } else if (event.isResidenceEvent()) {
             return getExportResidenceEvents() ? new ResidenceEventWrapper((ResidenceEvent) event) : null;
-        } else if (event.isFctScholarshipPhdGratuityContribuitionEvent()) {
-            return getExportPhdEvents() ? new ExternalScholarshipPhdGratuityContribuitionEventWrapper(event) : null;
         } else if (getExportOthers()) {
             return new EventWrapper(event);
         }

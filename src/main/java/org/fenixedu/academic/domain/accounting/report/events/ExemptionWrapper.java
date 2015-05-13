@@ -22,7 +22,6 @@ import org.fenixedu.academic.domain.accounting.Exemption;
 import org.fenixedu.academic.domain.accounting.events.gratuity.GratuityExemption;
 import org.fenixedu.academic.domain.accounting.events.gratuity.PercentageGratuityExemption;
 import org.fenixedu.academic.domain.accounting.events.gratuity.ValueGratuityExemption;
-import org.fenixedu.academic.domain.phd.debts.PhdEventExemption;
 
 public class ExemptionWrapper {
     Exemption exemption;
@@ -54,8 +53,6 @@ public class ExemptionWrapper {
             return "-";
         } else if (exemption.isPenaltyExemption()) {
             return "-";
-        } else if (exemption.isPhdEventExemption()) {
-            return ((PhdEventExemption) exemption).getValue().toPlainString();
         } else if (exemption.isSecondCycleIndividualCandidacyExemption()) {
             return "-";
         }
@@ -82,8 +79,6 @@ public class ExemptionWrapper {
         } else if (exemption.isForAdministrativeOfficeFee()) {
             return "-";
         } else if (exemption.isPenaltyExemption()) {
-            return "-";
-        } else if (exemption.isPhdEventExemption()) {
             return "-";
         } else if (exemption.isSecondCycleIndividualCandidacyExemption()) {
             return "-";

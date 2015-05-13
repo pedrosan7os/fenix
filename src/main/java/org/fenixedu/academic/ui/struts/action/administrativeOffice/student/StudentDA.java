@@ -34,7 +34,7 @@ import org.fenixedu.academic.dto.person.PersonBean;
 import org.fenixedu.academic.service.services.commons.FactoryExecutor;
 import org.fenixedu.academic.service.services.exceptions.FenixServiceException;
 import org.fenixedu.academic.ui.struts.FenixActionForm;
-import org.fenixedu.academic.ui.struts.action.administrativeOffice.student.EditCandidacyInformationDA.ChooseRegistrationOrPhd;
+import org.fenixedu.academic.ui.struts.action.administrativeOffice.student.EditCandidacyInformationDA.ChooseRegistration;
 import org.fenixedu.bennu.struts.annotations.Forward;
 import org.fenixedu.bennu.struts.annotations.Forwards;
 import org.fenixedu.bennu.struts.annotations.Mapping;
@@ -66,7 +66,7 @@ public class StudentDA extends StudentRegistrationDA {
         final String studentID = getFromRequest(request, "studentID").toString();
         final Student student = FenixFramework.getDomainObject(studentID);
         request.setAttribute("student", student);
-        request.setAttribute("choosePhdOrRegistration", new ChooseRegistrationOrPhd(student));
+        request.setAttribute("chooseRegistration", new ChooseRegistration(student));
         return student;
     }
 

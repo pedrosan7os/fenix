@@ -21,7 +21,6 @@ package org.fenixedu.academic.report.academicAdministrativeOffice;
 import java.math.BigDecimal;
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -44,7 +43,6 @@ import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.organizationalStructure.AcademicalInstitutionType;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.academic.domain.organizationalStructure.UniversityUnit;
-import org.fenixedu.academic.domain.phd.serviceRequests.documentRequests.PhdDiplomaSupplementRequest;
 import org.fenixedu.academic.domain.serviceRequests.IDiplomaSupplementRequest;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.DiplomaSupplementRequest;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.IDocumentRequest;
@@ -158,11 +156,6 @@ public class DiplomaSupplement extends AdministrativeOfficeDocument {
 
         EctsGraduationGradeConversionTable table = getDocumentRequest().getGraduationConversionTable();
 
-        if (getDocumentRequest().isRequestForPhd()) {
-            addParameter("thesisFinalGrade",
-                    ((PhdDiplomaSupplementRequest) getDocumentRequest()).getThesisFinalGrade(getLocale()));
-        }
-
         addParameter("ectsGradeConversionTable", table.getEctsTable());
         addParameter("ectsGradePercentagesTable", table.getPercentages());
     }
@@ -220,15 +213,6 @@ public class DiplomaSupplement extends AdministrativeOfficeDocument {
     }
 
     protected void fillGroup1() {
-        /*
-         * Oddly a subreport is only rendered if the specified data source is
-         * not empty. All reports have "entries" parameter as data source.
-         * "entries" may be empty in case of phd diploma supplement so add a
-         * dummy data source
-         */
-
-        addParameter("dummyDataSource", Arrays.asList(Boolean.TRUE));
-
         Person person = getDocumentRequest().getPerson();
 
         addParameter("familyName", person.getFamilyNames());
@@ -244,8 +228,6 @@ public class DiplomaSupplement extends AdministrativeOfficeDocument {
 
         addParameter("registrationNumber", getDocumentRequest().getRegistrationNumber());
         addParameter("isExemptedFromStudy", getDocumentRequest().isExemptedFromStudy());
-        addParameter("isForPhd", getDocumentRequest().isRequestForPhd());
-        addParameter("isForRegistration", getDocumentRequest().isRequestForRegistration());
     }
 
     private String getDegreeDesignation(Locale locale) {
@@ -260,23 +242,11 @@ public class DiplomaSupplement extends AdministrativeOfficeDocument {
             result.add(BundleUtil.getString(Bundle.ACADEMIC, locale, "label.in"));
         }
 
-        //TODO: phd-refactor registration should always be present in phd
+        Degree degree = request.getRegistration().getDegree();
 
-        Degree degree;
-
-        if (request.hasRegistration()) {
-            degree = request.getRegistration().getDegree();
-        } else {
-            degree = ((PhdDiplomaSupplementRequest) request).getPhdIndividualProgramProcess().getPhdProgram().getDegree();
-        }
-
-        if (request.isRequestForPhd()) {
-            result.add(degree.getNameI18N(request.getConclusionYear()).getContent(locale));
-        } else {
-            result.add(request.getProgramConclusion().groupFor(request.getRegistration()).map(CurriculumGroup::getDegreeModule)
-                    .map(dm -> dm.getDegreeNameWithTitleSuffix(request.getConclusionYear(), locale))
-                    .orElse(degree.getNameI18N(request.getConclusionYear()).getContent(locale)));
-        }
+        result.add(request.getProgramConclusion().groupFor(request.getRegistration()).map(CurriculumGroup::getDegreeModule)
+                .map(dm -> dm.getDegreeNameWithTitleSuffix(request.getConclusionYear(), locale))
+                .orElse(degree.getNameI18N(request.getConclusionYear()).getContent(locale)));
 
         return Joiner.on(" ").join(result);
     }
@@ -299,13 +269,7 @@ public class DiplomaSupplement extends AdministrativeOfficeDocument {
 
         String programmeRequirements;
 
-        if (getDocumentRequest().isRequestForPhd()) {
-            programmeRequirements =
-                    applyMessageArguments(BundleUtil.getString(Bundle.ACADEMIC, getLocale(),
-                            "diploma.supplement.four.two.programmerequirements.template.noareas.with.official.publication"),
-                            labelThe, graduateDegree, ectsCredits, officialPublication);
-        } else if (getDocumentRequest().getRequestedCycle().equals(CycleType.FIRST_CYCLE)
-                || dr.getSpecializationAreaSet().size() == 0) {
+        if (getDocumentRequest().getRequestedCycle().equals(CycleType.FIRST_CYCLE) || dr.getSpecializationAreaSet().size() == 0) {
             programmeRequirements =
                     applyMessageArguments(BundleUtil.getString(Bundle.ACADEMIC, getLocale(),
                             "diploma.supplement.four.two.programmerequirements.template.noareas"), labelThe, graduateDegree,

@@ -38,7 +38,6 @@ public class EventReportQueueJobBean implements Serializable {
     private Boolean exportAcademicServiceRequestEvents;
     private Boolean exportAdminOfficeFeeAndInsuranceEvents;
     private Boolean exportIndividualCandidacyEvents;
-    private Boolean exportPhdEvents;
     private Boolean exportResidenceEvents;
     private Boolean exportOthers;
     private LocalDate beginDate;
@@ -84,14 +83,6 @@ public class EventReportQueueJobBean implements Serializable {
         this.exportIndividualCandidacyEvents = exportIndividualCandidacyEvents;
     }
 
-    public Boolean getExportPhdEvents() {
-        return exportPhdEvents;
-    }
-
-    public void setExportPhdEvents(Boolean phdEvents) {
-        this.exportPhdEvents = phdEvents;
-    }
-
     public Boolean getExportResidenceEvents() {
         return exportResidenceEvents;
     }
@@ -130,9 +121,6 @@ public class EventReportQueueJobBean implements Serializable {
 
     public void setAdministrativeOffice(AdministrativeOffice administrativeOffice) {
         this.administrativeOffice = administrativeOffice;
-        if (administrativeOffice != null) {
-            this.exportPhdEvents = administrativeOffice.getHasAnyPhdProgram();
-        }
     }
 
     public ExecutionYear getExecutionYear() {
@@ -159,7 +147,6 @@ public class EventReportQueueJobBean implements Serializable {
         bean.setExportAcademicServiceRequestEvents(true);
         bean.setExportAdminOfficeFeeAndInsuranceEvents(true);
         bean.setExportIndividualCandidacyEvents(true);
-        bean.setExportPhdEvents(true);
         bean.setExportResidenceEvents(true);
         bean.setExportOthers(true);
 
@@ -173,7 +160,6 @@ public class EventReportQueueJobBean implements Serializable {
         bean.setExportAcademicServiceRequestEvents(true);
         bean.setExportAdminOfficeFeeAndInsuranceEvents(true);
         bean.setExportIndividualCandidacyEvents(true);
-        bean.setExportPhdEvents(true);
         bean.setExportResidenceEvents(false);
         bean.setExportOthers(true);
 

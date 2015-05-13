@@ -71,7 +71,6 @@ public class SibsPaymentFileProcessReport extends SibsPaymentFileProcessReport_B
         super.setMasterDegreeGratuityTotalAmount(sibsPaymentFileProcessReportDTO.getMasterDegreeGratuityTotalAmount());
         super.setDfaGratuityTotalAmount(sibsPaymentFileProcessReportDTO.getDfaGratuityTotalAmount());
         super.setAfterGraduationInsuranceTotalAmount(sibsPaymentFileProcessReportDTO.getAfterGraduationInsuranceTotalAmount());
-        super.setPhdGratuityTotalAmount(sibsPaymentFileProcessReportDTO.getPhdGratuityTotalAmout());
         super.setTransactionsTotalAmount(sibsPaymentFileProcessReportDTO.getTransactionsTotalAmount());
         super.setTotalCost(sibsPaymentFileProcessReportDTO.getTotalCost());
         super.setResidencePayment(sibsPaymentFileProcessReportDTO.getResidenceAmount());
@@ -85,7 +84,6 @@ public class SibsPaymentFileProcessReport extends SibsPaymentFileProcessReport_B
                 .getStandaloneEnrolmentGratuityEventAmount());
         super.setOver23IndividualCandidacyEventAmount(sibsPaymentFileProcessReportDTO.getOver23IndividualCandidacyEventAmount());
         super.setInstitutionAffiliationEventAmount(sibsPaymentFileProcessReportDTO.getInstitutionAffiliationEventAmount());
-        super.setPhdProgramCandidacyEventAmount(sibsPaymentFileProcessReportDTO.getPhdProgramCandidacyEventAmount());
         super.setRectorateAmount(sibsPaymentFileProcessReportDTO.getRectorateAmount());
     }
 

@@ -78,11 +78,6 @@ public class GratuityEventWrapper implements Wrapper {
     }
 
     @Override
-    public String getPhdProgramName() {
-        return "--";
-    }
-
-    @Override
     public String getEnrolledECTS() {
         return new BigDecimal(event.getRegistration().getLastStudentCurricularPlan()
                 .getEnrolmentsEctsCredits(event.getExecutionYear())).toString();

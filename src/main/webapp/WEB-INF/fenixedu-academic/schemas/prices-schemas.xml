@@ -130,21 +130,6 @@
 	bundle="APPLICATION_RESOURCES" extends="FixedAmountWithPenaltyPR.view">
 </schema>
 
-<schema name="PhdRegistrationFeePR.view"
-	type="org.fenixedu.academic.domain.phd.debts.PhdRegistrationFeePR"
-	bundle="APPLICATION_RESOURCES" extends="FixedAmountWithPenaltyPR.view">
-</schema>
-
-<schema name="PhdProgramCandidacyPR.view"
-	type="org.fenixedu.academic.domain.phd.candidacy.PhdProgramCandidacyPR"
-	bundle="APPLICATION_RESOURCES" extends="FixedAmountPR.view">
-</schema>
-
-<schema name="PhdThesisRequestFeePR.view"
-	type="org.fenixedu.academic.domain.phd.debts.PhdThesisRequestFeePR"
-	bundle="APPLICATION_RESOURCES" extends="FixedAmountPR.view">
-</schema>
-
 <schema name="DFAGratuityPR.view" 
 		type="org.fenixedu.academic.domain.accounting.postingRules.gratuity.DFAGratuityPR"  
 		extends="PostingRule.view" bundle="APPLICATION_RESOURCES">
@@ -457,21 +442,6 @@
 	bundle="APPLICATION_RESOURCES" extends="FixedAmountWithPenaltyPR.edit">
 </schema>
 
-<schema name="PhdRegistrationFeePR.edit"
-	type="org.fenixedu.academic.domain.phd.debts.PhdRegistrationFeePR"
-	bundle="APPLICATION_RESOURCES" extends="FixedAmountWithPenaltyPR.edit">
-</schema>
-
-<schema name="PhdProgramCandidacyPR.edit"
-	type="org.fenixedu.academic.domain.phd.candidacy.PhdProgramCandidacyPR"
-	bundle="APPLICATION_RESOURCES" extends="FixedAmountPR.edit">
-</schema>
-
-<schema name="PhdThesisRequestFeePR.edit"
-	type="org.fenixedu.academic.domain.phd.debts.PhdThesisRequestFeePR"
-	bundle="APPLICATION_RESOURCES" extends="FixedAmountPR.edit">
-</schema>
-
 <schema name="BaseAmountPlusAmountPerUnitPR.edit"
 	type="org.fenixedu.academic.domain.accounting.postingRules.BaseAmountPlusAmountPerUnitPR"
 	bundle="APPLICATION_RESOURCES">
@@ -630,17 +600,6 @@
 <schema name="SpecializationDegreeRegistrationPR.view-student"
 	type="org.fenixedu.academic.domain.accounting.postingRules.specializationDegree.SpecializationDegreeRegistrationPR"
 	extends="FixedAmountWithPenaltyPR.view-student" bundle="APPLICATION_RESOURCES">
-</schema>
-
-<schema name="PhdRegistrationFeePR.view-student" type="org.fenixedu.academic.domain.phd.debts.PhdRegistrationFeePR" extends="FixedAmountWithPenaltyPR.view-student" bundle="APPLICATION_RESOURCES">
-</schema>
-
-<schema name="PhdProgramCandidacyPR.view-student" type="org.fenixedu.academic.domain.phd.candidacy.PhdProgramCandidacyPR"
-	bundle="APPLICATION_RESOURCES" extends="FixedAmountPR.view-student">
-</schema>
-
-<schema name="PhdThesisRequestFeePR.view-student" type="org.fenixedu.academic.domain.phd.debts.PhdThesisRequestFeePR"
-	bundle="APPLICATION_RESOURCES" extends="FixedAmountPR.view-student">
 </schema>
 
 <schema name="AdministrativeOfficeFeePR.view-student"
@@ -1087,18 +1046,6 @@
 
 <schema name="StandaloneIndividualCandidacyPR.edit"
 	type="org.fenixedu.academic.domain.accounting.postingRules.candidacy.StandaloneIndividualCandidacyPR"
-	bundle="APPLICATION_RESOURCES" extends="FixedAmountPR.edit"/>
-
-<schema name="PhdFinalizationCertificateRequestPR.view"
-	type="org.fenixedu.academic.domain.accounting.postingRules.serviceRequests.phd.PhdFinalizationCertificateRequestPR"
-	bundle="APPLICATION_RESOURCES" extends="FixedAmountPR.view" />
-
-<schema name="PhdFinalizationCertificateRequestPR.view-student" 
-	type="org.fenixedu.academic.domain.accounting.postingRules.serviceRequests.phd.PhdFinalizationCertificateRequestPR"
-	bundle="APPLICATION_RESOURCES" extends="FixedAmountPR.view-student" />
-
-<schema name="PhdFinalizationCertificateRequestPR.edit"
-	type="org.fenixedu.academic.domain.accounting.postingRules.serviceRequests.phd.PhdFinalizationCertificateRequestPR"
 	bundle="APPLICATION_RESOURCES" extends="FixedAmountPR.edit"/>
 
 <schema name="DuplicateRequestPR.view"

@@ -106,11 +106,6 @@ public class EventWrapper implements Wrapper {
     }
 
     @Override
-    public String getPhdProgramName() {
-        return "--";
-    }
-
-    @Override
     public String getEnrolledECTS() {
         if (hasRegistration()) {
             return new BigDecimal(getRegistration().getLastStudentCurricularPlan()

@@ -176,10 +176,6 @@ public class EnrolmentContext {
         return getCurricularRuleLevel() == CurricularRuleLevel.ENROLMENT_NO_RULES;
     }
 
-    public boolean isPhdDegree() {
-        return studentCurricularPlan.getDegreeType().isAdvancedSpecializationDiploma();
-    }
-
     @SuppressWarnings("unchecked")
     static public EnrolmentContext createForVerifyWithRules(final StudentCurricularPlan studentCurricularPlan,
             final ExecutionSemester executionSemester) {

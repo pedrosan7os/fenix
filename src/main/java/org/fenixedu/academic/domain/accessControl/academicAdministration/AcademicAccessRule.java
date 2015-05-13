@@ -32,7 +32,6 @@ import org.fenixedu.academic.domain.accessControl.rules.AccessTarget;
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOffice;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.exceptions.DomainException;
-import org.fenixedu.academic.domain.phd.PhdProgram;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.groups.Group;
 import org.joda.time.DateTime;
@@ -221,10 +220,6 @@ public class AcademicAccessRule extends AcademicAccessRule_Base implements Compa
 
     public static Stream<Degree> getDegreesAccessibleToFunction(AcademicOperationType function, User user) {
         return getProgramsAccessibleToFunction(function, user).filter(p -> p instanceof Degree).map(p -> (Degree) p);
-    }
-
-    public static Stream<PhdProgram> getPhdProgramsAccessibleToFunction(AcademicOperationType function, User user) {
-        return getProgramsAccessibleToFunction(function, user).filter(p -> p instanceof PhdProgram).map(p -> (PhdProgram) p);
     }
 
     public static Stream<DegreeType> getDegreeTypesAccessibleToFunction(AcademicOperationType function, User user) {

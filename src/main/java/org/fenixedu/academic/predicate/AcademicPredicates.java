@@ -33,7 +33,6 @@ import org.fenixedu.academic.domain.accessControl.academicAdministration.Academi
 import org.fenixedu.academic.domain.accessControl.academicAdministration.AcademicOperationType;
 import org.fenixedu.academic.domain.candidacyProcess.IndividualCandidacy;
 import org.fenixedu.academic.domain.candidacyProcess.IndividualCandidacyPersonalDetails;
-import org.fenixedu.academic.domain.phd.PhdIndividualProgramProcess;
 import org.fenixedu.academic.domain.serviceRequests.AcademicServiceRequest;
 import org.fenixedu.academic.domain.student.Student;
 import org.fenixedu.bennu.core.groups.DynamicGroup;
@@ -161,12 +160,6 @@ public class AcademicPredicates {
                 }
             }
 
-            for (PhdIndividualProgramProcess programProcess : person.getPhdIndividualProgramProcessesSet()) {
-                if (allowedPrograms.contains(programProcess.getPhdProgram())) {
-                    return true; // 4.
-                }
-            }
-
             return false; // 5.
         };
     };
@@ -177,13 +170,6 @@ public class AcademicPredicates {
             return AcademicAccessRule
                     .getDegreesAccessibleToFunction(AcademicOperationType.MANAGE_ENROLMENT_PERIODS, Authenticate.getUser())
                     .collect(Collectors.toSet()).contains(degree);
-        };
-    };
-
-    public static final AccessControlPredicate<Object> MANAGE_PHD_PROCESSES = new AccessControlPredicate<Object>() {
-        @Override
-        public boolean evaluate(final Object unused) {
-            return AcademicAuthorizationGroup.get(AcademicOperationType.MANAGE_PHD_PROCESSES).isMember(Authenticate.getUser());
         };
     };
 

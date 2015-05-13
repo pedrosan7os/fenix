@@ -43,8 +43,6 @@ import org.fenixedu.academic.domain.curricularRules.RestrictionEnroledDegreeModu
 import org.fenixedu.academic.domain.curricularRules.RestrictionNotEnroledDegreeModule;
 import org.fenixedu.academic.domain.curricularRules.SeniorStatuteSpecialSeasonEnrolmentScope;
 import org.fenixedu.academic.domain.exceptions.DomainException;
-import org.fenixedu.academic.domain.phd.enrolments.PhdValidCurricularCoursesExecutor;
-import org.fenixedu.academic.domain.phd.enrolments.PhdValidCurricularCoursesRule;
 
 public class CurricularRuleExecutorFactory {
 
@@ -74,7 +72,6 @@ public class CurricularRuleExecutorFactory {
         executors.put(EvenOddRule.class, new EvenOddExecuter());
         executors.put(MaximumNumberOfEctsInStandaloneCurriculumGroup.class,
                 new MaximumNumberOfEctsInStandaloneCurriculumGroupExecutor());
-        executors.put(PhdValidCurricularCoursesRule.class, new PhdValidCurricularCoursesExecutor());
         executors.put(SeniorStatuteSpecialSeasonEnrolmentScope.class, new SeniorStatuteSpecialSeasonEnrolmentScopeExecutor());
     }
 

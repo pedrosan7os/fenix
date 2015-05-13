@@ -115,11 +115,6 @@ abstract public class RegistrationAcademicServiceRequest extends RegistrationAca
     }
 
     @Override
-    public boolean isRequestForRegistration() {
-        return true;
-    }
-
-    @Override
     protected void disconnect() {
         super.setRegistration(null);
         super.disconnect();

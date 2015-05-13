@@ -156,9 +156,6 @@ public class RequestListByDegreeDA extends FenixDispatchAction {
                 requestSearchBean.getAcademicServiceRequestSituationType();
 
         for (final AcademicServiceRequest academicServiceRequest : requestList) {
-            if (!academicServiceRequest.isRequestForRegistration()) {
-                continue;
-            }
             RegistrationAcademicServiceRequest request = (RegistrationAcademicServiceRequest) academicServiceRequest;
 
             DegreeCurricularPlan degreeCurricularPlan =

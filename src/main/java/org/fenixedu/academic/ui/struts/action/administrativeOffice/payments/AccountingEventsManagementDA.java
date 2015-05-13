@@ -69,7 +69,7 @@ public class AccountingEventsManagementDA extends FenixDispatchAction {
          * The insurance is an {@link EventType.ADMINISTRATIVE_OFFICE_FEE_INSURANCE} if the target
          * degree has no PhdProgram associated
          */
-        request.setAttribute("officeFeeInsurance", studentCurricularPlan.getDegree().getPhdProgram() == null);
+        request.setAttribute("officeFeeInsurance", true);
 
         return mapping.findForward("chooseEventType");
 

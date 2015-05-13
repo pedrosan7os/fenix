@@ -19,7 +19,6 @@
 package org.fenixedu.academic.ui.struts.action.administrativeOffice.student;
 
 import java.io.Serializable;
-import java.util.Locale;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,19 +30,14 @@ import org.apache.struts.action.ActionMapping;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.candidacy.PersonalInformationBean;
 import org.fenixedu.academic.domain.exceptions.DomainException;
-import org.fenixedu.academic.domain.phd.PhdIndividualProgramProcess;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.Student;
 import org.fenixedu.academic.ui.struts.action.base.FenixDispatchAction;
-import org.fenixedu.academic.util.Bundle;
-import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.bennu.struts.annotations.Forward;
 import org.fenixedu.bennu.struts.annotations.Forwards;
 import org.fenixedu.bennu.struts.annotations.Mapping;
-import org.fenixedu.commons.i18n.I18N;
 
 import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
-import pt.ist.fenixframework.DomainObject;
 
 @Mapping(path = "/editCandidacyInformation", module = "academicAdministration", functionality = SearchForStudentsDA.class)
 @Forwards({
@@ -64,19 +58,13 @@ public class EditCandidacyInformationDA extends FenixDispatchAction {
     }
 
     private PersonalInformationBean getPersonalInformationBean(HttpServletRequest request) {
-        ChooseRegistrationOrPhd chooseRegistrationOrPhd = getRenderedObject("choosePhdOrRegistration");
-        if (chooseRegistrationOrPhd.getPhdRegistrationWrapper() == null) {
-            request.setAttribute("studentID", chooseRegistrationOrPhd.getStudent().getExternalId());
+        ChooseRegistration chooseRegistration = getRenderedObject("chooseRegistration");
+        if (chooseRegistration.getRegistration() == null) {
+            request.setAttribute("studentID", chooseRegistration.getStudent().getExternalId());
             return null;
         }
         ExecutionYear currentExecutionYear = ExecutionYear.readCurrentExecutionYear();
-        if (chooseRegistrationOrPhd.getPhdRegistrationWrapper().isRegistration()) {
-            return chooseRegistrationOrPhd.getPhdRegistrationWrapper().getRegistration()
-                    .getPersonalInformationBean(currentExecutionYear);
-        } else {
-            return chooseRegistrationOrPhd.getPhdRegistrationWrapper().getPhdIndividualProgramProcess()
-                    .getPersonalInformationBean(currentExecutionYear);
-        }
+        return chooseRegistration.getRegistration().getPersonalInformationBean(currentExecutionYear);
     }
 
     public ActionForward prepareEditInvalid(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -150,83 +138,20 @@ public class EditCandidacyInformationDA extends FenixDispatchAction {
         return mapping.findForward("visualizeStudent");
     }
 
-    public static class PhdRegistrationWrapper implements Serializable {
-        private DomainObject phdOrRegistration;
-
-        public PhdRegistrationWrapper(Registration registration) {
-            setPhdOrRegistration(registration);
-        }
-
-        public PhdRegistrationWrapper(PhdIndividualProgramProcess phdIndividualProgramProcess) {
-            setPhdOrRegistration(phdIndividualProgramProcess);
-        }
-
-        public String getDisplayName() {
-            if (isRegistration()) {
-                return getRegistration().getDegreeCurricularPlanName();
-            } else {
-                Locale locale = I18N.getLocale();
-                StringBuilder stringBuilder = new StringBuilder(BundleUtil.getString(Bundle.PHD, "label.phd")).append(" ");
-                stringBuilder.append(getPhdIndividualProgramProcess().getPhdProgram().getName().getContent(locale));
-                return stringBuilder.toString();
-            }
-        }
-
-        public PhdIndividualProgramProcess getPhdIndividualProgramProcess() {
-            return (PhdIndividualProgramProcess) getPhdOrRegistration();
-        }
-
-        public Registration getRegistration() {
-            return (Registration) getPhdOrRegistration();
-        }
-
-        public boolean isRegistration() {
-            return getPhdOrRegistration() != null && getPhdOrRegistration() instanceof Registration;
-        }
-
-        public void setPhdOrRegistration(DomainObject phdOrRegistration) {
-            this.phdOrRegistration = phdOrRegistration;
-        }
-
-        public DomainObject getPhdOrRegistration() {
-            return phdOrRegistration;
-        }
-
-        @Override
-        public int hashCode() {
-            if (!isRegistration()) {
-                return getPhdIndividualProgramProcess().getRegistration() != null ? getPhdIndividualProgramProcess()
-                        .getRegistration().hashCode() : getPhdIndividualProgramProcess().hashCode();
-            } else {
-                return getRegistration().hashCode();
-            }
-        }
-
-        @Override
-        public boolean equals(Object object) {
-            if (object != null) {
-                PhdRegistrationWrapper phdRegistrationWrapper = (PhdRegistrationWrapper) object;
-                return phdRegistrationWrapper.hashCode() == this.hashCode();
-            } else {
-                return false;
-            }
-        }
-    }
-
-    public static class ChooseRegistrationOrPhd implements Serializable {
-        private PhdRegistrationWrapper phdRegistrationWrapper;
+    public static class ChooseRegistration implements Serializable {
+        private Registration registration;
         private Student student;
 
-        public ChooseRegistrationOrPhd(Student student) {
+        public ChooseRegistration(Student student) {
             setStudent(student);
         }
 
-        public PhdRegistrationWrapper getPhdRegistrationWrapper() {
-            return phdRegistrationWrapper;
+        public Registration getRegistration() {
+            return registration;
         }
 
-        public void setPhdRegistrationWrapper(PhdRegistrationWrapper phdRegistrationWrapper) {
-            this.phdRegistrationWrapper = phdRegistrationWrapper;
+        public void setRegistration(Registration registration) {
+            this.registration = registration;
         }
 
         public void setStudent(Student student) {

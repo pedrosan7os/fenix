@@ -172,10 +172,10 @@
 <h3 class="mbottom025"><bean:message key="label.editCandidacies" bundle="ACADEMIC_OFFICE_RESOURCES"/></h3>
 <p class="mtop05 mbottom15">
 	<fr:form action="/editCandidacyInformation.do?method=prepareEdit">
-		<fr:edit id="choosePhdOrRegistration" name="choosePhdOrRegistration" type="org.fenixedu.academic.ui.struts.action.administrativeOffice.student.EditCandidacyInformationDA$ChooseRegistrationOrPhd">
-			<fr:schema bundle="ACADEMIC_OFFICE_RESOURCES" type="org.fenixedu.academic.ui.struts.action.administrativeOffice.student.EditCandidacyInformationDA$ChooseRegistrationOrPhd">
-				<fr:slot name="phdRegistrationWrapper" key="label.raides.choosePhdOrRegistration" layout="menu-select-postback">
-					<fr:property name="providerClass" value="org.fenixedu.academic.ui.renderers.providers.academicAdminOffice.ActiveAndRecentRegistrationsAndPhds" />
+		<fr:edit id="chooseRegistration" name="chooseRegistration" type="org.fenixedu.academic.ui.struts.action.administrativeOffice.student.EditCandidacyInformationDA$ChooseRegistration">
+			<fr:schema bundle="ACADEMIC_OFFICE_RESOURCES" type="org.fenixedu.academic.ui.struts.action.administrativeOffice.student.EditCandidacyInformationDA$ChooseRegistration">
+				<fr:slot name="registration" key="label.raides.chooseRegistration" layout="menu-select-postback">
+					<fr:property name="providerClass" value="org.fenixedu.academic.ui.renderers.providers.academicAdminOffice.ActiveAndRecentRegistrations" />
 					<fr:property name="format" value="${displayName}" />
 				</fr:slot>
 			</fr:schema>

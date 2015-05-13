@@ -35,7 +35,6 @@ import org.fenixedu.academic.domain.accounting.events.insurance.InsuranceEvent;
 import org.fenixedu.academic.domain.accounting.paymentCodes.AccountingEventPaymentCode;
 import org.fenixedu.academic.domain.accounting.paymentCodes.GratuitySituationPaymentCode;
 import org.fenixedu.academic.domain.accounting.paymentCodes.MasterDegreeInsurancePaymentCode;
-import org.fenixedu.academic.domain.phd.candidacy.PhdProgramCandidacyEvent;
 import org.fenixedu.academic.util.Money;
 import org.fenixedu.academic.util.sibs.incomming.SibsIncommingPaymentFile;
 import org.fenixedu.academic.util.sibs.incomming.SibsIncommingPaymentFileDetailLine;
@@ -71,8 +70,6 @@ public class SibsPaymentFileProcessReportDTO {
 
     private Money afterGraduationInsuranceTotalAmount;
 
-    private Money phdGratuityTotalAmout;
-
     private Money transactionsTotalAmount;
 
     private Money residenceAmount;
@@ -93,8 +90,6 @@ public class SibsPaymentFileProcessReportDTO {
 
     private Money institutionAffiliationEventAmount;
 
-    private Money phdProgramCandidacyEventAmount;
-
     private Money rectorateAmount;
 
     public SibsPaymentFileProcessReportDTO() {
@@ -110,7 +105,6 @@ public class SibsPaymentFileProcessReportDTO {
         this.bolonhaMasterDegreeGratuityTotalAmount = Money.ZERO;
         this.dfaGratuityTotalAmount = Money.ZERO;
         this.afterGraduationInsuranceTotalAmount = Money.ZERO;
-        this.phdGratuityTotalAmout = Money.ZERO;
         this.transactionsTotalAmount = Money.ZERO;
         this.totalCost = Money.ZERO;
         this.residenceAmount = Money.ZERO;
@@ -121,7 +115,6 @@ public class SibsPaymentFileProcessReportDTO {
         this.standaloneEnrolmentGratuityEventAmount = Money.ZERO;
         this.over23IndividualCandidacyEventAmount = Money.ZERO;
         this.institutionAffiliationEventAmount = Money.ZERO;
-        this.phdProgramCandidacyEventAmount = Money.ZERO;
         this.rectorateAmount = Money.ZERO;
     }
 
@@ -238,14 +231,6 @@ public class SibsPaymentFileProcessReportDTO {
         return specializationGratuityTotalAmount;
     }
 
-    private void addPhdGratuityAmount(final Money amount) {
-        this.phdGratuityTotalAmout = this.phdGratuityTotalAmout.add(amount);
-    }
-
-    public Money getPhdGratuityTotalAmout() {
-        return phdGratuityTotalAmout;
-    }
-
     public Money getOver23IndividualCandidacyEventAmount() {
         return over23IndividualCandidacyEventAmount;
     }
@@ -260,14 +245,6 @@ public class SibsPaymentFileProcessReportDTO {
 
     public void addInstitutionAffiliationEventAmount(final Money amount) {
         this.institutionAffiliationEventAmount = this.institutionAffiliationEventAmount.add(amount);
-    }
-
-    public Money getPhdProgramCandidacyEventAmount() {
-        return phdProgramCandidacyEventAmount;
-    }
-
-    public void addPhdProgramCandidacyEventAmount(final Money amount) {
-        this.phdProgramCandidacyEventAmount = this.phdProgramCandidacyEventAmount.add(amount);
     }
 
     public Money getTotalCost() {
@@ -340,8 +317,6 @@ public class SibsPaymentFileProcessReportDTO {
             addStandaloneEnrolmentGratuityEventAmount(detailLine.getAmount());
         } else if (event instanceof Over23IndividualCandidacyEvent) {
             addOver23IndividualCandidacyEventAmount(detailLine.getAmount());
-        } else if (event instanceof PhdProgramCandidacyEvent) {
-            addPhdProgramCandidacyEventAmount(detailLine.getAmount());
         } else {
             throw new IllegalArgumentException("Unknown accounting event " + event.getClass().getName());
         }

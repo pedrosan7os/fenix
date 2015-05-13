@@ -137,20 +137,6 @@ public enum AcademicOperationType implements IPresentableEnum, AccessOperation<A
 
     MANAGE_DOCUMENTS(true, true, Scope.OFFICE),
 
-    /* Phd Management */
-
-    VIEW_PHD_CANDIDACY_ALERTS(true, true, Scope.OFFICE),
-
-    VIEW_PHD_PUBLIC_PRESENTATION_ALERTS(true, true, Scope.OFFICE),
-
-    VIEW_PHD_THESIS_ALERTS(true, true, Scope.OFFICE),
-
-    MANAGE_PHD_ENROLMENT_PERIODS(true, true, Scope.OFFICE),
-
-    MANAGE_PHD_PROCESSES(true, true, Scope.OFFICE),
-
-    MANAGE_PHD_PROCESS_STATE(true, true, Scope.OFFICE),
-
     MANAGE_MOBILITY_OUTBOUND(false, false, Scope.ADMINISTRATION),
 
     VALIDATE_MOBILITY_OUTBOUND_CANDIDACIES(false, false, Scope.ADMINISTRATION),

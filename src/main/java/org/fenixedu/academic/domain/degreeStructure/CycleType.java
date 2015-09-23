@@ -38,7 +38,7 @@ public enum CycleType {
 
     SECOND_CYCLE(2, FIRST_CYCLE, 120d),
 
-    THIRD_CYCLE(3),
+    THIRD_CYCLE(3, 60d),
 
     SPECIALIZATION_CYCLE(4),
 

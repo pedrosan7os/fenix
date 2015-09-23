@@ -282,9 +282,9 @@ abstract public class AcademicServiceRequest extends AcademicServiceRequest_Base
     @Atomic
     final public void conclude(final YearMonthDay situationDate, final String justification, boolean sendEmail) {
         conclude(AccessControl.getPerson(), situationDate, justification);
-        if (sendEmail) {
-            sendConcludeEmail();
-        }
+//        if (sendEmail) {
+//            sendConcludeEmail();
+//        }
     }
 
     private void sendConcludeEmail() {

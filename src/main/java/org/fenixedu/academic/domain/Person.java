@@ -237,7 +237,6 @@ public class Person extends Person_Base {
         if (profile.getUser() != null) {
             setUser(profile.getUser());
         }
-        setMaritalStatus(MaritalStatus.UNKNOWN);
     }
 
     /**

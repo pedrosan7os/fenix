@@ -56,6 +56,7 @@ import org.fenixedu.academic.domain.person.RoleType;
 import org.fenixedu.academic.domain.serviceRequests.InstitutionRegistryCodeGenerator;
 import org.fenixedu.academic.domain.space.SpaceUtils;
 import org.fenixedu.academic.domain.student.RegistrationProtocol;
+import org.fenixedu.academic.domain.util.email.SystemSender;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academic.util.MultiLanguageString;
 import org.fenixedu.bennu.core.bootstrap.AdminUserBootstrapper.AdminUserSection;
@@ -66,6 +67,7 @@ import org.fenixedu.bennu.core.bootstrap.annotations.Field;
 import org.fenixedu.bennu.core.bootstrap.annotations.Section;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.groups.NobodyGroup;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.core.util.CoreConfiguration;
 import org.fenixedu.bennu.portal.domain.PortalBootstrapper;
@@ -123,6 +125,9 @@ public class FenixBootstrapper {
         Installation installation = Installation.getInstance();
         installation.setInstituitionEmailDomain(schoolSetupSection.getSchoolEmailDomain());
         installation.setInstituitionURL(schoolSetupSection.getSchoolURL());
+
+        SystemSender sender = new SystemSender();
+        sender.setOptOutGroup(NobodyGroup.get());
 
         if (Bennu.getInstance().getRootClassificationSet().isEmpty()) {
             Builder schoolSpaces = new LocalizedString.Builder();

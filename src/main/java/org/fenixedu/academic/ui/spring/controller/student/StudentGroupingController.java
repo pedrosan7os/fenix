@@ -52,7 +52,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-@SpringApplication(description = "link.student.group", path = "enroll-spring", group = "anyone", hint = "Student",
+@SpringApplication(description = "link.student.group", path = "enroll-spring", group = "activeStudents", hint = "Student",
         title = "label.enroll")
 @SpringFunctionality(app = StudentGroupingController.class, title = "label.groupEnrolment")
 @RequestMapping("/student/groups")

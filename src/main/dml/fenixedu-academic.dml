@@ -1019,13 +1019,6 @@ valueType org.fenixedu.academic.domain.accounting.EventTypes as EventTypes {
         DateTime endDateTime;
     }
     
-    class LessonPlanning  {
-        ShiftType lessonType;
-        Integer orderOfPlanning;
-        MultiLanguageString planning;
-        MultiLanguageString title;
-    }
-
     class Locality  {
         String name;
     }
@@ -7507,13 +7500,6 @@ relation LessonLessonSpaceOccupation {
     space.LessonSpaceOccupation playsRole lessonSpaceOccupation;
 }
 
-relation LessonPlanningExecutionCourse {
-    Course playsRole executionCourse;
-    LessonPlanning playsRole lessonPlannings {
-        multiplicity *;
-    }
-}
-
 relation LessonShift {
     Lesson playsRole associatedLessons {
         multiplicity *;
@@ -8848,13 +8834,6 @@ relation RootDomainObjectInsuranceValue {
 relation RootDomainObjectLesson {
     .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
     Lesson playsRole lessons {
-        multiplicity *;
-    }
-}
-
-relation RootDomainObjectLessonPlanning {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    LessonPlanning playsRole lessonPlannings {
         multiplicity *;
     }
 }

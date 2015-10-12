@@ -16,6 +16,13 @@ class EvaluationMethod  {
     MultiLanguageString evaluationElements;
 }
 
+class LessonPlanning  {
+    ShiftType lessonType;
+    Integer orderOfPlanning;
+    MultiLanguageString planning;
+    MultiLanguageString title;
+}
+
 relation ExecutionCourseCourse {
     public ExecutionCourse playsRole sourceExecutionCourse {
         multiplicity 1..1;
@@ -47,6 +54,20 @@ relation ExecutionCourseEvaluationMethod {
 relation RootDomainObjectEvaluationMethod {
     .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
     EvaluationMethod playsRole evaluationMethods {
+        multiplicity *;
+    }
+}
+
+relation LessonPlanningExecutionCourse {
+    Course playsRole executionCourse;
+    LessonPlanning playsRole lessonPlannings {
+        multiplicity *;
+    }
+}
+
+relation RootDomainObjectLessonPlanning {
+    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
+    LessonPlanning playsRole lessonPlannings {
         multiplicity *;
     }
 }

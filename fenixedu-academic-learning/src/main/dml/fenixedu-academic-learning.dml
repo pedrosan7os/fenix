@@ -12,6 +12,10 @@ class BibliographicReference  {
     String year;
 }
 
+class EvaluationMethod  {
+    MultiLanguageString evaluationElements;
+}
+
 relation ExecutionCourseCourse {
     public ExecutionCourse playsRole sourceExecutionCourse {
         multiplicity 1..1;
@@ -31,6 +35,18 @@ relation ExecutionCourseBibliographicReference {
 relation RootDomainObjectBibliographicReference {
     .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
     BibliographicReference playsRole bibliographicReferences {
+        multiplicity *;
+    }
+}
+
+relation ExecutionCourseEvaluationMethod {
+    EvaluationMethod playsRole evaluationMethod;
+    Course playsRole executionCourse;
+}
+
+relation RootDomainObjectEvaluationMethod {
+    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
+    EvaluationMethod playsRole evaluationMethods {
         multiplicity *;
     }
 }

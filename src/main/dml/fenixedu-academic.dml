@@ -759,10 +759,6 @@ valueType org.fenixedu.academic.domain.accounting.EventTypes as EventTypes {
         GradeScale gradeScale;
     }
 
-    class EvaluationMethod  {
-        MultiLanguageString evaluationElements;
-    }
-
         class FinalEvaluation extends Evaluation {
         }
 
@@ -7023,11 +7019,6 @@ relation CourseAttendance {
     }
 }
 
-relation ExecutionCourseEvaluationMethod {
-    EvaluationMethod playsRole evaluationMethod;
-    Course playsRole executionCourse;
-}
-
 relation ExecutionCourseProfessorship {
     ExecutionCourse playsRole executionCourse;
     Professorship playsRole professorships {
@@ -8651,13 +8642,6 @@ relation RootDomainObjectEquivalencePlanEntry {
 relation RootDomainObjectEvaluation {
     .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
     Evaluation playsRole evaluations {
-        multiplicity *;
-    }
-}
-
-relation RootDomainObjectEvaluationMethod {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    EvaluationMethod playsRole evaluationMethods {
         multiplicity *;
     }
 }

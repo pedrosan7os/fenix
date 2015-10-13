@@ -472,15 +472,6 @@ valueType org.fenixedu.academic.domain.accounting.EventTypes as EventTypes {
         }
     }
     
-    class BibliographicReference  {
-        String authors;
-        Boolean optional;
-        String reference;
-        Integer referenceOrder;
-        String title;
-        String year;
-    }
-
     class Branch  {
         String acronym;
         OldBranchType branchType;
@@ -7032,13 +7023,6 @@ relation CourseAttendance {
     }
 }
 
-relation ExecutionCourseBibliographicReference {
-    BibliographicReference playsRole associatedBibliographicReferences {
-        multiplicity *;
-    }
-    Course playsRole executionCourse;
-}
-
 relation ExecutionCourseEvaluationMethod {
     EvaluationMethod playsRole evaluationMethod;
     Course playsRole executionCourse;
@@ -8389,13 +8373,6 @@ relation RootDomainObjectAttends {
 relation RootDomainObjectAttendance {
     .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
     Attendance playsRole attendance {
-        multiplicity *;
-    }
-}
-
-relation RootDomainObjectBibliographicReference {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    BibliographicReference playsRole bibliographicReferences {
         multiplicity *;
     }
 }

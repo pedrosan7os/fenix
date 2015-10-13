@@ -1193,19 +1193,6 @@ valueType org.fenixedu.academic.domain.accounting.EventTypes as EventTypes {
         Boolean valid;
     }
 
-    class Summary  {
-        Boolean isExtraLesson;
-        DateTime lastModifiedDateDateTime;
-        Integer studentsNumber;
-        YearMonthDay summaryDateYearMonthDay;
-        HourMinuteSecond summaryHourHourMinuteSecond;
-        MultiLanguageString summaryText;
-        ShiftType summaryType;
-        String teacherName;
-        MultiLanguageString title;    
-        Boolean taught;
-        }
-
     class Teacher  {
     }
 
@@ -7028,13 +7015,6 @@ relation CourseCourseTeacher {
     }
 }
 
-relation ExecutionCourseSummary {
-    Summary playsRole associatedSummaries {
-        multiplicity *;
-    }
-    Course playsRole executionCourse;
-}
-
 relation ExecutionCourseSender {
     Course playsRole course;
     util.email.ExecutionCourseSender playsRole sender;
@@ -7913,13 +7893,6 @@ relation PrecedentDegreeInformationStudentCurricularPlan {
     }
 }
 
-relation ProfessorshipSummary {
-    Summary playsRole associatedSummaries {
-        multiplicity *;
-    }
-    CourseTeacher playsRole professorship;
-}
-
 relation ProjectGrouping {
     Grouping playsRole grouping;
     Project playsRole projects {
@@ -8235,13 +8208,6 @@ relation ReimbursementGuideSituationReimbursementGuide {
 relation ReimbursementTransactionReimbursementGuideEntry {
     transactions.ReimbursementTransaction playsRole reimbursementTransaction;
     reimbursementGuide.ReimbursementGuideEntry playsRole reimbursementGuideEntry;
-}
-
-relation RoomSummary {
-    Summary playsRole associatedSummaries {
-        multiplicity *;
-    }
-    .org.fenixedu.spaces.domain.Space playsRole room;
 }
 
 relation RootDomainMarkSheet {
@@ -9237,13 +9203,6 @@ relation RootDomainObjectStudentStatute {
     }
 }
 
-relation RootDomainObjectSummary {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    Summary playsRole summarys {
-        multiplicity *;
-    }
-}
-
 relation RootDomainObjectTeacher {
     .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
     Teacher playsRole teachers {
@@ -9417,13 +9376,6 @@ relation ShiftAttends {
     Attendance playsRole attends {
         multiplicity *;
     }
-}
-
-relation ShiftSummary {
-    Summary playsRole associatedSummaries {
-        multiplicity *;
-    }
-    Shift playsRole shift;
 }
 
 relation SibsPaymentFileEntrySibsPaymentFile {
@@ -9826,11 +9778,6 @@ relation LessonInstanceLessonInstanceSpaceOccupations {
         multiplicity *;
     }
     space.LessonInstanceSpaceOccupation playsRole lessonInstanceSpaceOccupation;
-}
-
-relation SummaryLessonInstance {
-    Summary playsRole summary;
-    LessonInstance playsRole lessonInstance;
 }
 
 relation CompetenceCourseInformationChangeRequester {

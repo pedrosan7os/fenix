@@ -23,6 +23,19 @@ class LessonPlanning  {
     MultiLanguageString title;
 }
 
+class Summary  {
+    Boolean isExtraLesson;
+    DateTime lastModifiedDateDateTime;
+    Integer studentsNumber;
+    YearMonthDay summaryDateYearMonthDay;
+    HourMinuteSecond summaryHourHourMinuteSecond;
+    MultiLanguageString summaryText;
+    ShiftType summaryType;
+    String teacherName;
+    MultiLanguageString title;    
+    Boolean taught;
+}
+
 relation ExecutionCourseCourse {
     public ExecutionCourse playsRole sourceExecutionCourse {
         multiplicity 1..1;
@@ -70,4 +83,44 @@ relation RootDomainObjectLessonPlanning {
     LessonPlanning playsRole lessonPlannings {
         multiplicity *;
     }
+}
+
+relation ExecutionCourseSummary {
+    Summary playsRole associatedSummaries {
+        multiplicity *;
+    }
+    Course playsRole executionCourse;
+}
+
+relation ProfessorshipSummary {
+    Summary playsRole associatedSummaries {
+        multiplicity *;
+    }
+    CourseTeacher playsRole professorship;
+}
+
+relation RoomSummary {
+    Summary playsRole associatedSummaries {
+        multiplicity *;
+    }
+    .org.fenixedu.spaces.domain.Space playsRole room;
+}
+
+relation RootDomainObjectSummary {
+    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
+    Summary playsRole summarys {
+        multiplicity *;
+    }
+}
+
+relation ShiftSummary {
+    Summary playsRole associatedSummaries {
+        multiplicity *;
+    }
+    Shift playsRole shift;
+}
+
+relation SummaryLessonInstance {
+    Summary playsRole summary;
+    LessonInstance playsRole lessonInstance;
 }

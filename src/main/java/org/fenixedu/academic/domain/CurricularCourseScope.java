@@ -20,7 +20,6 @@ package org.fenixedu.academic.domain;
 
 import java.text.Collator;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -32,9 +31,7 @@ import org.fenixedu.academic.domain.time.calendarStructure.AcademicCalendarRootE
 import org.fenixedu.academic.domain.time.calendarStructure.AcademicInterval;
 import org.fenixedu.academic.domain.time.calendarStructure.AcademicYearCE;
 import org.fenixedu.academic.dto.comparators.CalendarDateComparator;
-import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.bennu.core.domain.Bennu;
-import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.joda.time.YearMonthDay;
 
 public class CurricularCourseScope extends CurricularCourseScope_Base {
@@ -110,14 +107,6 @@ public class CurricularCourseScope extends CurricularCourseScope_Base {
 
     public boolean getActive() {
         return this.isActive();
-    }
-
-    @Override
-    protected void checkForDeletionBlockers(Collection<String> blockers) {
-        super.checkForDeletionBlockers(blockers);
-        if (!getAssociatedWrittenEvaluationsSet().isEmpty()) {
-            blockers.add(BundleUtil.getString(Bundle.APPLICATION, "error.curricular.course.scope.has.written.evaluations"));
-        }
     }
 
     public Boolean isDeletable() {

@@ -6,12 +6,14 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import org.fenixedu.academic.domain.CurricularCourseScope;
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.Lesson;
 import org.fenixedu.academic.domain.LessonInstance;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.domain.Shift;
+import org.fenixedu.academic.domain.degreeStructure.Context;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.service.services.manager.MergeExecutionCourses;
 import org.fenixedu.academic.util.Bundle;
@@ -41,6 +43,13 @@ public class FenixEduAcademicLearningInitializer implements ServletContextListen
         FenixFramework.getDomainModel().registerDeletionBlockerListener(Lesson.class, (l, blockers) -> {
             if (l.getLessonInstancesSet().stream().map(LessonInstance::getSummary).anyMatch(Objects::nonNull)) {
                 throw new DomainException("error.deleteLesson.with.summaries", l.prettyPrint());
+            }
+        });
+        FenixFramework.getDomainModel().registerDeletionListener(Context.class,
+                c -> c.getAssociatedWrittenEvaluationsSet().clear());
+        FenixFramework.getDomainModel().registerDeletionBlockerListener(CurricularCourseScope.class, (s, blockers) -> {
+            if (!s.getAssociatedWrittenEvaluationsSet().isEmpty()) {
+                blockers.add(BundleUtil.getString(Bundle.APPLICATION, "error.curricular.course.scope.has.written.evaluations"));
             }
         });
 

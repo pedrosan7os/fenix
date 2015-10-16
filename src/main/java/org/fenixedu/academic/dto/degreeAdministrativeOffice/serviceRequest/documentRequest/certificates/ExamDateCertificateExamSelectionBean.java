@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.fenixedu.academic.domain.Enrolment;
-import org.fenixedu.academic.domain.Exam;
 import org.fenixedu.academic.domain.ExecutionSemester;
 
 public class ExamDateCertificateExamSelectionBean implements Serializable {
@@ -57,13 +56,6 @@ public class ExamDateCertificateExamSelectionBean implements Serializable {
     public static ExamDateCertificateExamSelectionBean buildFor(final Collection<Enrolment> enrolments,
             final ExecutionSemester executionSemester) {
         final ExamDateCertificateExamSelectionBean result = new ExamDateCertificateExamSelectionBean();
-
-        for (final Enrolment enrolment : enrolments) {
-            for (final Exam exam : enrolment.getAttendsFor(executionSemester).getExecutionCourse()
-                    .getPublishedExamsFor(enrolment.getCurricularCourse())) {
-                result.addEntry(new ExamDateCertificateExamSelectionEntryBean(enrolment, exam));
-            }
-        }
 
         return result;
     }

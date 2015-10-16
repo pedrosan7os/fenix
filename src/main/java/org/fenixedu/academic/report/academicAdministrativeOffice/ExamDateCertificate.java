@@ -23,14 +23,12 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.Enrolment;
-import org.fenixedu.academic.domain.Exam;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.degreeStructure.CycleType;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.DocumentRequest;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.ExamDateCertificateRequest;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.IDocumentRequest;
 import org.fenixedu.academic.domain.student.Registration;
-import org.fenixedu.academic.util.Season;
 
 public class ExamDateCertificate extends AdministrativeOfficeDocument {
 
@@ -157,41 +155,11 @@ public class ExamDateCertificate extends AdministrativeOfficeDocument {
         for (final Enrolment enrolment : request.getEnrolmentsSet()) {
             final ExamDateEntry entry = new ExamDateEntry();
             entry.setCurricularCourseName(enrolment.getCurricularCourse().getName());
-            fillFirstSeasonExam(request, enrolment, entry);
-            fillSecondSeasonExam(request, enrolment, entry);
-            fillSpecialSeasonExam(request, enrolment, entry);
 
             result.add(entry);
         }
 
         return result;
-    }
-
-    private void fillSpecialSeasonExam(final ExamDateCertificateRequest request, final Enrolment enrolment,
-            final ExamDateEntry entry) {
-        final Exam specialSeasonExam = request.getExamFor(enrolment, Season.SPECIAL_SEASON_OBJ);
-        if (specialSeasonExam != null) {
-            entry.setSpecialSeasonDate(specialSeasonExam.getDayDateYearMonthDay().toString(DD_SLASH_MM_SLASH_YYYY, getLocale()));
-            entry.setSpecialSeasonHour(specialSeasonExam.getBeginningDateHourMinuteSecond().toString("HH:mm"));
-        }
-    }
-
-    private void fillSecondSeasonExam(final ExamDateCertificateRequest request, final Enrolment enrolment,
-            final ExamDateEntry entry) {
-        final Exam secondSeasonExam = request.getExamFor(enrolment, Season.SEASON2_OBJ);
-        if (secondSeasonExam != null) {
-            entry.setSecondSeasonDate(secondSeasonExam.getDayDateYearMonthDay().toString(DD_SLASH_MM_SLASH_YYYY, getLocale()));
-            entry.setSecondSeasonHour(secondSeasonExam.getBeginningDateHourMinuteSecond().toString("HH:mm"));
-        }
-    }
-
-    private void fillFirstSeasonExam(final ExamDateCertificateRequest request, final Enrolment enrolment,
-            final ExamDateEntry entry) {
-        final Exam firstSeasonExam = request.getExamFor(enrolment, Season.SEASON1_OBJ);
-        if (firstSeasonExam != null) {
-            entry.setFirstSeasonDate(firstSeasonExam.getDayDateYearMonthDay().toString(DD_SLASH_MM_SLASH_YYYY, getLocale()));
-            entry.setFirstSeasonHour(firstSeasonExam.getBeginningDateHourMinuteSecond().toString("HH:mm"));
-        }
     }
 
     @Override

@@ -20,7 +20,6 @@ package org.fenixedu.academic.ui.struts.action.administrativeOffice.serviceReque
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,7 +36,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.Enrolment;
-import org.fenixedu.academic.domain.Exam;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.accessControl.academicAdministration.AcademicAccessRule;
 import org.fenixedu.academic.domain.accessControl.academicAdministration.AcademicOperationType;
@@ -60,7 +58,6 @@ import org.fenixedu.bennu.struts.annotations.Forwards;
 import org.fenixedu.bennu.struts.annotations.Mapping;
 
 import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
-import pt.ist.fenixframework.FenixFramework;
 
 @Mapping(path = "/documentRequestsManagement", module = "academicAdministration",
         formBeanClass = AcademicServiceRequestsManagementDispatchAction.AcademicServiceRequestsManagementForm.class,
@@ -277,33 +274,6 @@ public class DocumentRequestsManagementDispatchAction extends FenixDispatchActio
                 examSelectionBean.getEnrolmentsWithoutExam(requestCreateBean.getEnrolments()));
 
         return mapping.findForward("chooseExamsToCreateExamDateCertificateRequest");
-
-    }
-
-    public ActionForward chooseExamsToCreateExamDateCertificateRequest(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
-
-        final DocumentRequestCreateBean requestCreateBean = getRenderedObject("documentRequestCreateBean");
-        requestCreateBean.setExams(getSelectedExams(request));
-
-        setAdditionalInformationSchemaName(request, requestCreateBean);
-        request.setAttribute("documentRequestCreateBean", requestCreateBean);
-        return mapping.findForward("viewDocumentRequestsToCreate");
-    }
-
-    private List<Exam> getSelectedExams(final HttpServletRequest request) {
-        final String[] examIds = request.getParameterValues("selectedExams");
-
-        if (examIds == null) {
-            return Collections.emptyList();
-        }
-
-        final List<Exam> result = new ArrayList<Exam>();
-        for (final String examId : examIds) {
-            result.add((Exam) FenixFramework.getDomainObject(examId));
-        }
-
-        return result;
 
     }
 

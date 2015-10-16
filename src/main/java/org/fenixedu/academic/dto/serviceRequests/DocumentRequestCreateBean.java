@@ -27,7 +27,6 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.Enrolment;
-import org.fenixedu.academic.domain.Exam;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.degreeStructure.CycleType;
 import org.fenixedu.academic.domain.degreeStructure.ProgramConclusion;
@@ -118,8 +117,6 @@ public class DocumentRequestCreateBean extends RegistrationAcademicServiceReques
 
     private ExecutionSemester executionSemester;
 
-    private List<Exam> exams;
-
     private Integer numberOfCourseLoads;
 
     private Unit institution;
@@ -141,7 +138,6 @@ public class DocumentRequestCreateBean extends RegistrationAcademicServiceReques
     public DocumentRequestCreateBean(Registration registration) {
         super(registration);
         this.enrolments = new ArrayList<Enrolment>();
-        this.exams = new ArrayList<Exam>();
         pastRequestDate = new LocalDate();
         this.registrationProtocol = registration.getRegistrationProtocol();
 
@@ -427,24 +423,6 @@ public class DocumentRequestCreateBean extends RegistrationAcademicServiceReques
         }
 
         this.enrolments = enrolmentsToSet;
-    }
-
-    public List<Exam> getExams() {
-        final List<Exam> result = new ArrayList<Exam>();
-        for (final Exam each : this.exams) {
-            result.add(each);
-        }
-
-        return result;
-    }
-
-    public void setExams(List<Exam> exams) {
-        final List<Exam> result = new ArrayList<Exam>();
-        for (final Exam each : exams) {
-            result.add(each);
-        }
-
-        this.exams = result;
     }
 
     public ExecutionSemester getExecutionPeriod() {

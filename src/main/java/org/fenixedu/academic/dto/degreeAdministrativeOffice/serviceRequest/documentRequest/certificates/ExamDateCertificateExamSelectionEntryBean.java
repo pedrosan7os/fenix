@@ -23,7 +23,6 @@ import java.util.Set;
 
 import org.fenixedu.academic.domain.DegreeModuleScope;
 import org.fenixedu.academic.domain.Enrolment;
-import org.fenixedu.academic.domain.Exam;
 
 public class ExamDateCertificateExamSelectionEntryBean implements Serializable {
 
@@ -34,11 +33,8 @@ public class ExamDateCertificateExamSelectionEntryBean implements Serializable {
 
     private Enrolment enrolment;
 
-    private Exam exam;
-
-    public ExamDateCertificateExamSelectionEntryBean(final Enrolment enrolment, final Exam exam) {
+    public ExamDateCertificateExamSelectionEntryBean(final Enrolment enrolment) {
         setEnrolment(enrolment);
-        setExam(exam);
     }
 
     public Enrolment getEnrolment() {
@@ -49,16 +45,8 @@ public class ExamDateCertificateExamSelectionEntryBean implements Serializable {
         this.enrolment = enrolment;
     }
 
-    public Exam getExam() {
-        return this.exam;
-    }
-
-    public void setExam(Exam exam) {
-        this.exam = exam;
-    }
-
     public Set<DegreeModuleScope> getDegreeModuleScopesForEnrolment() {
-        return getExam().getDegreeModuleScopesFor(getEnrolment().getCurricularCourse());
+        return null;
     }
 
 }

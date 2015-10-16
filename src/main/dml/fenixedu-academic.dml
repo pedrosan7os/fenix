@@ -5937,16 +5937,6 @@ relation ExamDateCertificateRequestEnrolment {
     }
 }
 
-relation ExamDateCertificateRequestExam {
-    serviceRequests.documentRequests.ExamDateCertificateRequest playsRole examDateCertificateRequests {
-        multiplicity *;
-    }
-    
-    Exam playsRole exams {
-        multiplicity *;
-    }
-}
-
 relation ExamDateCertificateRequestExecutionPeriod {
     serviceRequests.documentRequests.ExamDateCertificateRequest playsRole examDateCertificateRequests {
         multiplicity *;

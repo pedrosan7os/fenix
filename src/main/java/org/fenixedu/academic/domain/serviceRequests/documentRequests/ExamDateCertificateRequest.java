@@ -24,9 +24,7 @@ import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.Exam;
 import org.fenixedu.academic.domain.accounting.EventType;
 import org.fenixedu.academic.domain.exceptions.DomainException;
-import org.fenixedu.academic.domain.exceptions.DomainExceptionWithLabelFormatter;
 import org.fenixedu.academic.dto.serviceRequests.DocumentRequestCreateBean;
-import org.fenixedu.academic.util.Season;
 
 public class ExamDateCertificateRequest extends ExamDateCertificateRequest_Base {
 
@@ -39,35 +37,8 @@ public class ExamDateCertificateRequest extends ExamDateCertificateRequest_Base 
         super.init(bean);
 
         checkParameters(bean);
-        checkRulesToCreate(bean);
         super.getEnrolmentsSet().addAll(bean.getEnrolments());
-        super.getExamsSet().addAll(bean.getExams());
         super.setExecutionPeriod(bean.getExecutionPeriod());
-    }
-
-    private void checkRulesToCreate(final DocumentRequestCreateBean bean) {
-        for (final Exam exam : bean.getExams()) {
-            if (exam.isForSeason(Season.SPECIAL_SEASON_OBJ)
-                    && !getEnrolmentFor(bean.getEnrolments(), exam).isSpecialSeasonEnroled(
-                            bean.getExecutionPeriod().getExecutionYear())) {
-
-                throw new DomainExceptionWithLabelFormatter(
-                        "error.serviceRequests.documentRequests.ExamDateCertificateRequest.special.season.exam.requires.student.to.be.enroled",
-                        exam.getSeason().getDescription());
-            }
-        }
-    }
-
-    private Enrolment getEnrolmentFor(final Collection<Enrolment> enrolments, final Exam exam) {
-        for (final Enrolment enrolment : enrolments) {
-            if (exam.contains(enrolment.getCurricularCourse())) {
-                return enrolment;
-            }
-        }
-
-        throw new DomainException(
-                "error.serviceRequests.documentRequests.ExamDateCertificateRequest.each.exam.must.belong.to.at.least.one.enrolment");
-
     }
 
     @Override
@@ -107,16 +78,6 @@ public class ExamDateCertificateRequest extends ExamDateCertificateRequest_Base 
     @Override
     public EventType getEventType() {
         return EventType.EXAM_DATE_CERTIFICATE_REQUEST;
-    }
-
-    public Exam getExamFor(final Enrolment enrolment, final Season season) {
-        for (final Exam exam : getExamsSet()) {
-            if (exam.contains(enrolment.getCurricularCourse()) && exam.isForSeason(season)) {
-                return exam;
-            }
-        }
-
-        return null;
     }
 
     @Override

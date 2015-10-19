@@ -1006,18 +1006,6 @@ public class ExecutionCourse extends ExecutionCourse_Base {
         return schoolClasses;
     }
 
-    public List<Summary> readSummariesOfTeachersWithoutProfessorship() {
-
-        List<Summary> summaries = new ArrayList<Summary>();
-        for (Summary summary : this.getAssociatedSummariesSet()) {
-            if (summary.getProfessorship() == null
-                    && (summary.getTeacher() != null || (summary.getTeacherName() != null && !summary.getTeacherName().equals("")))) {
-                summaries.add(summary);
-            }
-        }
-        return summaries;
-    }
-
     public ExportGrouping getExportGrouping(final Grouping grouping) {
         for (final ExportGrouping exportGrouping : this.getExportGroupingsSet()) {
             if (exportGrouping.getGrouping() == grouping) {
@@ -1468,25 +1456,6 @@ public class ExecutionCourse extends ExecutionCourse_Base {
             }
         }
         return summaries;
-    }
-
-    public List<Summary> getSummariesWithoutProfessorshipButWithTeacher(Teacher teacher) {
-        List<Summary> summaries = new ArrayList<Summary>();
-        if (teacher != null) {
-            for (Summary summary : getAssociatedSummariesSet()) {
-                if (summary.getTeacher() != null && summary.getTeacher().equals(teacher)) {
-                    summaries.add(summary);
-                }
-            }
-        }
-        return summaries;
-    }
-
-    public void moveSummariesFromTeacherToProfessorship(Teacher teacher, Professorship professorship) {
-        List<Summary> summaries = getSummariesWithoutProfessorshipButWithTeacher(teacher);
-        for (Summary summary : summaries) {
-            summary.moveFromTeacherToProfessorship(professorship);
-        }
     }
 
     @Override

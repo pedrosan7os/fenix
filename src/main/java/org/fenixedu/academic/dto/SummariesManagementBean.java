@@ -92,9 +92,9 @@ public class SummariesManagementBean implements Serializable {
     }
 
     public SummariesManagementBean(MultiLanguageString title, MultiLanguageString summaryText, Integer studentsNumber,
-            SummaryType summaryType, Professorship professorship, String teacherName, Teacher teacher, Shift shift,
-            Lesson lesson, YearMonthDay summaryDate, Space summaryRoom, Partial summaryTime, Summary summary,
-            Professorship professorshipLogged, ShiftType lessonType, Boolean taught) {
+            SummaryType summaryType, Professorship professorship, String teacherName, Shift shift, Lesson lesson,
+            YearMonthDay summaryDate, Space summaryRoom, Partial summaryTime, Summary summary, Professorship professorshipLogged,
+            ShiftType lessonType, Boolean taught) {
 
         setTitle(title);
         setSummaryText(summaryText);
@@ -102,7 +102,7 @@ public class SummariesManagementBean implements Serializable {
         setShift(shift);
         setLesson(lesson);
         setProfessorship(professorship);
-        setTeacher(teacher);
+        setTeacher(professorship.getTeacher());
         setTeacherName(teacherName);
         setSummary(summary);
         setSummaryDate(summaryDate);

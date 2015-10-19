@@ -73,10 +73,6 @@ public class Professorship extends Professorship_Base {
 
         professorShip.setResponsibleFor(responsibleFor);
 
-        if (person.getTeacher() != null) {
-            executionCourse.moveSummariesFromTeacherToProfessorship(person.getTeacher(), professorShip);
-        }
-
         ProfessorshipManagementLog.createLog(professorShip.getExecutionCourse(), Bundle.MESSAGING,
                 "log.executionCourse.professorship.added", professorShip.getPerson().getPresentationName(), professorShip
                         .getExecutionCourse().getNome(), professorShip.getExecutionCourse().getDegreePresentationString());

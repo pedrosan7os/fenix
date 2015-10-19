@@ -9691,13 +9691,6 @@ relation PersonProfessorship {
     Person playsRole person;
 }
 
-relation TeacherSummary {
-    Summary playsRole associatedSummaries {
-        multiplicity *;
-    }
-    Teacher playsRole teacher;
-}
-
 relation ThesisDegree {
     Degree playsRole degree;
     thesis.Thesis playsRole thesis {

@@ -78,13 +78,13 @@ public class Summary extends Summary_Base {
     };
 
     public Summary(MultiLanguageString title, MultiLanguageString summaryText, Integer studentsNumber, Boolean isExtraLesson,
-            Professorship professorship, String teacherName, Teacher teacher, Shift shift, Lesson lesson, YearMonthDay date,
-            Space room, Partial hour, ShiftType type, Boolean taught) {
+            Professorship professorship, String teacherName, Shift shift, Lesson lesson, YearMonthDay date, Space room,
+            Partial hour, ShiftType type, Boolean taught) {
 
         super();
         setRootDomainObject(Bennu.getInstance());
-        fillSummaryWithInfo(title, summaryText, studentsNumber, isExtraLesson, professorship, teacherName, teacher, shift,
-                lesson, date, room, hour, type, taught);
+        fillSummaryWithInfo(title, summaryText, studentsNumber, isExtraLesson, professorship, teacherName, shift, lesson, date,
+                room, hour, type, taught);
 
         ContentManagementLog.createLog(shift.getExecutionCourse(), Bundle.MESSAGING, "log.executionCourse.content.summary.added",
                 title.getContent(), shift.getPresentationName(), shift.getExecutionCourse().getNome(), shift.getExecutionCourse()
@@ -92,11 +92,11 @@ public class Summary extends Summary_Base {
     }
 
     public void edit(MultiLanguageString title, MultiLanguageString summaryText, Integer studentsNumber, Boolean isExtraLesson,
-            Professorship professorship, String teacherName, Teacher teacher, Shift shift, Lesson lesson, YearMonthDay date,
-            Space room, Partial hour, ShiftType type, Boolean taught) {
+            Professorship professorship, String teacherName, Shift shift, Lesson lesson, YearMonthDay date, Space room,
+            Partial hour, ShiftType type, Boolean taught) {
 
-        fillSummaryWithInfo(title, summaryText, studentsNumber, isExtraLesson, professorship, teacherName, teacher, shift,
-                lesson, date, room, hour, type, taught);
+        fillSummaryWithInfo(title, summaryText, studentsNumber, isExtraLesson, professorship, teacherName, shift, lesson, date,
+                room, hour, type, taught);
 
         ContentManagementLog.createLog(shift.getExecutionCourse(), Bundle.MESSAGING,
                 "log.executionCourse.content.summary.edited", title.getContent(), shift.getPresentationName(), shift
@@ -106,8 +106,8 @@ public class Summary extends Summary_Base {
     }
 
     private void fillSummaryWithInfo(MultiLanguageString title, MultiLanguageString summaryText, Integer studentsNumber,
-            Boolean isExtraLesson, Professorship professorship, String teacherName, Teacher teacher, Shift shift, Lesson lesson,
-            YearMonthDay day, Space room, Partial hour, ShiftType type, Boolean taught) {
+            Boolean isExtraLesson, Professorship professorship, String teacherName, Shift shift, Lesson lesson, YearMonthDay day,
+            Space room, Partial hour, ShiftType type, Boolean taught) {
 
         setShift(shift);
         setSummaryDateYearMonthDay(day);
@@ -116,14 +116,13 @@ public class Summary extends Summary_Base {
         setSummaryText(summaryText);
         setIsExtraLesson(isExtraLesson);
 
-        checkSpecialParameters(isExtraLesson, professorship, teacherName, teacher, lesson, hour, type);
-        checkIfInternalTeacherHasProfessorhipInExecutionCourse(teacher, shift.getExecutionCourse());
+        checkSpecialParameters(isExtraLesson, professorship, teacherName, lesson, hour, type);
+        checkIfInternalTeacherHasProfessorhipInExecutionCourse(professorship.getTeacher(), shift.getExecutionCourse());
         checkIfSummaryDateIsValid(day, shift.getExecutionPeriod(), lesson, isExtraLesson);
 
         setStudentsNumber(studentsNumber);
         setProfessorship(professorship);
         setTeacherName(teacherName);
-        setTeacher(teacher);
         setLastModifiedDateDateTime(new DateTime());
         setSummaryType(type);
         setTaught(taught);
@@ -155,7 +154,6 @@ public class Summary extends Summary_Base {
         super.setLessonInstance(null);
         setRoom(null);
         setProfessorship(null);
-        setTeacher(null);
         setRootDomainObject(null);
         deleteDomainObject();
 
@@ -174,6 +172,10 @@ public class Summary extends Summary_Base {
         } else {
             lessonInstance.summaryAndCourseLoadManagement(this, lesson);
         }
+    }
+
+    public Teacher getTeacher() {
+        return getProfessorship().getTeacher();
     }
 
     public Lesson getLesson() {
@@ -268,10 +270,10 @@ public class Summary extends Summary_Base {
         }
     }
 
-    private void checkSpecialParameters(Boolean isExtraLesson, Professorship professorship, String teacherName, Teacher teacher,
-            Lesson lesson, Partial hour, ShiftType type) {
+    private void checkSpecialParameters(Boolean isExtraLesson, Professorship professorship, String teacherName, Lesson lesson,
+            Partial hour, ShiftType type) {
 
-        if (professorship == null && StringUtils.isEmpty(teacherName) && teacher == null) {
+        if (professorship == null && StringUtils.isEmpty(teacherName)) {
             throw new DomainException("error.summary.no.teacher");
         }
         if (isExtraLesson) {
@@ -313,15 +315,6 @@ public class Summary extends Summary_Base {
             return getLessonInstance().getRoom();
         }
         return null;
-    }
-
-    public void moveFromTeacherToProfessorship(Professorship professorship) {
-        if (getTeacher() != null && professorship != null && professorship.getExecutionCourse().equals(getExecutionCourse())
-                && professorship.getTeacher().equals(getTeacher())) {
-
-            setTeacher(null);
-            setProfessorship(professorship);
-        }
     }
 
     public ShiftType getShiftType() {

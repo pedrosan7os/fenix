@@ -386,9 +386,9 @@ public class SummariesManagementDA extends FenixDispatchAction {
 
         SummariesManagementBean bean =
                 new SummariesManagementBean(summary.getTitle(), summary.getSummaryText(), summary.getStudentsNumber(),
-                        summaryType, summary.getProfessorship(), summary.getTeacherName(), summary.getTeacher(),
-                        summary.getShift(), summary.getLesson(), summary.getSummaryDateYearMonthDay(), summary.getRoom(),
-                        timePartial, summary, teacherLogged, summary.getSummaryType(), summary.getTaught());
+                        summaryType, summary.getProfessorship(), summary.getTeacherName(), summary.getShift(),
+                        summary.getLesson(), summary.getSummaryDateYearMonthDay(), summary.getRoom(), timePartial,
+                        summary, teacherLogged, summary.getSummaryType(), summary.getTaught());
 
         return goToSummaryManagementPageAgain(mapping, request, dynaActionForm, bean);
     }

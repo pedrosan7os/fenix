@@ -1,2 +1,13 @@
 package org.fenixedu.academic.domain;
 
+class Course {
+}
+
+relation ExecutionCourseCourse {
+    public ExecutionCourse playsRole sourceExecutionCourse {
+        multiplicity 1..1;
+    }
+    public Course playsRole course {
+        multiplicity 1..1;
+    }
+}

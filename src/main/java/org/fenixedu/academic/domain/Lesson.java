@@ -24,24 +24,17 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.apache.commons.collections.comparators.ReverseComparator;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.space.LessonInstanceSpaceOccupation;
 import org.fenixedu.academic.domain.space.LessonSpaceOccupation;
 import org.fenixedu.academic.domain.space.SpaceUtils;
 import org.fenixedu.academic.domain.time.calendarStructure.AcademicInterval;
-import org.fenixedu.academic.domain.util.icalendar.ClassEventBean;
 import org.fenixedu.academic.domain.util.icalendar.EventBean;
 import org.fenixedu.academic.dto.GenericPair;
 import org.fenixedu.academic.predicate.AccessControl;
@@ -165,7 +158,7 @@ public class Lesson extends Lesson_Base {
 
         refreshPeriodAndInstancesInEditOperation(newBeginDate, newEndDate, createLessonInstances, maxLessonsPeriod);
 
-        if (wasFinished() && (getLessonSpaceOccupation() != null || !hasAnyLessonInstances())) {
+        if (wasFinished() && (getLessonSpaceOccupation() != null || getLessonInstancesSet().isEmpty())) {
             throw new DomainException("error.Lesson.empty.period");
         }
 
@@ -197,10 +190,6 @@ public class Lesson extends Lesson_Base {
             throw new DomainException("error.deleteLesson.with.Shift.with.students", prettyPrint());
         }
 
-        if (hasAnyAssociatedSummaries()) {
-            throw new DomainException("error.deleteLesson.with.summaries", prettyPrint());
-        }
-
         final OccupationPeriod period = getPeriod();
         super.setPeriod(null);
         if (period != null) {
@@ -211,7 +200,7 @@ public class Lesson extends Lesson_Base {
             getLessonSpaceOccupation().delete();
         }
 
-        while (hasAnyLessonInstances()) {
+        while (!getLessonInstancesSet().isEmpty()) {
             getLessonInstancesSet().iterator().next().delete();
         }
 
@@ -312,7 +301,7 @@ public class Lesson extends Lesson_Base {
     public Space getSala() {
         if (getLessonSpaceOccupation() != null) {
             return getLessonSpaceOccupation().getRoom();
-        } else if (hasAnyLessonInstances() && wasFinished()) {
+        } else if (!getLessonInstancesSet().isEmpty() && wasFinished()) {
             return getLastLessonInstance().getRoom();
         }
         return null;
@@ -344,7 +333,7 @@ public class Lesson extends Lesson_Base {
         }
     }
 
-    public void refreshPeriodAndInstancesInSummaryCreation(YearMonthDay newBeginDate) {
+    public void refreshPeriodAndInstances(YearMonthDay newBeginDate) {
         if (!wasFinished() && newBeginDate != null && newBeginDate.isAfter(getPeriod().getStartYearMonthDay())) {
             SortedSet<YearMonthDay> instanceDates =
                     getAllLessonInstancesDatesToCreate(getLessonStartDay(), newBeginDate.minusDays(1), true);
@@ -356,24 +345,18 @@ public class Lesson extends Lesson_Base {
                 removeLessonSpaceOccupationAndPeriod();
                 period.delete();
             }
-            createAllLessonInstances(instanceDates);
+            instanceDates.forEach(day -> new LessonInstance(this, day));
         }
     }
 
     private void refreshPeriodAndInstancesInEditOperation(YearMonthDay newBeginDate, YearMonthDay newEndDate,
             Boolean createLessonInstances, GenericPair<YearMonthDay, YearMonthDay> maxLessonsPeriod) {
 
-        removeExistentInstancesWithoutSummaryAfterOrEqual(newBeginDate);
+        removeExistentDeletableInstancesAfterOrEqual(newBeginDate);
         SortedSet<YearMonthDay> instanceDates =
                 getAllLessonInstancesDatesToCreate(getLessonStartDay(), newBeginDate.minusDays(1), createLessonInstances);
         refreshPeriod(newBeginDate, newEndDate);
-        createAllLessonInstances(instanceDates);
-    }
-
-    private void createAllLessonInstances(SortedSet<YearMonthDay> instanceDates) {
-        for (YearMonthDay day : instanceDates) {
-            new LessonInstance(this, day);
-        }
+        instanceDates.forEach(day -> new LessonInstance(this, day));
     }
 
     private SortedSet<YearMonthDay> getAllLessonInstancesDatesToCreate(YearMonthDay startDate, YearMonthDay endDate,
@@ -393,40 +376,26 @@ public class Lesson extends Lesson_Base {
         return new TreeSet<YearMonthDay>();
     }
 
-    private void removeExistentInstancesWithoutSummaryAfterOrEqual(YearMonthDay newBeginDate) {
-        Map<Boolean, List<LessonInstance>> instances = getLessonInstancesAfterOrEqual(newBeginDate);
-        if (instances.get(Boolean.TRUE).isEmpty()) {
-            List<LessonInstance> instancesWithoutSummary = instances.get(Boolean.FALSE);
-            for (Iterator<LessonInstance> iter = instancesWithoutSummary.iterator(); iter.hasNext();) {
-                LessonInstance instance = iter.next();
-                iter.remove();
-                instance.delete();
-            }
-        } else {
-            throw new DomainException("error.Lesson.invalid.new.begin.date");
-        }
-    }
-
-    private Map<Boolean, List<LessonInstance>> getLessonInstancesAfterOrEqual(YearMonthDay day) {
-
-        Map<Boolean, List<LessonInstance>> result = new HashMap<Boolean, List<LessonInstance>>();
-        result.put(Boolean.TRUE, new ArrayList<LessonInstance>());
-        result.put(Boolean.FALSE, new ArrayList<LessonInstance>());
-
-        if (day != null) {
-            Collection<LessonInstance> lessonInstances = getLessonInstancesSet();
-            for (LessonInstance lessonInstance : lessonInstances) {
-                if (lessonInstance.getSummary() != null && !lessonInstance.getDay().isBefore(day)) {
-                    List<LessonInstance> list = result.get(Boolean.TRUE);
-                    list.add(lessonInstance);
-                } else if (lessonInstance.getSummary() == null && !lessonInstance.getDay().isBefore(day)) {
-                    List<LessonInstance> list = result.get(Boolean.FALSE);
-                    list.add(lessonInstance);
+    private void removeExistentDeletableInstancesAfterOrEqual(YearMonthDay newBeginDate) {
+        List<LessonInstance> deleteList = new ArrayList<>();
+        boolean ok = false;
+        if (newBeginDate != null) {
+            for (LessonInstance lessonInstance : getLessonInstancesSet()) {
+                if (!lessonInstance.getDay().isBefore(newBeginDate)) {
+                    if (lessonInstance.isDeletable()) {
+                        deleteList.add(lessonInstance);
+                    } else {
+                        ok = true;
+                    }
                 }
             }
         }
-
-        return result;
+        if (!ok) {
+            throw new DomainException("error.Lesson.invalid.new.begin.date");
+        }
+        for (LessonInstance lessonInstance : deleteList) {
+            lessonInstance.delete();
+        }
     }
 
     private void refreshPeriod(YearMonthDay newBeginDate, YearMonthDay newEndDate) {
@@ -568,66 +537,7 @@ public class Lesson extends Lesson_Base {
         return 0.0;
     }
 
-    public Summary getSummaryByDate(YearMonthDay date) {
-        for (Summary summary : getAssociatedSummaries()) {
-            if (summary.getSummaryDateYearMonthDay().isEqual(date)) {
-                return summary;
-            }
-        }
-        return null;
-    }
-
-    public List<Summary> getAssociatedSummaries() {
-        List<Summary> result = new ArrayList<Summary>();
-        Collection<LessonInstance> lessonInstances = getLessonInstancesSet();
-        for (LessonInstance lessonInstance : lessonInstances) {
-            if (lessonInstance.getSummary() != null) {
-                result.add(lessonInstance.getSummary());
-            }
-        }
-        return result;
-    }
-
-    public boolean hasAnyAssociatedSummaries() {
-        return !getAssociatedSummaries().isEmpty();
-    }
-
-    public SortedSet<Summary> getSummariesSortedByDate() {
-        return getSummaries(new ReverseComparator(Summary.COMPARATOR_BY_DATE_AND_HOUR));
-    }
-
-    public SortedSet<Summary> getSummariesSortedByNewestDate() {
-        return getSummaries(Summary.COMPARATOR_BY_DATE_AND_HOUR);
-    }
-
-    public boolean isTimeValidToInsertSummary(HourMinuteSecond timeToInsert, YearMonthDay summaryDate) {
-
-        YearMonthDay currentDate = new YearMonthDay();
-        if (timeToInsert == null || summaryDate == null || summaryDate.isAfter(currentDate)) {
-            return false;
-        }
-
-        if (currentDate.isEqual(summaryDate)) {
-            HourMinuteSecond lessonEndTime = null;
-            LessonInstance lessonInstance = getLessonInstanceFor(summaryDate);
-            lessonEndTime = lessonInstance != null ? lessonInstance.getEndTime() : getEndHourMinuteSecond();
-            return !lessonEndTime.isAfter(timeToInsert);
-        }
-
-        return true;
-    }
-
-    public boolean isDateValidToInsertSummary(YearMonthDay date) {
-        YearMonthDay currentDate = new YearMonthDay();
-        SortedSet<YearMonthDay> allLessonDatesEvenToday = getAllLessonDatesUntil(currentDate);
-        return (allLessonDatesEvenToday.isEmpty() || date == null) ? false : allLessonDatesEvenToday.contains(date);
-    }
-
-    public boolean isDateValidToInsertExtraSummary(YearMonthDay date) {
-        return !(getLessonStartDay().isAfter(date) || getLessonEndDay().isBefore(date));
-    }
-
-    private YearMonthDay getLessonStartDay() {
+    public YearMonthDay getLessonStartDay() {
         if (!wasFinished()) {
             YearMonthDay periodBegin = getPeriod().getStartYearMonthDay();
             return getValidBeginDate(periodBegin);
@@ -635,7 +545,7 @@ public class Lesson extends Lesson_Base {
         return null;
     }
 
-    private YearMonthDay getLessonEndDay() {
+    public YearMonthDay getLessonEndDay() {
         if (!wasFinished()) {
             YearMonthDay periodEnd = getPeriod().getLastOccupationPeriodOfNestedPeriods().getEndYearMonthDay();
             return getValidEndDate(periodEnd);
@@ -673,52 +583,6 @@ public class Lesson extends Lesson_Base {
                 return null;
             }
         }
-    }
-
-    public YearMonthDay getNextPossibleSummaryDate() {
-
-        YearMonthDay currentDate = new YearMonthDay();
-        HourMinuteSecond now = new HourMinuteSecond();
-        Summary lastSummary = getLastSummary();
-
-        if (lastSummary != null) {
-
-            SortedSet<YearMonthDay> datesEvenToday = getAllLessonDatesUntil(currentDate);
-            SortedSet<YearMonthDay> possibleDates = datesEvenToday.tailSet(lastSummary.getSummaryDateYearMonthDay());
-
-            possibleDates.remove(lastSummary.getSummaryDateYearMonthDay());
-            if (!possibleDates.isEmpty()) {
-                YearMonthDay nextPossibleDate = possibleDates.first();
-                return isTimeValidToInsertSummary(now, nextPossibleDate) ? nextPossibleDate : null;
-            }
-
-        } else {
-            YearMonthDay nextPossibleDate = hasAnyLessonInstances() ? getFirstLessonInstance().getDay() : getLessonStartDay();
-            return isTimeValidToInsertSummary(now, nextPossibleDate) ? nextPossibleDate : null;
-        }
-
-        return null;
-    }
-
-    public SortedSet<YearMonthDay> getAllPossibleDatesToInsertSummary() {
-
-        HourMinuteSecond now = new HourMinuteSecond();
-        YearMonthDay currentDate = new YearMonthDay();
-        SortedSet<YearMonthDay> datesToInsert = getAllLessonDatesUntil(currentDate);
-
-        for (Summary summary : getAssociatedSummaries()) {
-            YearMonthDay summaryDate = summary.getSummaryDateYearMonthDay();
-            datesToInsert.remove(summaryDate);
-        }
-
-        for (Iterator<YearMonthDay> iter = datesToInsert.iterator(); iter.hasNext();) {
-            YearMonthDay date = iter.next();
-            if (!isTimeValidToInsertSummary(now, date)) {
-                iter.remove();
-            }
-        }
-
-        return datesToInsert;
     }
 
     public SortedSet<YearMonthDay> getAllLessonDatesWithoutInstanceDates() {
@@ -926,17 +790,6 @@ public class Lesson extends Lesson_Base {
         return !result.isEmpty() ? result.first() : null;
     }
 
-    private Summary getLastSummary() {
-        SortedSet<Summary> summaries = getSummariesSortedByNewestDate();
-        return (summaries.isEmpty()) ? null : summaries.first();
-    }
-
-    private SortedSet<Summary> getSummaries(Comparator<Summary> comparator) {
-        SortedSet<Summary> lessonSummaries = new TreeSet<Summary>(comparator);
-        lessonSummaries.addAll(getAssociatedSummaries());
-        return lessonSummaries;
-    }
-
     public LessonInstance getLessonInstanceFor(YearMonthDay date) {
         Collection<LessonInstance> lessonInstances = getLessonInstancesSet();
         for (LessonInstance lessonInstance : lessonInstances) {
@@ -1110,64 +963,7 @@ public class Lesson extends Lesson_Base {
     }
 
     public List<EventBean> getAllLessonsEvents() {
-        HashMap<DateTime, LessonInstance> hashmap = new HashMap<DateTime, LessonInstance>();
-        ArrayList<EventBean> result = new ArrayList<EventBean>();
-        LocalDate lessonEndDay = null;
-        if (getLessonEndDay() != null) {
-            getLessonEndDay().toLocalDate();
-        }
-        for (LessonInstance lessonInstance : getAllLessonInstancesUntil(lessonEndDay)) {
-            hashmap.put(lessonInstance.getBeginDateTime(), lessonInstance);
-        }
-
-        for (YearMonthDay aDay : getAllLessonDates()) {
-            DateTime beginDate =
-                    new DateTime(aDay.getYear(), aDay.getMonthOfYear(), aDay.getDayOfMonth(), getBeginHourMinuteSecond()
-                            .getHour(), getBeginHourMinuteSecond().getMinuteOfHour(), getBeginHourMinuteSecond()
-                            .getSecondOfMinute(), 0);
-
-            LessonInstance lessonInstance = hashmap.get(beginDate);
-            EventBean bean;
-            Set<Space> location = new HashSet<>();
-
-            String url = getExecutionCourse().getSiteUrl();
-
-            if (lessonInstance != null) {
-
-                if (lessonInstance.getLessonInstanceSpaceOccupation() != null) {
-                    location.add(lessonInstance.getLessonInstanceSpaceOccupation().getRoom());
-                }
-                String summary = null;
-                if (lessonInstance.getSummary() != null) {
-                    summary = lessonInstance.getSummary().getSummaryText().toString();
-                    Pattern p = Pattern.compile("<[a-zA-Z0-9\\/]*[^>]*>");
-                    Matcher matcher = p.matcher(summary);
-                    summary = matcher.replaceAll("");
-
-                    p = Pattern.compile("\\s(\\s)*");
-                    matcher = p.matcher(summary);
-                    summary = matcher.replaceAll(" ");
-                }
-
-                bean =
-                        new ClassEventBean(lessonInstance.getBeginDateTime(), lessonInstance.getEndDateTime(), false, location,
-                                url + "/sumarios", summary, getShift());
-            } else {
-                if (getLessonSpaceOccupation() != null) {
-                    location.add(getLessonSpaceOccupation().getRoom());
-                }
-                DateTime endDate =
-                        new DateTime(aDay.getYear(), aDay.getMonthOfYear(), aDay.getDayOfMonth(), getEndHourMinuteSecond()
-                                .getHour(), getEndHourMinuteSecond().getMinuteOfHour(), getEndHourMinuteSecond()
-                                .getSecondOfMinute(), 0);
-
-                bean = new ClassEventBean(beginDate, endDate, false, location, url, null, getShift());
-            }
-
-            result.add(bean);
-        }
-
-        return result;
+        return EventBean.getAllLessonsEvents(this);
     }
 
     @Deprecated
@@ -1250,10 +1046,6 @@ public class Lesson extends Lesson_Base {
             }
         }
         return builder.toString();
-    }
-
-    private boolean hasAnyLessonInstances() {
-        return !getLessonInstancesSet().isEmpty();
     }
 
     public boolean isBiWeeklyOffset() {

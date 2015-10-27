@@ -20,7 +20,6 @@ package org.fenixedu.academic.domain;
 
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -32,7 +31,6 @@ import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.bennu.core.domain.Bennu;
-import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.bennu.core.security.Authenticate;
 
 import pt.ist.fenixframework.Atomic;
@@ -87,14 +85,6 @@ public class Professorship extends Professorship_Base {
         setRootDomainObject(null);
         setCreator(null);
         deleteDomainObject();
-    }
-
-    @Override
-    protected void checkForDeletionBlockers(Collection<String> blockers) {
-        super.checkForDeletionBlockers(blockers);
-        if (!getAssociatedSummariesSet().isEmpty()) {
-            blockers.add(BundleUtil.getString(Bundle.APPLICATION, "error.remove.professorship.hasAnyAssociatedSummaries"));
-        }
     }
 
     public boolean isDeletable() {

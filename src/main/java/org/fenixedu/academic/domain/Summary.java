@@ -26,6 +26,8 @@ package org.fenixedu.academic.domain;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.SortedSet;
 
 import org.apache.commons.lang.StringUtils;
@@ -168,10 +170,33 @@ public class Summary extends Summary_Base {
     private void lessonInstanceManagement(Lesson lesson, YearMonthDay day, Space room) {
         LessonInstance lessonInstance = lesson.getLessonInstanceFor(day);
         if (lessonInstance == null) {
-            new LessonInstance(this, lesson);
+            YearMonthDay nextPossibleDay = findNextPossibleDateAfter(day, lesson);
+            lesson.refreshPeriodAndInstances(nextPossibleDay);
+
+            lessonInstance = new LessonInstance(lesson, day);
+            CourseLoad courseLoad = null;
+            if (lesson != null) {
+                courseLoad = lesson.getExecutionCourse().getCourseLoadByShiftType(getSummaryType());
+            }
+            lessonInstance.setSummary(this);
+            lessonInstance.setCourseLoad(courseLoad);
         } else {
-            lessonInstance.summaryAndCourseLoadManagement(this, lesson);
+            CourseLoad courseLoad = null;
+            if (lesson != null && this != null) {
+                courseLoad = lesson.getExecutionCourse().getCourseLoadByShiftType(this.getSummaryType());
+            }
+            lessonInstance.setSummary(this);
+            lessonInstance.setCourseLoad(courseLoad);
         }
+    }
+
+    private static YearMonthDay findNextPossibleDateAfter(YearMonthDay day, Lesson lesson) {
+        for (YearMonthDay lessonDay : lesson.getAllLessonDatesWithoutInstanceDates()) {
+            if (lessonDay.isAfter(day)) {
+                return lessonDay;
+            }
+        }
+        return lesson.isBiWeeklyOffset() ? day.plusDays(8) : day.plusDays(1);
     }
 
     public Teacher getTeacher() {
@@ -249,14 +274,13 @@ public class Summary extends Summary_Base {
     private void checkIfSummaryDateIsValid(YearMonthDay date, ExecutionSemester executionSemester, Lesson lesson,
             Boolean isExtraLesson) {
         if (!isExtraLesson) {
-            Summary summary = lesson.getSummaryByDate(date);
-            if (summary != null && !summary.equals(this)) {
+            if (getSummaryByDate(lesson, date).filter(s -> s.equals(this)).isPresent()) {
                 throw new DomainException("error.summary.already.exists");
             }
-            if (!lesson.isDateValidToInsertSummary(date)) {
+            if (!isDateValidToInsertSummary(lesson, date)) {
                 throw new DomainException("error.summary.no.valid.date.to.lesson");
             }
-            if (!lesson.isTimeValidToInsertSummary(new HourMinuteSecond(), date)) {
+            if (!isTimeValidToInsertSummary(lesson, new HourMinuteSecond(), date)) {
                 throw new DomainException("error.summary.no.valid.time.to.lesson");
             }
         } else if (!executionSemester.containsDay(date)) {
@@ -329,6 +353,61 @@ public class Summary extends Summary_Base {
         HourMinuteSecond time = getSummaryHourHourMinuteSecond();
         return getSummaryDateYearMonthDay().toDateTime(
                 new TimeOfDay(time.getHour(), time.getMinuteOfHour(), time.getSecondOfMinute(), 0));
+    }
+
+    public static Optional<Summary> getSummaryByDate(Lesson lesson, YearMonthDay date) {
+        return lesson.getLessonInstancesSet().stream().map(LessonInstance::getSummary).filter(Objects::nonNull)
+                .filter(s -> s.getSummaryDateYearMonthDay().isEqual(date)).findAny();
+    }
+
+    public static boolean isTimeValidToInsertSummary(Lesson lesson, HourMinuteSecond timeToInsert, YearMonthDay summaryDate) {
+        YearMonthDay currentDate = new YearMonthDay();
+        if (timeToInsert == null || summaryDate == null || summaryDate.isAfter(currentDate)) {
+            return false;
+        }
+
+        if (currentDate.isEqual(summaryDate)) {
+            HourMinuteSecond lessonEndTime = null;
+            LessonInstance lessonInstance = lesson.getLessonInstanceFor(summaryDate);
+            lessonEndTime = lessonInstance != null ? lessonInstance.getEndTime() : lesson.getEndHourMinuteSecond();
+            return !lessonEndTime.isAfter(timeToInsert);
+        }
+
+        return true;
+    }
+
+    public static boolean isDateValidToInsertSummary(Lesson lesson, YearMonthDay date) {
+        YearMonthDay currentDate = new YearMonthDay();
+        SortedSet<YearMonthDay> allLessonDatesEvenToday = lesson.getAllLessonDatesUntil(currentDate);
+        return (allLessonDatesEvenToday.isEmpty() || date == null) ? false : allLessonDatesEvenToday.contains(date);
+    }
+
+    public static YearMonthDay getNextPossibleSummaryDate(Lesson lesson) {
+        YearMonthDay currentDate = new YearMonthDay();
+        HourMinuteSecond now = new HourMinuteSecond();
+        Summary lastSummary =
+                lesson.getLessonInstancesSet().stream().map(LessonInstance::getSummary).filter(Objects::nonNull)
+                        .sorted(COMPARATOR_BY_DATE_AND_HOUR).findFirst().orElse(null);
+
+        if (lastSummary != null) {
+
+            SortedSet<YearMonthDay> datesEvenToday = lesson.getAllLessonDatesUntil(currentDate);
+            SortedSet<YearMonthDay> possibleDates = datesEvenToday.tailSet(lastSummary.getSummaryDateYearMonthDay());
+
+            possibleDates.remove(lastSummary.getSummaryDateYearMonthDay());
+            if (!possibleDates.isEmpty()) {
+                YearMonthDay nextPossibleDate = possibleDates.first();
+                return isTimeValidToInsertSummary(lesson, now, nextPossibleDate) ? nextPossibleDate : null;
+            }
+
+        } else {
+            YearMonthDay nextPossibleDate =
+                    !lesson.getLessonInstancesSet().isEmpty() ? lesson.getFirstLessonInstance().getDay() : lesson
+                            .getLessonStartDay();
+            return isTimeValidToInsertSummary(lesson, now, nextPossibleDate) ? nextPossibleDate : null;
+        }
+
+        return null;
     }
 
     @Deprecated

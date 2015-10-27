@@ -206,10 +206,6 @@ public class MergeExecutionCourses {
                 otherProfessorship =
                         Professorship.create(professorship.getResponsibleFor(), executionCourseTo, professorship.getPerson());
             }
-            for (; !professorship.getAssociatedSummariesSet().isEmpty(); otherProfessorship.addAssociatedSummaries(professorship
-                    .getAssociatedSummariesSet().iterator().next())) {
-                ;
-            }
         }
     }
 

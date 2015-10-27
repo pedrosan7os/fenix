@@ -22,18 +22,15 @@ import static org.fenixedu.academic.predicate.AccessControl.check;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Collection;
 import java.util.Comparator;
 
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.space.LessonInstanceSpaceOccupation;
 import org.fenixedu.academic.domain.space.SpaceUtils;
 import org.fenixedu.academic.predicate.ResourceAllocationRolePredicates;
-import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academic.util.DiaSemana;
 import org.fenixedu.academic.util.HourMinuteSecond;
 import org.fenixedu.bennu.core.domain.Bennu;
-import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.spaces.domain.Space;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
@@ -51,59 +48,6 @@ public class LessonInstance extends LessonInstance_Base {
         }
 
     };
-
-    public LessonInstance(Summary summary, Lesson lesson) {
-//        check(this, ResourceAllocationRolePredicates.checkPermissionsToManageLessonInstancesWithTeacherCheck);
-
-        super();
-
-        if (summary == null) {
-            throw new DomainException("error.LessonInstance.empty.summary");
-        }
-
-        if (lesson == null) {
-            throw new DomainException("error.LessonInstance.empty.lesson");
-        }
-
-        YearMonthDay day = summary.getSummaryDateYearMonthDay();
-
-        LessonInstance lessonInstance = lesson.getLessonInstanceFor(day);
-        if (lessonInstance != null) {
-            throw new DomainException("error.lessonInstance.already.exist");
-        }
-
-        Space room = lesson.getSala();
-
-        HourMinuteSecond beginTime = lesson.getBeginHourMinuteSecond();
-        HourMinuteSecond endTime = lesson.getEndHourMinuteSecond();
-        DateTime beginDateTime =
-                new DateTime(day.getYear(), day.getMonthOfYear(), day.getDayOfMonth(), beginTime.getHour(),
-                        beginTime.getMinuteOfHour(), beginTime.getSecondOfMinute(), 0);
-        DateTime endDateTime =
-                new DateTime(day.getYear(), day.getMonthOfYear(), day.getDayOfMonth(), endTime.getHour(),
-                        endTime.getMinuteOfHour(), endTime.getSecondOfMinute(), 0);
-
-        setRootDomainObject(Bennu.getInstance());
-        setBeginDateTime(beginDateTime);
-        setEndDateTime(endDateTime);
-
-        YearMonthDay nextPossibleDay = findNextPossibleDateAfter(day, lesson);
-
-        setLesson(lesson);
-
-        summaryAndCourseLoadManagement(summary, lesson);
-        lesson.refreshPeriodAndInstancesInSummaryCreation(nextPossibleDay);
-        lessonInstanceSpaceOccupationManagement(room);
-    }
-
-    private YearMonthDay findNextPossibleDateAfter(YearMonthDay day, Lesson lesson) {
-        for (YearMonthDay lessonDay : lesson.getAllLessonDatesWithoutInstanceDates()) {
-            if (lessonDay.isAfter(day)) {
-                return lessonDay;
-            }
-        }
-        return lesson.isBiWeeklyOffset() ? day.plusDays(8) : day.plusDays(1);
-    }
 
     public LessonInstance(Lesson lesson, YearMonthDay day) {
 //        check(this, ResourceAllocationRolePredicates.checkPermissionsToManageLessonInstancesWithTeacherCheck);
@@ -158,16 +102,6 @@ public class LessonInstance extends LessonInstance_Base {
         deleteDomainObject();
     }
 
-    public void summaryAndCourseLoadManagement(Summary summary, Lesson lesson) {
-        check(this, ResourceAllocationRolePredicates.checkPermissionsToManageLessonInstancesWithTeacherCheck);
-        CourseLoad courseLoad = null;
-        if (lesson != null && summary != null) {
-            courseLoad = lesson.getExecutionCourse().getCourseLoadByShiftType(summary.getSummaryType());
-        }
-        setSummary(summary);
-        setCourseLoad(courseLoad);
-    }
-
     private int getUnitMinutes() {
         return Minutes.minutesBetween(getStartTime(), getEndTime()).getMinutes();
     }
@@ -175,14 +109,6 @@ public class LessonInstance extends LessonInstance_Base {
     public BigDecimal getInstanceDurationInHours() {
         return BigDecimal.valueOf(getUnitMinutes()).divide(BigDecimal.valueOf(Lesson.NUMBER_OF_MINUTES_IN_HOUR), 2,
                 RoundingMode.HALF_UP);
-    }
-
-    @Override
-    protected void checkForDeletionBlockers(Collection<String> blockers) {
-        super.checkForDeletionBlockers(blockers);
-        if (getSummary() != null) {
-            blockers.add(BundleUtil.getString(Bundle.APPLICATION, "error.LessonInstance.cannot.be.deleted"));
-        }
     }
 
     @jvstm.cps.ConsistencyPredicate
@@ -202,14 +128,6 @@ public class LessonInstance extends LessonInstance_Base {
                     instanceSpaceOccupation == null ? new LessonInstanceSpaceOccupation(space) : instanceSpaceOccupation;
             instanceSpaceOccupation.edit(this);
         }
-    }
-
-    @Override
-    public void setSummary(Summary summary) {
-        if (summary == null) {
-            throw new DomainException("error.LessonInstance.empty.summary");
-        }
-        super.setSummary(summary);
     }
 
     @Override
@@ -291,6 +209,10 @@ public class LessonInstance extends LessonInstance_Base {
 
     public Interval getInterval() {
         return new Interval(getBeginDateTime(), getEndDateTime());
+    }
+
+    public boolean isDeletable() {
+        return getDeletionBlockers().isEmpty();
     }
 
 }

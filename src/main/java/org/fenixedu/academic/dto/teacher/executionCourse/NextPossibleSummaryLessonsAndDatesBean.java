@@ -27,6 +27,7 @@ import org.fenixedu.academic.domain.Lesson;
 import org.fenixedu.academic.domain.LessonInstance;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.ShiftType;
+import org.fenixedu.academic.domain.Summary;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academic.util.HourMinuteSecond;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
@@ -107,7 +108,7 @@ public class NextPossibleSummaryLessonsAndDatesBean implements Serializable, Com
     }
 
     public boolean getWrittenSummary() {
-        return isExtraLesson() ? true : getLesson().getSummaryByDate(getDate()) != null;
+        return isExtraLesson() ? true : Summary.getSummaryByDate(getLesson(), getDate()).isPresent();
     }
 
     public String getMonthString() {
@@ -121,8 +122,8 @@ public class NextPossibleSummaryLessonsAndDatesBean implements Serializable, Com
         }
 
         Lesson lesson = getLesson();
-        if (lesson.isDateValidToInsertSummary(getDate()) && lesson.isTimeValidToInsertSummary(new HourMinuteSecond(), getDate())
-                && !getWrittenSummary()) {
+        if (Summary.isDateValidToInsertSummary(lesson, getDate())
+                && Summary.isTimeValidToInsertSummary(lesson, new HourMinuteSecond(), getDate()) && !getWrittenSummary()) {
             return true;
         }
 
@@ -130,7 +131,7 @@ public class NextPossibleSummaryLessonsAndDatesBean implements Serializable, Com
     }
 
     public boolean getIsPossibleDeleteLessonInstance() {
-        return isExtraLesson() ? false : getLesson().getSummaryByDate(getDate()) == null;
+        return isExtraLesson() ? false : !Summary.getSummaryByDate(getLesson(), getDate()).isPresent();
     }
 
     public String getCheckBoxValue() {

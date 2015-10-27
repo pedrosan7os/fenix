@@ -44,7 +44,7 @@ public class DeleteLessonInstance {
         final NextPossibleSummaryLessonsAndDatesBean last = set.last();
         final Lesson lesson = last.getLesson();
         final YearMonthDay date = last.getDate();
-        lesson.refreshPeriodAndInstancesInSummaryCreation(lesson.isBiWeeklyOffset() ? date.plusDays(8) : date.plusDays(1));
+        lesson.refreshPeriodAndInstances(lesson.isBiWeeklyOffset() ? date.plusDays(8) : date.plusDays(1));
         for (final NextPossibleSummaryLessonsAndDatesBean n : set) {
             run(n.getLesson(), n.getDate());
         }

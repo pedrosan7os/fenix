@@ -42,7 +42,11 @@ public class LastSummariesToSummariesManagementProvider implements DataProvider 
 
             Course executionCourse = bean.getExecutionCourse();
             List<Summary> summaries = new ArrayList<Summary>();
-            summaries.addAll(executionCourse.getSummariesByShiftType(lessonType));
+            for (Summary summary : executionCourse.getAssociatedSummariesSet()) {
+                if (summary.getSummaryType() != null && summary.getSummaryType().equals(lessonType)) {
+                    summaries.add(summary);
+                }
+            }
             Collections.sort(summaries, Summary.COMPARATOR_BY_DATE_AND_HOUR);
 
             List<Summary> result = new ArrayList<Summary>();

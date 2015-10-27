@@ -19,14 +19,18 @@
 package org.fenixedu.academic.ui.renderers.providers;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.fenixedu.academic.domain.Lesson;
+import org.fenixedu.academic.domain.LessonInstance;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.Summary;
 import org.fenixedu.academic.dto.SummariesManagementBean;
 import org.fenixedu.academic.dto.SummariesManagementBean.SummaryType;
 import org.fenixedu.academic.ui.renderers.converters.YearMonthDayConverter;
+import org.fenixedu.academic.util.HourMinuteSecond;
 import org.joda.time.YearMonthDay;
 
 import pt.ist.fenixWebFramework.renderers.DataProvider;
@@ -46,7 +50,19 @@ public class PossibleDatesToSummariesManagementProvider implements DataProvider 
 
         if (summaryType != null && summaryType.equals(SummaryType.NORMAL_SUMMARY)) {
             if (lesson != null) {
-                possibleSummaryDates.addAll(lesson.getAllPossibleDatesToInsertSummary());
+                HourMinuteSecond now = new HourMinuteSecond();
+                YearMonthDay currentDate = new YearMonthDay();
+                possibleSummaryDates.addAll(lesson.getAllLessonDatesUntil(currentDate));
+
+                lesson.getLessonInstancesSet().stream().map(LessonInstance::getSummary).filter(Objects::nonNull)
+                        .forEach(s -> possibleSummaryDates.remove(s.getSummaryDateYearMonthDay()));
+
+                for (Iterator<YearMonthDay> iter = possibleSummaryDates.iterator(); iter.hasNext();) {
+                    YearMonthDay date = iter.next();
+                    if (!Summary.isTimeValidToInsertSummary(lesson, now, date)) {
+                        iter.remove();
+                    }
+                }
             }
 
             // Show SummaryDate when edit summary

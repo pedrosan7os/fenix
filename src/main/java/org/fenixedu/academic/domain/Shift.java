@@ -232,9 +232,6 @@ public class Shift extends Shift_Base {
         if (!getAttendsSet().isEmpty()) {
             blockers.add(BundleUtil.getString(Bundle.RESOURCE_ALLOCATION, "error.deleteShift.with.students", getNome()));
         }
-        if (!getAssociatedSummariesSet().isEmpty()) {
-            blockers.add(BundleUtil.getString(Bundle.RESOURCE_ALLOCATION, "error.deleteShift.with.summaries", getNome()));
-        }
     }
 
     public BigDecimal getTotalHours() {
@@ -423,17 +420,6 @@ public class Shift extends Shift_Base {
             }
         }
         return builder.toString();
-    }
-
-    public List<Summary> getExtraSummaries() {
-        List<Summary> result = new ArrayList<Summary>();
-        Set<Summary> summaries = getAssociatedSummariesSet();
-        for (Summary summary : summaries) {
-            if (summary.isExtraSummary()) {
-                result.add(summary);
-            }
-        }
-        return result;
     }
 
     private static class ShiftAttendsListener extends RelationAdapter<Shift, Attendance> {

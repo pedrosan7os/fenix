@@ -714,11 +714,11 @@ public class SummariesManagementDA extends FenixDispatchAction {
             if (insert) {
                 for (YearMonthDay lessonDate : lesson.getAllLessonDates()) {
                     if ((calendarViewType.equals(LessonCalendarViewType.ALL_LESSONS))
-                            || (calendarViewType.equals(LessonCalendarViewType.PAST_LESSON) && lesson.isTimeValidToInsertSummary(
-                                    new HourMinuteSecond(), lessonDate))
-                            || (calendarViewType.equals(LessonCalendarViewType.PAST_LESSON_WITHOUT_SUMMARY) && lesson
-                                    .getSummaryByDate(lessonDate) == null)
-                            && lesson.isTimeValidToInsertSummary(new HourMinuteSecond(), lessonDate)) {
+                            || (calendarViewType.equals(LessonCalendarViewType.PAST_LESSON) && Summary
+                                    .isTimeValidToInsertSummary(lesson, new HourMinuteSecond(), lessonDate))
+                            || (calendarViewType.equals(LessonCalendarViewType.PAST_LESSON_WITHOUT_SUMMARY) && !Summary
+                                    .getSummaryByDate(lesson, lessonDate).isPresent())
+                            && Summary.isTimeValidToInsertSummary(lesson, new HourMinuteSecond(), lessonDate)) {
 
                         summariesCalendar.add(new NextPossibleSummaryLessonsAndDatesBean(lesson, lessonDate));
                     }
@@ -750,13 +750,14 @@ public class SummariesManagementDA extends FenixDispatchAction {
             LessonCalendarViewType calendarViewType) {
 
         if (!calendarViewType.equals(LessonCalendarViewType.PAST_LESSON_WITHOUT_SUMMARY)) {
-            List<Summary> extraSummaries = shift.getExtraSummaries();
-            for (Summary summary : extraSummaries) {
-                if (calendarViewType.equals(LessonCalendarViewType.ALL_LESSONS)
-                        || (calendarViewType.equals(LessonCalendarViewType.PAST_LESSON) && summary.getSummaryDateTime()
-                                .isBeforeNow())) {
-                    summariesCalendar.add(new NextPossibleSummaryLessonsAndDatesBean(shift, summary.getSummaryDateYearMonthDay(),
-                            summary.getSummaryHourHourMinuteSecond(), summary.getRoom()));
+            for (Summary summary : shift.getAssociatedSummariesSet()) {
+                if (summary.isExtraSummary()) {
+                    if (calendarViewType.equals(LessonCalendarViewType.ALL_LESSONS)
+                            || (calendarViewType.equals(LessonCalendarViewType.PAST_LESSON) && summary.getSummaryDateTime()
+                                    .isBeforeNow())) {
+                        summariesCalendar.add(new NextPossibleSummaryLessonsAndDatesBean(shift, summary
+                                .getSummaryDateYearMonthDay(), summary.getSummaryHourHourMinuteSecond(), summary.getRoom()));
+                    }
                 }
             }
         }
@@ -833,7 +834,7 @@ public class SummariesManagementDA extends FenixDispatchAction {
                         NextPossibleSummaryLessonsAndDatesBean.COMPARATOR_BY_DATE_AND_HOUR);
         for (Shift shift : executionCourse.getAssociatedShifts()) {
             for (Lesson lesson : shift.getAssociatedLessonsSet()) {
-                YearMonthDay nextPossibleSummaryDate = lesson.getNextPossibleSummaryDate();
+                YearMonthDay nextPossibleSummaryDate = Summary.getNextPossibleSummaryDate(lesson);
                 if (nextPossibleSummaryDate != null) {
                     possibleLessonsAndDates.add(new NextPossibleSummaryLessonsAndDatesBean(lesson, nextPossibleSummaryDate));
                 }

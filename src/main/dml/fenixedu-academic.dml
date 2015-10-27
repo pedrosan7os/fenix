@@ -460,18 +460,6 @@ valueType org.fenixedu.academic.domain.accounting.EventTypes as EventTypes {
     class Attends  {
     }
 
-    class Attendance  {
-    }
-
-    relation AttendsAttendance {
-        public Attends playsRole sourceAttends {
-            multiplicity 1..1;
-        }
-        public Attendance playsRole attendance {
-            multiplicity 1..1;
-        }
-    }
-    
     class Branch  {
         String acronym;
         OldBranchType branchType;
@@ -754,48 +742,6 @@ valueType org.fenixedu.academic.domain.accounting.EventTypes as EventTypes {
         }
 
 
-    class Evaluation  {
-        String publishmentMessage;
-        GradeScale gradeScale;
-    }
-
-        class FinalEvaluation extends Evaluation {
-        }
-
-        class AdHocEvaluation extends Evaluation {
-            String description;
-            String name;
-            DateTime creationDateTime;
-        }
-
-        class Project extends Evaluation {
-            String description;
-            Integer maxSubmissionsToKeep;
-            String name;
-            Boolean onlineSubmissionsAllowed;
-            DateTime projectBeginDateTime;
-            DateTime projectEndDateTime;
-        }
-
-        class WrittenEvaluation extends Evaluation {
-            HourMinuteSecond beginningDateHourMinuteSecond (REQUIRED);
-            YearMonthDay dayDateYearMonthDay (REQUIRED);
-            HourMinuteSecond endDateHourMinuteSecond;
-            YearMonthDay enrollmentBeginDayDateYearMonthDay;
-            HourMinuteSecond enrollmentBeginTimeDateHourMinuteSecond;
-            YearMonthDay enrollmentEndDayDateYearMonthDay;
-            HourMinuteSecond enrollmentEndTimeDateHourMinuteSecond;
-        }
-
-            class Exam extends WrittenEvaluation {
-                Season season;
-            }
-
-            class WrittenTest extends WrittenEvaluation {
-                String description;
-                DateTime requestRoomSentDate;
-            }
-
     class ExecutionCourse  {
         Boolean availableGradeSubmission;
         String comment;     
@@ -812,19 +758,6 @@ valueType org.fenixedu.academic.domain.accounting.EventTypes as EventTypes {
         boolean lessonPlanningAvailable;
     }
 
-    class ExecutionCourseLog extends DomainOperationLog {
-    }
-    	class ContentManagementLog extends ExecutionCourseLog {
-    	}
-    	class ProfessorshipManagementLog extends ExecutionCourseLog {
-    	}  
-    	class CurricularManagementLog extends ExecutionCourseLog {
-    	}
-    	class GroupsAndShiftsManagementLog extends ExecutionCourseLog {
-    	}
-    	class EvaluationManagementLog extends ExecutionCourseLog {
-    	}
-
     class DegreeLog extends DomainOperationLog { }
     
     	class CoordinationTeamLog extends DegreeLog { }
@@ -836,12 +769,6 @@ valueType org.fenixedu.academic.domain.accounting.EventTypes as EventTypes {
     class  PersonInformationLog extends DomainOperationLog {
     }
         
-    class CourseLoad  {
-        ShiftType type;
-        BigDecimal totalQuantity;
-        BigDecimal unitQuantity;    
-    }
-
     class ExecutionDegree  {
         MultiLanguageString anotation;
         Boolean temporaryExamMap;                           
@@ -862,10 +789,6 @@ valueType org.fenixedu.academic.domain.accounting.EventTypes as EventTypes {
     }
 
     class ExecutionYear extends ExecutionInterval {                                         
-    }
-
-    class ExportGrouping  {
-        ProposalState proposalState;
     }
 
     class ExternalCurricularCourse  {
@@ -915,9 +838,6 @@ valueType org.fenixedu.academic.domain.accounting.EventTypes as EventTypes {
                 Integer year;
             }
 
-        class ProjectSubmissionFile extends .org.fenixedu.bennu.io.domain.GenericFile {
-        }
-
         class candidacy.CandidacyDocumentFile extends .org.fenixedu.bennu.io.domain.GenericFile {
         }
         
@@ -954,21 +874,6 @@ valueType org.fenixedu.academic.domain.accounting.EventTypes as EventTypes {
         Double scholarShipValue;
         YearMonthDay startPaymentYearMonthDay;
         DateTime whenDateTime;
-    }
-
-    class Grouping  {
-        DateTime enrolmentBeginDayDateDateTime;
-        DateTime enrolmentEndDayDateDateTime;
-        EnrolmentGroupPolicyType enrolmentPolicy;
-        Integer groupMaximumNumber;
-        Integer idealCapacity;
-        Integer maximumCapacity;
-        Integer minimumCapacity;
-        String name;
-        String projectDescription;
-        ShiftType shiftType;
-        Boolean automaticEnrolment;
-        Boolean differentiatedCapacity;
     }
 
     class Guide  {
@@ -1023,18 +928,6 @@ valueType org.fenixedu.academic.domain.accounting.EventTypes as EventTypes {
         String name;
     }
 
-    class Mark  {
-        String mark;
-        String publishedMark;
-    }
-
-        class FinalMark extends Mark {
-            Integer gradeListVersion;
-            YearMonthDay submitDateYearMonthDay;
-            String submitedMark;
-            YearMonthDay whenSubmitedYearMonthDay;
-        }
-        
     class MarkSheet  {
         String archiveInformation;
         String checkSum;
@@ -1085,33 +978,6 @@ valueType org.fenixedu.academic.domain.accounting.EventTypes as EventTypes {
 
     class Professorship  {
         Boolean responsibleFor;
-    }
-
-    class CourseTeacher  {
-        Boolean responsibleFor;
-    }
-
-    relation ProfessorshipCourseTeacher {
-        public Professorship playsRole sourceProfessorship {
-            multiplicity 1..1;
-        }
-        public CourseTeacher playsRole courseTeacher {
-            multiplicity 1..1;
-        }
-    }
-
-    class ProjectSubmission  {
-        DateTime submissionDateTime;
-        String teacherObservation;
-    }
-
-    class ProjectSubmissionLog  {
-        String fileChecksum;
-        String fileChecksumAlgorithm;
-        String fileMimeType;
-        Integer fileSize;
-        String filename;
-        DateTime submissionDateTime;
     }
 
     class Qualification  {
@@ -1171,10 +1037,6 @@ valueType org.fenixedu.academic.domain.accounting.EventTypes as EventTypes {
         DateTime createdOn;
     }
     
-    class ShiftGroupingProperties  {
-    	Integer capacity;
-    }
-
     class StudentCurricularPlan  {
         Double classification;
         Integer completedCourses;
@@ -1188,11 +1050,6 @@ valueType org.fenixedu.academic.domain.accounting.EventTypes as EventTypes {
         LocalDate endStageDate;
     }
     
-    class StudentGroup  {
-        Integer groupNumber;
-        Boolean valid;
-    }
-
     class Teacher  {
     }
 
@@ -1212,9 +1069,6 @@ valueType org.fenixedu.academic.domain.accounting.EventTypes as EventTypes {
     class University  {
         String code;
         String name;
-    }
-
-    class WrittenEvaluationEnrolment  {
     }
 
     class accounting.Account  {
@@ -2638,19 +2492,6 @@ valueType org.fenixedu.academic.domain.accounting.EventTypes as EventTypes {
         class space.SpaceOccupation extends .org.fenixedu.spaces.domain.occupation.Occupation {
         }
 
-            class space.EventSpaceOccupation extends space.SpaceOccupation {                
-            }
-
-                class space.LessonSpaceOccupation extends space.EventSpaceOccupation {
-                }
-
-                class space.LessonInstanceSpaceOccupation extends space.EventSpaceOccupation {          
-                }
-                
-                class space.WrittenEvaluationSpaceOccupation extends space.EventSpaceOccupation {
-                }
-                
-                
     class serviceRequests.InstitutionRegistryCodeGenerator {
         Integer number;
     }
@@ -3372,32 +3213,6 @@ valueType org.fenixedu.academic.domain.accounting.EventTypes as EventTypes {
     class util.email.PersonSender extends util.email.Sender {}
 
     class util.email.SystemSender extends util.email.Sender {}
-
-    class messaging.ConversationMessage {
-        DateTime creationDate;
-        MultiLanguageString body;
-    }
-
-    class messaging.ConversationThread {
-        DateTime creationDate;
-        MultiLanguageString title;
-    }
-
-    class messaging.Forum {
-        DateTime creationDate;
-        MultiLanguageString name;
-        MultiLanguageString description;
-    }
-
-    class messaging.ForumSubscription  {
-        Boolean favorite;
-        Boolean receivePostsByEmail;
-    }
-
-        class messaging.ExecutionCourseForum extends messaging.Forum {
-        }
-        class messaging.DepartmentForum extends messaging.Forum {
-        }
 
 class caseHandling.Process  {
     
@@ -4845,15 +4660,6 @@ relation DomainOperationLogRootDomainObject {
 	}
 }
 
-relation ExecutionCourseExecutionCourseLog {
-	Course playsRole executionCourse{
-		multiplicity 1..1;
-	}
-	ExecutionCourseLog playsRole executionCourseLogs {
-		multiplicity*;
-	}
-}
-
 relation ExecutionYearDegreeLog {
 	ExecutionYear playsRole executionYear{
 		multiplicity 1..1;
@@ -6115,13 +5921,6 @@ relation AnnualEventExecutionYear {
     }
 }
 
-relation AnswerExportProposal {
-    ExportGrouping playsRole exportGroupingReceivers {
-        multiplicity *;
-    }
-    Person playsRole receiverPerson;
-}
-
 relation AnyCurricularCourseDegree {
     curricularRules.AnyCurricularCourse playsRole participatingAnyCurricularCourseCurricularRules {
         multiplicity *;
@@ -6155,20 +5954,6 @@ relation AttendsStudent {
         multiplicity *;
     }
     student.Registration playsRole aluno;
-}
-
-relation AttendsWeeklyWorkLoad {
-    Attendance playsRole attends;
-    student.WeeklyWorkLoad playsRole weeklyWorkLoads {
-        multiplicity *;
-    }
-}
-
-relation BelongsTo {
-    ExportGrouping playsRole exportGroupings {
-        multiplicity *;
-    }
-    Grouping playsRole grouping;
 }
 
 /* Documents */
@@ -6969,15 +6754,6 @@ relation EquivalencePlanEquivalencePlanEntry {
     }
 }
 
-relation EvaluationExecutionCourse {
-    Course playsRole associatedExecutionCourses {
-        multiplicity *;
-    }
-    Evaluation playsRole associatedEvaluations {
-        multiplicity *;
-    }
-}
-
 relation ExclusivenessDegreeModule {
     curricularRules.Exclusiveness playsRole participatingExclusivenessCurricularRules {
         multiplicity *;
@@ -6992,32 +6768,11 @@ relation ExecutionCourseAttends {
     }
 }
 
-relation CourseAttendance {
-    Course playsRole disciplinaExecucao;
-    Attendance playsRole attends {
-        multiplicity *;
-    }
-}
-
 relation ExecutionCourseProfessorship {
     ExecutionCourse playsRole executionCourse;
     Professorship playsRole professorships {
         multiplicity *;
     }
-}
-
-relation CourseCourseTeacher {
-    Course playsRole executionCourse {
-        multiplicity 1..1;
-    }
-    CourseTeacher playsRole professorships {
-        multiplicity *;
-    }
-}
-
-relation ExecutionCourseSender {
-    Course playsRole course;
-    util.email.ExecutionCourseSender playsRole sender;
 }
 
 relation CoordinatorSender {
@@ -7255,74 +7010,6 @@ relation PhotographOriginal {
 	photograph.PictureOriginal playsRole original;
 }
 
-relation ExecutionCourseForumCourse {
-    messaging.ExecutionCourseForum playsRole forum {
-        multiplicity *;
-    }
-    Course playsRole executionCourse;
-}
-
-relation DepartmentForumDepartment {
-    messaging.DepartmentForum playsRole forum;
-    Department playsRole department;
-}
-
-relation ForumSubscriptionForum {
-    messaging.ForumSubscription playsRole forumSubscriptions {
-        multiplicity *;
-    }
-    messaging.Forum playsRole forum;
-}
-
-relation ForumSubscriptionPerson {
-    messaging.ForumSubscription playsRole forumSubscriptions {
-        multiplicity *;
-    }
-    Person playsRole person;
-}
-
-relation ForumConversationThreads {
-    public messaging.Forum playsRole forum;
-    public messaging.ConversationThread playsRole conversationThread {
-        multiplicity *;
-    }
-}
-
-relation ConversationThreadHasMessages {
-    public messaging.ConversationThread playsRole conversationThread;
-    public messaging.ConversationMessage playsRole message {
-        multiplicity *;
-    }
-}
-
-relation ConversationMessageCreator {
-    public Person playsRole creator;
-    public messaging.ConversationMessage playsRole conversationMessage {
-        multiplicity *;
-    }
-}
-
-relation ConversationThreadCreator {
-    public Person playsRole creator;
-    public messaging.ConversationThread playsRole conversationThread {
-        multiplicity *;
-    }
-}
-
-relation ForumCreator {
-    public Person playsRole creator;
-    public messaging.Forum playsRole forum {
-        multiplicity *;
-    }
-}
-
-relation GoalExecutionCourse {
-    ExportGrouping playsRole exportGroupings {
-        multiplicity *;
-    }
-    Course playsRole executionCourse;
-}
-
 relation GratuityEventStudentCurricularPlan {
     StudentCurricularPlan playsRole studentCurricularPlan;
     accounting.events.gratuity.GratuityEvent playsRole gratuityEvents {
@@ -7368,15 +7055,6 @@ relation GratuityTransactionGratuitySituation {
 relation GratuityValuesExecutionDegree {
     GratuityValues playsRole gratuityValues;
     ExecutionDegree playsRole executionDegree;
-}
-
-relation GroupingAttends {
-    Attendance playsRole attends {
-        multiplicity *;
-    }
-    Grouping playsRole groupings {
-        multiplicity *;
-    }
 }
 
 relation GuideEntryGuide {
@@ -7475,37 +7153,11 @@ relation InsuranceValueExecutionYear {
     ExecutionYear playsRole executionYear;
 }
 
-relation LessonLessonSpaceOccupation {
-    Lesson playsRole lesson;
-    space.LessonSpaceOccupation playsRole lessonSpaceOccupation;
-}
-
 relation LessonShift {
     Lesson playsRole associatedLessons {
         multiplicity *;
     }
     Shift playsRole shift;
-}
-
-relation MakeExportProposal {
-    ExportGrouping playsRole exportGroupingSenders {
-        multiplicity *;
-    }
-    Person playsRole senderPerson;
-}
-
-relation MarkAttends {
-    Mark playsRole associatedMarks {
-        multiplicity *;
-    }
-    Attendance playsRole attend;
-}
-
-relation MarkEvaluation {
-    Mark playsRole marks {
-        multiplicity *;
-    }
-    Evaluation playsRole evaluation;
 }
 
 relation MarkSheetConfirmationPerson {
@@ -7893,71 +7545,6 @@ relation PrecedentDegreeInformationStudentCurricularPlan {
     }
 }
 
-relation ProjectGrouping {
-    Grouping playsRole grouping;
-    Project playsRole projects {
-        multiplicity *;
-    }
-}
-
-relation ProjectsDeparments {
-	Project playsRole projects {
-		multiplicity *;
-	}
-	Department playsRole deparments {
-		multiplicity *;
-	}
-}
-
-relation ProjectSubmissionAttends {
-    Attendance playsRole attends;
-    ProjectSubmission playsRole projectSubmissions {
-        multiplicity *;
-    }
-}
-
-relation ProjectSubmissionFileProjectSubmission {
-    ProjectSubmission playsRole projectSubmission;
-    ProjectSubmissionFile playsRole projectSubmissionFile {
-        multiplicity 1..1;
-    }
-}
-
-relation ProjectSubmissionLogAttends {
-    Attendance playsRole attends;
-    ProjectSubmissionLog playsRole projectSubmissionLogs {
-        multiplicity *;
-    }
-}
-
-relation ProjectSubmissionLogProject {
-    Project playsRole project;
-    ProjectSubmissionLog playsRole projectSubmissionLogs {
-        multiplicity *;
-    }
-}
-
-relation ProjectSubmissionLogStudentGroup {
-    StudentGroup playsRole studentGroup;
-    ProjectSubmissionLog playsRole projectSubmissionLogs {
-        multiplicity *;
-    }
-}
-
-relation ProjectSubmissionProject {
-    Project playsRole project;
-    ProjectSubmission playsRole projectSubmissions {
-        multiplicity *;
-    }
-}
-
-relation ProjectSubmissionStudentGroup {
-    StudentGroup playsRole studentGroup;
-    ProjectSubmission playsRole projectSubmissions {
-        multiplicity *;
-    }
-}
-
 relation QualificationCountry {
     Qualification playsRole associatedQualifications {
         multiplicity *;
@@ -8313,13 +7900,6 @@ relation RootDomainObjectAttends {
     }
 }
 
-relation RootDomainObjectAttendance {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    Attendance playsRole attendance {
-        multiplicity *;
-    }
-}
-
 relation RootDomainObjectBranch {
     .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
     Branch playsRole branchs {
@@ -8591,23 +8171,9 @@ relation RootDomainObjectEquivalencePlanEntry {
     }
 }
 
-relation RootDomainObjectEvaluation {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    Evaluation playsRole evaluations {
-        multiplicity *;
-    }
-}
-
 relation RootDomainObjectExecutionCourse {
     .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
     ExecutionCourse playsRole executionCourses {
-        multiplicity *;
-    }
-}
-
-relation RootDomainObjectCourse {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    Course playsRole course {
         multiplicity *;
     }
 }
@@ -8650,13 +8216,6 @@ relation RootDomainObjectExemption {
 relation RootDomainObjectExemptionJustification {
     .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
     accounting.events.ExemptionJustification playsRole exemptionJustifications {
-        multiplicity *;
-    }
-}
-
-relation RootDomainObjectExportGrouping {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    ExportGrouping playsRole exportGroupings {
         multiplicity *;
     }
 }
@@ -8708,13 +8267,6 @@ relation RootDomainObjectPendingPhotographs {
     }
 }
 
-relation RootDomainObjectForumSubscription {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    messaging.ForumSubscription playsRole forumSubscriptions {
-        multiplicity *;
-    }
-}
-
 relation RootDomainObjectGratuitySituation {
     .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
     GratuitySituation playsRole gratuitySituations {
@@ -8725,13 +8277,6 @@ relation RootDomainObjectGratuitySituation {
 relation RootDomainObjectGratuityValues {
     .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
     GratuityValues playsRole gratuityValuess {
-        multiplicity *;
-    }
-}
-
-relation RootDomainObjectGrouping {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    Grouping playsRole groupings {
         multiplicity *;
     }
 }
@@ -8807,13 +8352,6 @@ relation RootDomainObjectLesson {
 relation RootDomainObjectLocality {
     .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
     Locality playsRole localities {
-        multiplicity *;
-    }
-}
-
-relation RootDomainObjectMark {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    Mark playsRole marks {
         multiplicity *;
     }
 }
@@ -8972,27 +8510,6 @@ relation RootDomainObjectProfessorship {
     }
 }
 
-relation RootDomainObjectCourseTeacher {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    CourseTeacher playsRole courseTeacher {
-        multiplicity *;
-    }
-}
-
-relation RootDomainObjectProjectSubmission {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    ProjectSubmission playsRole projectSubmissions {
-        multiplicity *;
-    }
-}
-
-relation RootDomainObjectProjectSubmissionLog {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    ProjectSubmissionLog playsRole projectSubmissionLogs {
-        multiplicity *;
-    }
-}
-
 relation RootDomainObjectQualification {
     .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
     Qualification playsRole qualifications {
@@ -9112,13 +8629,6 @@ relation RootDomainObjectShift {
     }
 }
 
-relation RootDomainObjectShiftGroupingProperties {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    ShiftGroupingProperties playsRole shiftGroupingProperties {
-        multiplicity *;
-    }
-}
-
 relation RootDomainObjectShiftEnrolment {
     .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
     ShiftEnrolment playsRole shiftEnrolments {
@@ -9165,13 +8675,6 @@ relation RootDomainObjectStudentNumber {
 relation RootDomainObjectStudentCurricularPlan {
     .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
     StudentCurricularPlan playsRole studentCurricularPlans {
-        multiplicity *;
-    }
-}
-
-relation RootDomainObjectStudentGroup {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    StudentGroup playsRole studentGroups {
         multiplicity *;
     }
 }
@@ -9259,13 +8762,6 @@ relation RootDomainObjectWeeklyWorkLoad {
     }
 }
 
-relation RootDomainObjectWrittenEvaluationEnrolment {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    WrittenEvaluationEnrolment playsRole writtenEvaluationEnrolments {
-        multiplicity *;
-    }
-}
-
 relation SchoolClassExecutionDegree {
     SchoolClass playsRole schoolClasses {
         multiplicity *;
@@ -9285,13 +8781,6 @@ relation ScientificCommissionRootDomainObject {
         multiplicity *;
     }
     .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-}
-
-relation SendProposal {
-    ExportGrouping playsRole groupingSenderExecutionCourse {
-        multiplicity *;
-    }
-    Course playsRole senderExecutionCourse;
 }
 
 relation SeniorStudent {
@@ -9334,13 +8823,6 @@ relation ServiceAgreementTemplatePostingRule {
     }
 }
 
-relation ShiftEnrolmentAttends {
-    Attendance playsRole attends;
-    ShiftEnrolment playsRole shiftEnrolments {
-        multiplicity *;
-    }
-}
-
 relation ShiftEnrolmentShift {
     Shift playsRole shift;
     ShiftEnrolment playsRole shiftEnrolments {
@@ -9348,32 +8830,11 @@ relation ShiftEnrolmentShift {
     }
 }
 
-relation ShiftGroupingPropertiesShift {
-	Shift playsRole shift;
-	ShiftGroupingProperties playsRole shiftGroupingProperties;
-}
-
-relation ShiftGroupingPropertiesGrouping {
-	Grouping playsRole grouping;
-	ShiftGroupingProperties playsRole shiftGroupingProperties {
-		multiplicity *;
-	}
-}
-
 relation ShiftSchoolClass {
     SchoolClass playsRole associatedClasses {
         multiplicity *;
     }
     Shift playsRole associatedShifts {
-        multiplicity *;
-    }
-}
-
-relation ShiftAttends {
-    Shift playsRole shifts {
-        multiplicity *;
-    }
-    Attendance playsRole attends {
         multiplicity *;
     }
 }
@@ -9505,29 +8966,6 @@ relation RegistrationExternalEnrolment {
     }
 }
 
-relation StudentGroup {
-    StudentGroup playsRole associatedStudentGroups {
-        multiplicity *;
-    }
-    Shift playsRole shift;
-}
-
-relation StudentGroupAttend {
-    Attendance playsRole attends {
-        multiplicity *;
-    }
-    StudentGroup playsRole studentGroups {
-        multiplicity *;
-    }
-}
-
-relation StudentGroupBelongsToGrouping {
-    StudentGroup playsRole studentGroups {
-        multiplicity *;
-    }
-    Grouping playsRole grouping;
-}
-
 relation StudentPaymentCode {
     Person playsRole person;
     accounting.PaymentCode playsRole paymentCodes {
@@ -9587,13 +9025,6 @@ relation PersonProfessorship {
         multiplicity *;
     }
     Person playsRole person;
-}
-
-relation UserCourseTeacher {
-    CourseTeacher playsRole courseTeacher {
-        multiplicity *;
-    }
-    .org.fenixedu.bennu.core.domain.User playsRole user;
 }
 
 relation ThesisDegree {
@@ -9704,54 +9135,6 @@ relation UserPrivateKeyUser {
     .org.fenixedu.bennu.core.domain.User playsRole;
 }
 
-relation WrittenEvaluationContext {
-    WrittenEvaluation playsRole associatedWrittenEvaluations {
-        multiplicity *;
-    }
-    degreeStructure.Context playsRole associatedContexts {
-        multiplicity *;
-    }
-}
-
-relation WrittenEvaluationCurricularCourseScope {
-    WrittenEvaluation playsRole associatedWrittenEvaluations {
-        multiplicity *;
-    }
-    CurricularCourseScope playsRole associatedCurricularCourseScope {
-        multiplicity *;
-    }
-}
-
-relation WrittenEvaluationEnrolmentExam {
-    WrittenEvaluationEnrolment playsRole writtenEvaluationEnrolments {
-        multiplicity *;
-    }
-    WrittenEvaluation playsRole writtenEvaluation;
-}
-
-relation WrittenEvaluationEnrolmentRoom {
-    WrittenEvaluationEnrolment playsRole writtenEvaluationEnrolments {
-        multiplicity *;
-    }
-    .org.fenixedu.spaces.domain.Space playsRole room;
-}
-
-relation WrittenEvaluationEnrolmentStudent {
-    WrittenEvaluationEnrolment playsRole writtenEvaluationEnrolments {
-        multiplicity *;
-    }
-    student.Registration playsRole student;
-}
-
-relation WrittenEvaluationWrittenEvaluationSpaceOccupation {
-    WrittenEvaluation playsRole writtenEvaluations {
-        multiplicity *;
-    }
-    space.WrittenEvaluationSpaceOccupation playsRole writtenEvaluationSpaceOccupations {
-        multiplicity *;
-    }
-}
-
 relation OccupationPeriodLesson {
     OccupationPeriod playsRole period;
     Lesson playsRole lessons {
@@ -9771,13 +9154,6 @@ relation LessonInstanceLesson {
     LessonInstance playsRole lessonInstances {
         multiplicity *;
     }
-}
-
-relation LessonInstanceLessonInstanceSpaceOccupations {
-    LessonInstance playsRole lessonInstances {
-        multiplicity *;
-    }
-    space.LessonInstanceSpaceOccupation playsRole lessonInstanceSpaceOccupation;
 }
 
 relation CompetenceCourseInformationChangeRequester {
@@ -9825,36 +9201,6 @@ relation CompetenceCourseInformationChangeRequestRootDomainObject {
 relation CompetenceCourseInformationExecutionPeriod {
     ExecutionSemester playsRole executionPeriod;
     degreeStructure.CompetenceCourseInformation playsRole competenceCourseInformations {
-        multiplicity *;
-    }
-}
-
-relation CourseLoadRootDomainObject {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    CourseLoad playsRole courseLoads {
-        multiplicity *;
-    }
-}
-
-relation CourseLoadExecutionCourse {
-    Course playsRole executionCourse;
-    CourseLoad playsRole courseLoads {
-        multiplicity *;
-    }
-}
-
-relation CourseLoadShift {
-    Shift playsRole shifts {
-        multiplicity *;
-    }
-    CourseLoad playsRole courseLoads {
-        multiplicity *;
-    }
-}
-
-relation CourseLoadLessonInstance {
-    CourseLoad playsRole courseLoad;
-    LessonInstance playsRole lessonInstances {
         multiplicity *;
     }
 }
@@ -11146,11 +10492,6 @@ relation ExternalPhdProgramPhdProgramFocusArea {
     }
 }
 
-relation ProfessorshipPremissionsProfessorship {
-	CourseTeacher playsRole professorship;
-	ProfessorshipPermissions playsRole permissions;
-}
-
 relation PremissionsProfessorshipRootDomainObject {
 	.org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
 	ProfessorshipPermissions playsRole professorshipPermissions {
@@ -11812,15 +11153,6 @@ relation PersistentTeachersWithIncompleteEvaluationWorkGroupDegreeCurricularPlan
     }
 }
 
-relation PersistentGroupingGroupGrouping {
-    public accessControl.PersistentGroupingGroup playsRole groupingGroup {
-        multiplicity 0..1;
-    }
-    public Grouping playsRole grouping {
-        multiplicity 1..1;
-    }
-}
-
 relation PersistentStudentsConcludedInExecutionYearGroupDegrees {
     public accessControl.PersistentStudentsConcludedInExecutionYearGroup playsRole studentsConcludedInExecutionYearGroup {
         multiplicity *;
@@ -11835,24 +11167,6 @@ relation PersistentStudentsConcludedInExecutionYearExecutionYear {
         multiplicity *;
     }
     public ExecutionYear playsRole conclusionYear {
-        multiplicity 1..1;
-    }
-}
-
-relation StudentGroupStudentGroupGroup {
-    public accessControl.PersistentStudentGroupGroup playsRole studentGroupGroup {
-        multiplicity 0..1;
-    }
-    public StudentGroup playsRole studentGroup {
-        multiplicity 1..1;
-    }
-}
-
-relation PersistentProjectDepartmentGroupProject {
-    public accessControl.PersistentProjectDepartmentGroup playsRole projectDepartmentGroup {
-        multiplicity 0..1;
-    }
-    public Project playsRole project {
         multiplicity 1..1;
     }
 }

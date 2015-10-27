@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
@@ -40,12 +41,33 @@ import org.fenixedu.academic.domain.StudentGroup;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.service.services.manager.CreateExecutionCoursesForDegreeCurricularPlansAndExecutionPeriod;
-import org.fenixedu.academic.service.utils.ExecutionCourseUtils;
 
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.FenixFramework;
 
 public class SeperateExecutionCourse {
+    @FunctionalInterface
+    public static interface SubDomainSeparationHandler {
+        public void separate(ExecutionCourse originExecutionCourse, ExecutionCourse destinationExecutionCourse,
+                final List<Shift> shiftsToTransfer, final List<CurricularCourse> curricularCourseToTransfer);
+    }
+
+    private static final ConcurrentLinkedQueue<SubDomainSeparationHandler> handlers = new ConcurrentLinkedQueue<>();
+
+    public static void registerSeparationHandler(SubDomainSeparationHandler handler) {
+        handlers.add(handler);
+    }
+
+    static {
+        registerSeparationHandler((origin, destination, shifts, curriculars) -> destination
+                .copyBibliographicReferencesFrom(origin));
+        registerSeparationHandler((origin, destination, shifts, curriculars) -> destination.copyEvaluationMethodFrom(origin));
+        registerSeparationHandler(SeperateExecutionCourse::transferCurricularCourses);
+        registerSeparationHandler(SeperateExecutionCourse::transferAttends);
+        registerSeparationHandler(SeperateExecutionCourse::transferShifts);
+        registerSeparationHandler(SeperateExecutionCourse::fixStudentShiftEnrolements);
+        registerSeparationHandler(SeperateExecutionCourse::associateGroupings);
+    }
 
     @Atomic
     public static ExecutionCourse run(final ExecutionCourse originExecutionCourse, ExecutionCourse destinationExecutionCourse,
@@ -61,30 +83,22 @@ public class SeperateExecutionCourse {
 
         if (destinationExecutionCourse == null) {
             destinationExecutionCourse = createNewExecutionCourse(originExecutionCourse);
-            ExecutionCourseUtils.copyBibliographicReference(originExecutionCourse, destinationExecutionCourse);
-            ExecutionCourseUtils.copyEvaluationMethod(originExecutionCourse, destinationExecutionCourse);
         }
 
         if (destinationExecutionCourse.equals(originExecutionCourse)) {
             throw new DomainException("error.selection.sameSourceDestinationCourse");
         }
 
-        transferCurricularCourses(originExecutionCourse, destinationExecutionCourse, curricularCourseToTransfer);
-
-        transferAttends(originExecutionCourse, destinationExecutionCourse);
-
-        transferShifts(originExecutionCourse, destinationExecutionCourse, shiftsToTransfer);
-
-        fixStudentShiftEnrolements(originExecutionCourse);
-        fixStudentShiftEnrolements(destinationExecutionCourse);
-
-        associateGroupings(originExecutionCourse, destinationExecutionCourse);
+        for (SubDomainSeparationHandler handler : handlers) {
+            handler.separate(originExecutionCourse, destinationExecutionCourse, shiftsToTransfer, curricularCourseToTransfer);
+        }
 
         return destinationExecutionCourse;
     }
 
     private static void transferCurricularCourses(final ExecutionCourse originExecutionCourse,
-            final ExecutionCourse destinationExecutionCourse, final List<CurricularCourse> curricularCoursesToTransfer) {
+            final ExecutionCourse destinationExecutionCourse, final List<Shift> shiftsToTransfer,
+            final List<CurricularCourse> curricularCoursesToTransfer) {
         // The last curricular course must not be removed.
         if (originExecutionCourse.getAssociatedCurricularCoursesSet().size() - curricularCoursesToTransfer.size() < 1) {
             throw new DomainException("error.manager.executionCourseManagement.lastCurricularCourse");
@@ -97,7 +111,8 @@ public class SeperateExecutionCourse {
     }
 
     private static void transferAttends(final ExecutionCourse originExecutionCourse,
-            final ExecutionCourse destinationExecutionCourse) {
+            final ExecutionCourse destinationExecutionCourse, final List<Shift> shiftsToTransfer,
+            final List<CurricularCourse> curricularCoursesToTransfer) {
         final Collection<CurricularCourse> curricularCourses = destinationExecutionCourse.getAssociatedCurricularCoursesSet();
         List<Attends> allAttends = new ArrayList<>(originExecutionCourse.getAttendsSet());
         for (Attends attends : allAttends) {
@@ -109,7 +124,8 @@ public class SeperateExecutionCourse {
     }
 
     private static void transferShifts(final ExecutionCourse originExecutionCourse,
-            final ExecutionCourse destinationExecutionCourse, final List<Shift> shiftsToTransfer) {
+            final ExecutionCourse destinationExecutionCourse, final List<Shift> shiftsToTransfer,
+            final List<CurricularCourse> curricularCoursesToTransfer) {
         for (final Shift shift : shiftsToTransfer) {
 
             Collection<CourseLoad> courseLoads = shift.getCourseLoadsSet();
@@ -129,10 +145,19 @@ public class SeperateExecutionCourse {
         }
     }
 
-    private static void fixStudentShiftEnrolements(final ExecutionCourse executionCourse) {
-        for (final Shift shift : executionCourse.getAssociatedShifts()) {
+    private static void fixStudentShiftEnrolements(final ExecutionCourse originExecutionCourse,
+            final ExecutionCourse destinationExecutionCourse, final List<Shift> shiftsToTransfer,
+            final List<CurricularCourse> curricularCoursesToTransfer) {
+        for (final Shift shift : originExecutionCourse.getAssociatedShifts()) {
             for (Registration registration : shift.getStudentsSet()) {
-                if (!registration.attends(executionCourse)) {
+                if (!registration.attends(originExecutionCourse)) {
+                    shift.removeStudents(registration);
+                }
+            }
+        }
+        for (final Shift shift : destinationExecutionCourse.getAssociatedShifts()) {
+            for (Registration registration : shift.getStudentsSet()) {
+                if (!registration.attends(destinationExecutionCourse)) {
                     shift.removeStudents(registration);
                 }
             }
@@ -140,7 +165,8 @@ public class SeperateExecutionCourse {
     }
 
     private static void associateGroupings(final ExecutionCourse originExecutionCourse,
-            final ExecutionCourse destinationExecutionCourse) {
+            final ExecutionCourse destinationExecutionCourse, final List<Shift> shiftsToTransfer,
+            final List<CurricularCourse> curricularCoursesToTransfer) {
         for (final Grouping grouping : originExecutionCourse.getGroupings()) {
             for (final StudentGroup studentGroup : grouping.getStudentGroupsSet()) {
                 studentGroup.getAttendsSet().clear();
@@ -157,11 +183,6 @@ public class SeperateExecutionCourse {
 
         final ExecutionCourse destinationExecutionCourse =
                 new ExecutionCourse(originExecutionCourse.getNome(), sigla, originExecutionCourse.getExecutionPeriod(), null);
-
-        for (CourseLoad courseLoad : originExecutionCourse.getCourseLoadsSet()) {
-            new CourseLoad(destinationExecutionCourse, courseLoad.getType(), courseLoad.getUnitQuantity(),
-                    courseLoad.getTotalQuantity());
-        }
 
         for (final Professorship professorship : originExecutionCourse.getProfessorshipsSet()) {
             final Professorship newProfessorship = new Professorship();

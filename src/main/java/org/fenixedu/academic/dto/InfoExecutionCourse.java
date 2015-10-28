@@ -36,11 +36,9 @@ import org.fenixedu.academic.domain.Exam;
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Grouping;
-import org.fenixedu.academic.domain.NonAffiliatedTeacher;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.ShiftType;
 import org.fenixedu.academic.domain.time.calendarStructure.AcademicInterval;
-import org.fenixedu.academic.dto.teacher.InfoNonAffiliatedTeacher;
 
 /**
  * @author tfc130
@@ -163,21 +161,11 @@ public class InfoExecutionCourse extends InfoObject {
         return result;
     }
 
-    public List<InfoNonAffiliatedTeacher> getNonAffiliatedTeachers() {
-        final List<InfoNonAffiliatedTeacher> result = new ArrayList<InfoNonAffiliatedTeacher>();
-
-        for (final NonAffiliatedTeacher nonAffiliatedTeacher : getExecutionCourse().getNonAffiliatedTeachersSet()) {
-            result.add(InfoNonAffiliatedTeacher.newInfoFromDomain(nonAffiliatedTeacher));
-        }
-
-        return result;
-    }
-
     public List<InfoEvaluation> getAssociatedInfoEvaluations() {
         final List<InfoEvaluation> result = new ArrayList<InfoEvaluation>();
 
-        for (final Evaluation nonAffiliatedTeacher : getExecutionCourse().getAssociatedEvaluationsSet()) {
-            result.add(InfoEvaluation.newInfoFromDomain(nonAffiliatedTeacher));
+        for (final Evaluation evaluation : getExecutionCourse().getAssociatedEvaluationsSet()) {
+            result.add(InfoEvaluation.newInfoFromDomain(evaluation));
         }
 
         return result;

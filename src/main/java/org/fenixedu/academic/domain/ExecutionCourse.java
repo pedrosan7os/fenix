@@ -411,7 +411,6 @@ public class ExecutionCourse extends ExecutionCourse_Base {
 
         removeFinalEvaluations();
         getAssociatedCurricularCoursesSet().clear();
-        getNonAffiliatedTeachersSet().clear();
         setExecutionPeriod(null);
         setRootDomainObject(null);
         super.deleteDomainObject();
@@ -1151,7 +1150,7 @@ public class ExecutionCourse extends ExecutionCourse_Base {
                 constructSortedSet(getAssociatedShifts(), Shift.SHIFT_COMPARATOR_BY_TYPE_AND_ORDERED_LESSONS);
         int counter = 0;
         for (final Shift shift : shifts) {
-            if(shift.isCustomName()){
+            if (shift.isCustomName()) {
                 continue;
             }
             final String name = constructShiftName(shift, ++counter);

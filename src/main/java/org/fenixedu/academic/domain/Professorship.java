@@ -100,10 +100,6 @@ public class Professorship extends Professorship_Base {
         if (!getAssociatedSummariesSet().isEmpty()) {
             blockers.add(BundleUtil.getString(Bundle.APPLICATION, "error.remove.professorship.hasAnyAssociatedSummaries"));
         }
-        if (!getAssociatedShiftProfessorshipSet().isEmpty()) {
-            blockers.add(BundleUtil
-                    .getString(Bundle.APPLICATION, "error.remove.professorship.hasAnyAssociatedShiftProfessorship"));
-        }
     }
 
     public boolean isDeletable() {

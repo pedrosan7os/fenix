@@ -325,10 +325,6 @@ public class MergeExecutionCourses {
                     .getAssociatedSummariesSet().iterator().next())) {
                 ;
             }
-            for (; !professorship.getAssociatedShiftProfessorshipSet().isEmpty(); otherProfessorship
-                    .addAssociatedShiftProfessorship(professorship.getAssociatedShiftProfessorshipSet().iterator().next())) {
-                ;
-            }
         }
     }
 

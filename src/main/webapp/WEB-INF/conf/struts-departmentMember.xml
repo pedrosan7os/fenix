@@ -30,15 +30,6 @@
                   <form-property type="java.lang.String" name="executionPeriodId"></form-property>
                   <form-property type="java.lang.String" name="teacherId"></form-property>
             </form-bean>
-            <form-bean dynamic="true" type="org.apache.struts.validator.DynaValidatorForm" name="teacherExecutionCourseShiftProfessorshipForm">
-                  <form-property type="java.lang.String" name="teacherId"></form-property>
-                  <form-property type="java.lang.Integer" name="executionCourseId"></form-property>
-                  <form-property type="java.lang.Integer" name="executionPeriodId"></form-property>
-                  <form-property type="java.lang.String" name="professorshipID"></form-property>
-                  <form-property type="java.util.HashMap" name="teacherPercentageMap"></form-property>
-                  <form-property initial="0" type="java.lang.Integer" name="page"></form-property>
-                  <form-property type="java.lang.String" name="method"></form-property>
-            </form-bean>
             <form-bean dynamic="true" type="org.apache.struts.validator.DynaValidatorForm" name="supportLessonForm">
                   <form-property initial="0" type="java.lang.Integer" name="page"></form-property>
                   <form-property type="java.lang.String" name="method"></form-property>

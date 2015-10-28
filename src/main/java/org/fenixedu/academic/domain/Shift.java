@@ -154,9 +154,6 @@ public class Shift extends Shift_Base {
         for (; !getAssociatedLessonsSet().isEmpty(); getAssociatedLessonsSet().iterator().next().delete()) {
             ;
         }
-        for (; !getAssociatedShiftProfessorshipSet().isEmpty(); getAssociatedShiftProfessorshipSet().iterator().next().delete()) {
-            ;
-        }
 
         getAssociatedClassesSet().clear();
         getCourseLoadsSet().clear();

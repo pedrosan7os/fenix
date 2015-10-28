@@ -1175,10 +1175,6 @@ valueType org.fenixedu.academic.domain.accounting.EventTypes as EventTypes {
     	Integer capacity;
     }
 
-    class ShiftProfessorship  {
-        Double percentage;
-    }
-
     class StudentCurricularPlan  {
         Double classification;
         Integer completedCourses;
@@ -7939,13 +7935,6 @@ relation PrecedentDegreeInformationStudentCurricularPlan {
     }
 }
 
-relation ProfessorshipShiftProfessorship {
-    Professorship playsRole professorship;
-    ShiftProfessorship playsRole associatedShiftProfessorship {
-        multiplicity *;
-    }
-}
-
 relation ProfessorshipSummary {
     Summary playsRole associatedSummaries {
         multiplicity *;
@@ -9200,13 +9189,6 @@ relation RootDomainObjectShiftEnrolment {
     }
 }
 
-relation RootDomainObjectShiftProfessorship {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    ShiftProfessorship playsRole shiftProfessorships {
-        multiplicity *;
-    }
-}
-
 relation RootDomainObjectSibsPaymentFile {
     .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
     gratuity.masterDegree.SibsPaymentFile playsRole sibsPaymentFiles {
@@ -9453,13 +9435,6 @@ relation ShiftSchoolClass {
         multiplicity *;
     }
     Shift playsRole associatedShifts {
-        multiplicity *;
-    }
-}
-
-relation ShiftShiftProfessorship {
-    Shift playsRole shift;
-    ShiftProfessorship playsRole associatedShiftProfessorship {
         multiplicity *;
     }
 }

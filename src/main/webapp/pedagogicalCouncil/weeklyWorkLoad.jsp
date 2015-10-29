@@ -89,7 +89,7 @@
 <bean:define id="autonomousStudy_tooltip" type="java.lang.String"><bean:message key="title.weekly.work.load.autonomousStudy.tooltip"/></bean:define>
 <bean:define id="other_tooltip" type="java.lang.String"><bean:message key="title.weekly.work.load.other.tooltip"/></bean:define>
 
-<logic:notPresent name="selectedExecutionCourse">
+<logic:notPresent name="weeklyWorkLoadView">
 	<logic:present name="curricularYearWeeklyWorkLoadView">
 		<table class="tstyle3 tpadding01">
 			<tr>
@@ -118,13 +118,12 @@
 					</th>
 				</logic:iterate>
 			</tr>
-			<logic:iterate id="executionCourse" name="curricularYearWeeklyWorkLoadView" property="executionCourses">
-				<logic:present name="executionCourse" property="weeklyWorkLoadView">
+			<logic:iterate id="weeklyWorkLoadView" name="curricularYearWeeklyWorkLoadView" property="weeklyWorkLoadView">
+				<logic:present name="weeklyWorkLoadView">
 					<tr>
 						<td class="courses">
-							<bean:write name="executionCourse" property="nome"/>
+							<bean:write name="weeklyWorkLoadView" property="executionCourse.nome"/>
 						</td>
-						<bean:define id="weeklyWorkLoadView" name="executionCourse" property="weeklyWorkLoadView"/>
 						<logic:iterate id="value" name="weeklyWorkLoadView" property="totalAverage">
 							<td>
 								<str:strip delimiter="."><str:getPrechomp delimiter="."><bean:write name="value"/></str:getPrechomp></str:strip>
@@ -149,8 +148,7 @@
 
 
 
-<logic:present name="selectedExecutionCourse">
-	<bean:define id="weeklyWorkLoadView" name="selectedExecutionCourse" property="weeklyWorkLoadView"/>
+<logic:present name="weeklyWorkLoadView">
 	<table class="tstyle3 tpadding01">
 		<tr>
 			<th rowspan="2">

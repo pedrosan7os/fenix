@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +32,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
+import org.fenixedu.academic.domain.Attends;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.CurricularYear;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
@@ -40,6 +42,7 @@ import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.OccupationPeriod;
 import org.fenixedu.academic.domain.exceptions.DomainException;
+import org.fenixedu.academic.domain.student.WeeklyWorkLoad;
 import org.fenixedu.academic.service.services.exceptions.FenixServiceException;
 import org.fenixedu.academic.ui.struts.action.base.FenixDispatchAction;
 import org.fenixedu.academic.util.PeriodState;
@@ -131,6 +134,228 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
         public Set<ExecutionCourse> getExecutionCourses() {
             return executionCourses;
         }
+
+        public Set<WeeklyWorkLoadView> getWeeklyWorkLoadView() {
+            return executionCourses.stream().map(c -> createWeeklyWorkLoadView(c)).collect(Collectors.toSet());
+        }
+    }
+
+    public static class WeeklyWorkLoadView {
+        final ExecutionCourse executionCourse;
+
+        final Interval executionPeriodInterval;
+
+        final int numberOfWeeks;
+
+        final Interval[] intervals;
+
+        final int[] numberResponses;
+
+        final int[] contactSum;
+
+        final int[] autonomousStudySum;
+
+        final int[] otherSum;
+
+        final int[] totalSum;
+
+        public WeeklyWorkLoadView(ExecutionCourse executionCourse, final Interval executionPeriodInterval) {
+            this.executionCourse = executionCourse;
+            this.executionPeriodInterval = executionPeriodInterval;
+            final Period period = executionPeriodInterval.toPeriod();
+            int extraWeek = period.getDays() > 0 ? 1 : 0;
+            numberOfWeeks = (period.getYears() * 12 + period.getMonths()) * 4 + period.getWeeks() + extraWeek + 1;
+            intervals = new Interval[numberOfWeeks];
+            numberResponses = new int[numberOfWeeks];
+            contactSum = new int[numberOfWeeks];
+            autonomousStudySum = new int[numberOfWeeks];
+            otherSum = new int[numberOfWeeks];
+            totalSum = new int[numberOfWeeks];
+            for (int i = 0; i < numberOfWeeks; i++) {
+                final DateTime start = executionPeriodInterval.getStart().plusWeeks(i);
+                final DateTime end = start.plusWeeks(1);
+                intervals[i] = new Interval(start, end);
+            }
+        }
+
+        public void add(final Attends attends) {
+            for (final WeeklyWorkLoad weeklyWorkLoad : attends.getWeeklyWorkLoadsSet()) {
+                final int weekIndex = weeklyWorkLoad.getWeekOffset();
+                if (consistentAnswers(attends, weekIndex)) {
+                    numberResponses[weekIndex]++;
+
+                    final Integer contact = weeklyWorkLoad.getContact();
+                    contactSum[weekIndex] += contact != null ? contact.intValue() : 0;
+
+                    final Integer autounomousStudy = weeklyWorkLoad.getAutonomousStudy();
+                    autonomousStudySum[weekIndex] += autounomousStudy != null ? autounomousStudy.intValue() : 0;
+
+                    final Integer other = weeklyWorkLoad.getOther();
+                    otherSum[weekIndex] += other != null ? other.intValue() : 0;
+
+                    totalSum[weekIndex] = contactSum[weekIndex] + autonomousStudySum[weekIndex] + otherSum[weekIndex];
+                }
+            }
+        }
+
+        private boolean consistentAnswers(final Attends attends, final int weekIndex) {
+            int weeklyTotal = 0;
+            for (final Attends someAttends : attends.getRegistration().getAssociatedAttendsSet()) {
+                for (final WeeklyWorkLoad weeklyWorkLoad : someAttends.getWeeklyWorkLoadsSet()) {
+                    if (weeklyWorkLoad.getWeekOffset().intValue() == weekIndex) {
+                        weeklyTotal += weeklyWorkLoad.getTotal();
+                    }
+                }
+            }
+            return weeklyTotal <= 140;
+        }
+
+        public Interval[] getIntervals() {
+            return intervals;
+        }
+
+        public Interval getExecutionPeriodInterval() {
+            return executionPeriodInterval;
+        }
+
+        public int[] getContactSum() {
+            return contactSum;
+        }
+
+        public int[] getAutonomousStudySum() {
+            return autonomousStudySum;
+        }
+
+        public int[] getOtherSum() {
+            return otherSum;
+        }
+
+        public int[] getNumberResponses() {
+            return numberResponses;
+        }
+
+        public double[] getContactAverage() {
+            return average(getContactSum(), getNumberResponses());
+        }
+
+        public double[] getAutonomousStudyAverage() {
+            return average(getAutonomousStudySum(), getNumberResponses());
+        }
+
+        public double[] getOtherAverage() {
+            return average(getOtherSum(), getNumberResponses());
+        }
+
+        public double[] getTotalAverage() {
+            final double[] valuesAverage = new double[numberOfWeeks];
+            for (int i = 0; i < numberOfWeeks; i++) {
+                valuesAverage[i] =
+                        Math.round((0.0 + getContactSum()[i] + getAutonomousStudySum()[i] + getOtherSum()[i])
+                                / getNumberResponses()[i]);
+            }
+            return valuesAverage;
+        }
+
+        private double[] average(final int[] values, final int[] divisor) {
+            final double[] valuesAverage = new double[numberOfWeeks];
+            for (int i = 0; i < numberOfWeeks; i++) {
+                valuesAverage[i] = Math.round((0.0 + values[i]) / divisor[i]);
+            }
+            return valuesAverage;
+        }
+
+        private double add(final double[] values) {
+            double total = 0;
+            for (double value : values) {
+                total += value;
+            }
+            return total;
+        }
+
+        public double getContactAverageTotal() {
+            return add(getContactAverage());
+        }
+
+        public double getAutonomousStudyAverageTotal() {
+            return add(getAutonomousStudyAverage());
+        }
+
+        public double getOtherAverageTotal() {
+            return add(getOtherAverage());
+        }
+
+        public double getTotalAverageTotal() {
+            return add(getTotalAverage());
+        }
+
+        public int getNumberResponsesTotal() {
+            int total = 0;
+            for (int i = 0; i < getNumberResponses().length; i++) {
+                total += getNumberResponses()[i];
+            }
+            return total;
+        }
+
+        private int getNumberWeeksForAverageCalculation() {
+            if (!executionCourse.getAttendsSet().isEmpty()) {
+                final Attends attends = findAttendsWithEnrolment(executionCourse);
+                if (attends != null) {
+                    int currentWeekOffset = attends.calculateCurrentWeekOffset();
+                    if (currentWeekOffset > 0 && currentWeekOffset < numberOfWeeks) {
+                        return currentWeekOffset;
+                    }
+                }
+            }
+            return numberOfWeeks;
+        }
+
+        public double getContactAverageTotalAverage() {
+            final int numberOfWeeks = getNumberWeeksForAverageCalculation();
+            return numberOfWeeks > 0 ? Math.round(getContactAverageTotal() / numberOfWeeks) : 0;
+        }
+
+        public double getAutonomousStudyAverageTotalAverage() {
+            final int numberOfWeeks = getNumberWeeksForAverageCalculation();
+            return numberOfWeeks > 0 ? Math.round(getAutonomousStudyAverageTotal() / getNumberWeeksForAverageCalculation()) : 0;
+        }
+
+        public double getOtherAverageTotalAverage() {
+            final int numberOfWeeks = getNumberWeeksForAverageCalculation();
+            return numberOfWeeks > 0 ? Math.round(getOtherAverageTotal() / getNumberWeeksForAverageCalculation()) : 0;
+        }
+
+        public double getTotalAverageTotalAverage() {
+            final int numberOfWeeks = getNumberWeeksForAverageCalculation();
+            return numberOfWeeks > 0 ? Math.round(getTotalAverageTotal() / getNumberWeeksForAverageCalculation()) : 0;
+        }
+
+        public double getNumberResponsesTotalAverage() {
+            final int numberOfWeeks = getNumberWeeksForAverageCalculation();
+            return numberOfWeeks > 0 ? Math.round((0.0 + getNumberResponsesTotal()) / getNumberWeeksForAverageCalculation()) : 0;
+        }
+    }
+
+    public static WeeklyWorkLoadView createWeeklyWorkLoadView(ExecutionCourse executionCourse) {
+        final Attends attends = findAttendsWithEnrolment(executionCourse);
+        if (attends != null) {
+            final Interval interval = attends.getWeeklyWorkLoadInterval();
+            final WeeklyWorkLoadView weeklyWorkLoadView = new WeeklyWorkLoadView(executionCourse, interval);
+            for (final Attends attend : executionCourse.getAttendsSet()) {
+                weeklyWorkLoadView.add(attend);
+            }
+            return weeklyWorkLoadView;
+        } else {
+            return null;
+        }
+    }
+
+    private static Attends findAttendsWithEnrolment(ExecutionCourse executionCourse) {
+        for (final Attends attends : executionCourse.getAttendsSet()) {
+            if (attends.getEnrolment() != null) {
+                return attends;
+            }
+        }
+        return null;
     }
 
     @EntryPoint
@@ -164,7 +389,7 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
 
         final ExecutionCourse selectedExecutionCourse =
                 setDomainObjectInRequest(dynaActionForm, request, "executionCourseID", "executionCourse");
-        request.setAttribute("selectedExecutionCourse", selectedExecutionCourse);
+        request.setAttribute("weeklyWorkLoadView", createWeeklyWorkLoadView(selectedExecutionCourse));
 
         final String curricularYearID = getCurricularYearID(dynaActionForm);
         final CurricularYear selecctedCurricularYear =

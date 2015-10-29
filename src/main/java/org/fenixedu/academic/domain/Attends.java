@@ -260,33 +260,6 @@ public class Attends extends Attends_Base {
         return orderedMarks;
     }
 
-    public WeeklyWorkLoad createWeeklyWorkLoad(final Integer contact, final Integer autonomousStudy, final Integer other) {
-
-        if (contact.intValue() < 0 || autonomousStudy.intValue() < 0 || other.intValue() < 0) {
-            throw new DomainException("weekly.work.load.creation.invalid.data");
-        }
-
-        if (getEnrolment() == null) {
-            throw new DomainException("weekly.work.load.creation.requires.enrolment");
-        }
-
-        final int currentWeekOffset = calculateCurrentWeekOffset();
-        if (currentWeekOffset < 1
-                || new YearMonthDay(getEndOfExamsPeriod()).plusDays(Lesson.NUMBER_OF_DAYS_IN_WEEK).isBefore(new YearMonthDay())) {
-            throw new DomainException("outside.weekly.work.load.response.period");
-        }
-
-        final int previousWeekOffset = currentWeekOffset - 1;
-
-        final WeeklyWorkLoad lastExistentWeeklyWorkLoad =
-                getWeeklyWorkLoadsSet().isEmpty() ? null : Collections.max(getWeeklyWorkLoadsSet());
-        if (lastExistentWeeklyWorkLoad != null && lastExistentWeeklyWorkLoad.getWeekOffset().intValue() == previousWeekOffset) {
-            throw new DomainException("weekly.work.load.for.previous.week.already.exists");
-        }
-
-        return new WeeklyWorkLoad(this, Integer.valueOf(previousWeekOffset), contact, autonomousStudy, other);
-    }
-
     public Interval getWeeklyWorkLoadInterval() {
         final DateTime beginningOfSemester = new DateTime(getBegginingOfLessonPeriod());
         final DateTime firstMonday = beginningOfSemester.withField(DateTimeFieldType.dayOfWeek(), 1);

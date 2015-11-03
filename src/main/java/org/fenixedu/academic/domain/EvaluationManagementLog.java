@@ -24,7 +24,7 @@ public class EvaluationManagementLog extends EvaluationManagementLog_Base {
         super();
     }
 
-    public EvaluationManagementLog(ExecutionCourse executionCourse, String description) {
+    public EvaluationManagementLog(Course executionCourse, String description) {
         super();
         if (getExecutionCourse() == null) {
             setExecutionCourse(executionCourse);
@@ -32,11 +32,11 @@ public class EvaluationManagementLog extends EvaluationManagementLog_Base {
         setDescription(description);
     }
 
-    public static EvaluationManagementLog createEvaluationManagementLog(ExecutionCourse executionCourse, String description) {
+    public static EvaluationManagementLog createEvaluationManagementLog(Course executionCourse, String description) {
         return new EvaluationManagementLog(executionCourse, description);
     }
 
-    public static EvaluationManagementLog createLog(ExecutionCourse executionCourse, String bundle, String key, String... args) {
+    public static EvaluationManagementLog createLog(Course executionCourse, String bundle, String key, String... args) {
         final String label = generateLabelDescription(bundle, key, args);
         return createEvaluationManagementLog(executionCourse, label);
     }

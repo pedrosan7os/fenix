@@ -119,7 +119,7 @@ public class Lesson extends Lesson_Base {
 
         OccupationPeriod period = null;
         if (shift != null) {
-            final ExecutionCourse executionCourse = shift.getExecutionCourse();
+            final Course executionCourse = shift.getExecutionCourse();
             GenericPair<YearMonthDay, YearMonthDay> maxLessonsPeriod = executionCourse.getMaxLessonsPeriod();
             if (beginDate == null || beginDate.isBefore(maxLessonsPeriod.getLeft())) {
                 throw new DomainException("error.Lesson.invalid.begin.date");
@@ -299,7 +299,7 @@ public class Lesson extends Lesson_Base {
         return getPeriod() == null;
     }
 
-    public ExecutionCourse getExecutionCourse() {
+    public Course getExecutionCourse() {
         return getShift().getExecutionCourse();
     }
 
@@ -1225,7 +1225,7 @@ public class Lesson extends Lesson_Base {
     public String getOccurrenceWeeksAsString() {
         final SortedSet<Integer> weeks = new TreeSet<Integer>();
 
-        final ExecutionCourse executionCourse = getExecutionCourse();
+        final Course executionCourse = getExecutionCourse();
         final YearMonthDay firstPossibleLessonDay = executionCourse.getMaxLessonsPeriod().getLeft();
         final YearMonthDay lastPossibleLessonDay = executionCourse.getMaxLessonsPeriod().getRight();
         for (final Interval interval : getAllLessonIntervals()) {

@@ -20,8 +20,8 @@ package org.fenixedu.academic.service.services.student;
 
 import java.util.Set;
 
-import org.fenixedu.academic.domain.Attends;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Attendance;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.WrittenEvaluation;
 import org.fenixedu.academic.domain.student.Registration;
@@ -54,11 +54,11 @@ public class EnrolStudentInWrittenEvaluation {
         enrolmentAction(writtenEvaluation, registration);
     }
 
-    private Registration findCorrectRegistration(final Student student, final Set<ExecutionCourse> associatedExecutionCoursesSet) {
+    private Registration findCorrectRegistration(final Student student, final Set<Course> associatedExecutionCoursesSet) {
         for (final Registration registration : student.getRegistrationsSet()) {
             if (registration.isActive()) {
-                for (final Attends attends : registration.getAssociatedAttendsSet()) {
-                    final ExecutionCourse executionCourse = attends.getExecutionCourse();
+                for (final Attendance attends : registration.getAssociatedAttendsSet()) {
+                    final Course executionCourse = attends.getExecutionCourse();
                     if (associatedExecutionCoursesSet.contains(executionCourse)) {
                         return registration;
                     }

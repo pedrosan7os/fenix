@@ -29,10 +29,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.UriBuilder;
 
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.Attends.StudentAttendsStateType;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.Mark;
-import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.StudentGroup;
 import org.fenixedu.academic.domain.student.registrationStates.RegistrationState;
@@ -80,7 +80,7 @@ public class AttendsSearchController extends ExecutionCourseController {
     }
 
     @Override
-    Boolean getPermission(Professorship prof) {
+    Boolean getPermission(CourseTeacher prof) {
         return prof.getPermissions().getStudents();
     }
 
@@ -123,21 +123,21 @@ public class AttendsSearchController extends ExecutionCourseController {
 
     @RequestMapping(value = "/studentSpreadsheet", method = RequestMethod.POST)
     public void generateSpreadsheet(@RequestParam String filteredAttendsJson, HttpServletResponse response) throws IOException {
-        Set<Attends> attends = new TreeSet<Attends>(Attends.COMPARATOR_BY_STUDENT_NUMBER);
+        Set<Attendance> attends = new TreeSet<Attendance>(Attendance.COMPARATOR_BY_STUDENT_NUMBER);
         for (JsonElement elem : new JsonParser().parse(filteredAttendsJson).getAsJsonArray()) {
             JsonObject object = elem.getAsJsonObject();
-            attends.add((Attends) FenixFramework.getDomainObject(object.get("id").getAsString()));
+            attends.add((Attendance) FenixFramework.getDomainObject(object.get("id").getAsString()));
         }
 
         final SpreadsheetBuilder builder = new SpreadsheetBuilder();
         builder.addSheet(executionCourse.getPrettyAcronym().concat(BundleUtil.getString(Bundle.APPLICATION, "label.students")),
-                new SheetData<Attends>(attends) {
+                new SheetData<Attendance>(attends) {
                     protected String getLabel(final String key) {
                         return BundleUtil.getString(Bundle.APPLICATION, key);
                     }
 
                     @Override
-                    protected void makeLine(final Attends attends) {
+                    protected void makeLine(final Attendance attends) {
                         addCell(getLabel("label.username"), attends.getRegistration().getPerson().getUsername());
                         addCell(getLabel("label.number"), attends.getRegistration().getNumber());
                         addCell(getLabel("label.name"), attends.getRegistration().getPerson().getName());
@@ -198,17 +198,17 @@ public class AttendsSearchController extends ExecutionCourseController {
     @RequestMapping(value = "/studentEvaluationsSpreadsheet", method = RequestMethod.POST)
     public void generateSpreadsheet(HttpServletResponse response) throws IOException {
 
-        Set<Attends> attends = executionCourse.getAttendsSet();
+        Set<Attendance> attends = executionCourse.getAttendsSet();
 
         final SpreadsheetBuilder builder = new SpreadsheetBuilder();
         builder.addSheet(executionCourse.getPrettyAcronym().concat(BundleUtil.getString(Bundle.APPLICATION, "label.grades")),
-                new SheetData<Attends>(attends) {
+                new SheetData<Attendance>(attends) {
                     protected String getLabel(final String key) {
                         return BundleUtil.getString(Bundle.APPLICATION, key);
                     }
 
                     @Override
-                    protected void makeLine(final Attends attends) {
+                    protected void makeLine(final Attendance attends) {
                         addCell(getLabel("label.username"), attends.getRegistration().getPerson().getUsername());
                         addCell(getLabel("label.number"), attends.getRegistration().getNumber());
                         addCell(getLabel("label.name"), attends.getRegistration().getPerson().getPresentationName());
@@ -291,7 +291,7 @@ public class AttendsSearchController extends ExecutionCourseController {
 
         for (JsonElement elem : new JsonParser().parse(filteredAttendsJson).getAsJsonArray()) {
             JsonObject object = elem.getAsJsonObject();
-            users.add(((Attends) FenixFramework.getDomainObject(object.get("id").getAsString())).getRegistration().getPerson()
+            users.add(((Attendance) FenixFramework.getDomainObject(object.get("id").getAsString())).getRegistration().getPerson()
                     .getUser());
         }
 

@@ -21,25 +21,25 @@ package org.fenixedu.academic.dto.resourceAllocationManager;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.ShiftType;
 
 public class CourseLoadBean implements Serializable {
 
-    private ExecutionCourse executionCourseReference;
+    private Course executionCourseReference;
     private ShiftType type;
     private BigDecimal totalQuantity;
     private BigDecimal unitQuantity;
 
-    public CourseLoadBean(ExecutionCourse executionCourse) {
+    public CourseLoadBean(Course executionCourse) {
         setExecutionCourse(executionCourse);
     }
 
-    public ExecutionCourse getExecutionCourse() {
+    public Course getExecutionCourse() {
         return this.executionCourseReference;
     }
 
-    public void setExecutionCourse(ExecutionCourse executionCourse) {
+    public void setExecutionCourse(Course executionCourse) {
         this.executionCourseReference = executionCourse;
     }
 

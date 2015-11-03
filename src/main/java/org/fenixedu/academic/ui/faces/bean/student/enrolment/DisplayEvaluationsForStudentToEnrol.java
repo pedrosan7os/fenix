@@ -30,9 +30,9 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.ComparatorChain;
 import org.apache.commons.collections.comparators.ReverseComparator;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Evaluation;
 import org.fenixedu.academic.domain.Exam;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.WrittenTest;
 import org.fenixedu.academic.domain.exceptions.DomainException;
@@ -71,7 +71,7 @@ public class DisplayEvaluationsForStudentToEnrol extends FenixBackingBean {
     private List<Evaluation> notEnroledEvaluations;
     private List<Evaluation> enroledEvaluations;
     private List<Evaluation> evaluationsWithoutEnrolmentPeriod;
-    private Map<String, List<ExecutionCourse>> executionCourses;
+    private Map<String, List<Course>> executionCourses;
 
     public List<SelectItem> getExecutionPeriodsLabels() {
         if (this.executionPeriodsLabels == null) {
@@ -323,14 +323,14 @@ public class DisplayEvaluationsForStudentToEnrol extends FenixBackingBean {
         this.evaluationType = evaluationType;
     }
 
-    public Map<String, List<ExecutionCourse>> getExecutionCourses() {
+    public Map<String, List<Course>> getExecutionCourses() {
         if (this.executionCourses == null) {
-            this.executionCourses = new HashMap<String, List<ExecutionCourse>>();
+            this.executionCourses = new HashMap<String, List<Course>>();
         }
         return this.executionCourses;
     }
 
-    public void setExecutionCourses(Map<String, List<ExecutionCourse>> executionCourses) {
+    public void setExecutionCourses(Map<String, List<Course>> executionCourses) {
         this.executionCourses = executionCourses;
     }
 }

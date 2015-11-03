@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.FrequencyType;
 import org.fenixedu.academic.domain.WrittenEvaluation;
 import org.fenixedu.academic.domain.exceptions.DomainException;
@@ -160,7 +160,7 @@ public class WrittenEvaluationSpaceOccupation extends WrittenEvaluationSpaceOccu
     }
 
     @Override
-    public boolean isOccupiedByExecutionCourse(final ExecutionCourse executionCourse, final DateTime start, final DateTime end) {
+    public boolean isOccupiedByExecutionCourse(final Course executionCourse, final DateTime start, final DateTime end) {
         for (final WrittenEvaluation writtenEvaluation : getWrittenEvaluationsSet()) {
             if (writtenEvaluation.getAssociatedExecutionCoursesSet().contains(executionCourse)
                     && start.isBefore(writtenEvaluation.getEndDateTime())

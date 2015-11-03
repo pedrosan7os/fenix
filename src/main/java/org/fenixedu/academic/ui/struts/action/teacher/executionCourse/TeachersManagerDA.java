@@ -27,9 +27,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.service.services.exceptions.NotAuthorizedException;
 import org.fenixedu.academic.service.services.teacher.DeleteProfessorshipWithPerson;
@@ -56,7 +56,7 @@ public class TeachersManagerDA extends ExecutionCourseBaseAction {
 
     public ActionForward removeTeacher(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) {
-        Professorship professorship = getDomainObject(request, "teacherOID");
+        CourseTeacher professorship = getDomainObject(request, "teacherOID");
         try {
             DeleteProfessorshipWithPerson.run(professorship.getPerson(), getExecutionCourse(request));
         } catch (NotAuthorizedException e) {
@@ -85,11 +85,11 @@ public class TeachersManagerDA extends ExecutionCourseBaseAction {
         }
 
         Person person = Person.readPersonByUsername(request.getParameter("teacherId"));
-        final ExecutionCourse executionCourse = getExecutionCourse(request);
+        final Course executionCourse = getExecutionCourse(request);
 
         if (person != null) {
             if (person.getTeacher() != null && person.getTeacher().hasTeacherAuthorization(executionCourse.getAcademicInterval())) {
-                Professorship professorship = Professorship.create(false, executionCourse, person);
+                CourseTeacher professorship = CourseTeacher.create(false, executionCourse, person);
                 request.setAttribute("teacherOID", professorship.getExternalId());
             } else {
                 final ActionMessages actionErrors = new ActionErrors();

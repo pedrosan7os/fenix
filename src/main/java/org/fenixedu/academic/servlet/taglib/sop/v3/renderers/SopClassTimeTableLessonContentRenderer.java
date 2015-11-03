@@ -18,7 +18,7 @@
  */
 package org.fenixedu.academic.servlet.taglib.sop.v3.renderers;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.FrequencyType;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.dto.InfoCurricularYear;
@@ -124,7 +124,7 @@ public class SopClassTimeTableLessonContentRenderer extends LessonSlotContentRen
             final InfoLessonInstanceAggregation aggregation = (InfoLessonInstanceAggregation) showOccupation;
 
             final Shift shift = aggregation.getShift();
-            final ExecutionCourse executionCourse = shift.getExecutionCourse();
+            final Course executionCourse = shift.getExecutionCourse();
             strBuffer.append(executionCourse.getSigla());
 
             strBuffer.append("&nbsp;(");

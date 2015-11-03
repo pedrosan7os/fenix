@@ -46,14 +46,14 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.LabelValueBean;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.Department;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.Lesson;
 import org.fenixedu.academic.domain.LessonInstance;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.Summary;
 import org.fenixedu.academic.domain.Teacher;
@@ -167,7 +167,7 @@ public final class SummariesControlAction extends FenixDispatchAction {
         String departmentID = (String) getFromRequest(request, "departmentID");
         String categoryControl = (String) getFromRequest(request, "categoryControl");
         String executionCourseId = (String) getFromRequest(request, "executionCourseID");
-        ExecutionCourse executionCourse = FenixFramework.getDomainObject(executionCourseId);
+        Course executionCourse = FenixFramework.getDomainObject(executionCourseId);
 
         List<DetailSummaryElement> executionCoursesResume =
                 getExecutionCourseResume(executionCourse.getExecutionPeriod(), executionCourse.getProfessorshipsSet());
@@ -215,11 +215,11 @@ public final class SummariesControlAction extends FenixDispatchAction {
     }
 
     private List<DetailSummaryElement> getExecutionCourseResume(final ExecutionSemester executionSemester,
-            Collection<Professorship> professorships) {
+            Collection<CourseTeacher> professorships) {
         List<DetailSummaryElement> allListElements = new ArrayList<DetailSummaryElement>();
         LocalDate today = new LocalDate();
         LocalDate oneWeekBeforeToday = today.minusDays(8);
-        for (Professorship professorship : professorships) {
+        for (CourseTeacher professorship : professorships) {
             BigDecimal summariesGiven = EMPTY;
             BigDecimal notTaughtSummaries = EMPTY;
             if (professorship.belongsToExecutionPeriod(executionSemester)) {
@@ -283,11 +283,11 @@ public final class SummariesControlAction extends FenixDispatchAction {
     private DepartmentSummaryElement getDepartmentSummaryResume(final ExecutionSemester executionSemester,
             final Department department) {
         DepartmentSummaryElement departmentSummariesElement = new DepartmentSummaryElement(department, executionSemester);
-        Set<ExecutionCourse> allDepartmentExecutionCourses = getDepartmentExecutionCourses(department, executionSemester);
+        Set<Course> allDepartmentExecutionCourses = getDepartmentExecutionCourses(department, executionSemester);
         if (allDepartmentExecutionCourses != null) {
             LocalDate today = new LocalDate();
             LocalDate oneWeekBeforeToday = today.minusDays(8);
-            for (ExecutionCourse executionCourse : allDepartmentExecutionCourses) {
+            for (Course executionCourse : allDepartmentExecutionCourses) {
                 int instanceLessonsTotal[] = { 0, 0, 0 };
                 for (Shift shift : executionCourse.getAssociatedShifts()) {
                     getInstanceLessonsTotalsByShift(shift, instanceLessonsTotal, oneWeekBeforeToday);
@@ -350,12 +350,12 @@ public final class SummariesControlAction extends FenixDispatchAction {
         return departmentSummariesElement;
     }
 
-    private Set<ExecutionCourse> getDepartmentExecutionCourses(Department department, ExecutionSemester executionSemester) {
-        Set<ExecutionCourse> executionCourses = new HashSet<ExecutionCourse>();
+    private Set<Course> getDepartmentExecutionCourses(Department department, ExecutionSemester executionSemester) {
+        Set<Course> executionCourses = new HashSet<Course>();
         List<Teacher> allDepartmentTeachers = department.getAllTeachers(executionSemester);
 
         for (Teacher teacher : allDepartmentTeachers) {
-            for (Professorship professorship : teacher.getProfessorships()) {
+            for (CourseTeacher professorship : teacher.getProfessorships()) {
                 if (professorship.belongsToExecutionPeriod(executionSemester)
                         && !professorship.getExecutionCourse().isMasterDegreeDFAOrDEAOnly()) {
                     executionCourses.add(professorship.getExecutionCourse());
@@ -423,7 +423,7 @@ public final class SummariesControlAction extends FenixDispatchAction {
         instanceLessonsTotals[2] = instanceLessonsTotals[2] + numberOfInstanceLessonsWithNotTaughtSummary;
     }
 
-    private BigDecimal getSummariesGiven(Professorship professorship, Shift shift, BigDecimal summariesGiven,
+    private BigDecimal getSummariesGiven(CourseTeacher professorship, Shift shift, BigDecimal summariesGiven,
             LocalDate oneWeekBeforeToday) {
         for (Summary summary : shift.getAssociatedSummariesSet()) {
             if (summary.getProfessorship() != null && summary.getProfessorship() == professorship && !summary.getIsExtraLesson()
@@ -434,7 +434,7 @@ public final class SummariesControlAction extends FenixDispatchAction {
         return summariesGiven;
     }
 
-    private BigDecimal getNotTaughtSummaries(Professorship professorship, Shift shift, BigDecimal notTaughtSummaries,
+    private BigDecimal getNotTaughtSummaries(CourseTeacher professorship, Shift shift, BigDecimal notTaughtSummaries,
             LocalDate oneWeekBeforeToday) {
         for (Summary summary : shift.getAssociatedSummariesSet()) {
             if (summary.getProfessorship() != null && summary.getProfessorship() == professorship && !summary.getIsExtraLesson()
@@ -456,8 +456,8 @@ public final class SummariesControlAction extends FenixDispatchAction {
 //        return BigDecimal.valueOf(difference).setScale(2, RoundingMode.HALF_UP);
 //    }
 
-    private String getSiglas(Professorship professorship) {
-        ExecutionCourse executionCourse = professorship.getExecutionCourse();
+    private String getSiglas(CourseTeacher professorship) {
+        Course executionCourse = professorship.getExecutionCourse();
         int numberOfCurricularCourse = executionCourse.getAssociatedCurricularCoursesSet().size();
 
         List<String> siglas = new ArrayList<String>();

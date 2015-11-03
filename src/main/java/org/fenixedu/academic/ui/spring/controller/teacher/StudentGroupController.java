@@ -26,12 +26,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.UriBuilder;
 
-import org.fenixedu.academic.domain.Attends;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Attendance;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.ExportGrouping;
 import org.fenixedu.academic.domain.Grouping;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.StudentGroup;
 import org.fenixedu.academic.domain.student.Registration;
@@ -72,7 +72,7 @@ public class StudentGroupController extends ExecutionCourseController {
     }
 
     @Override
-    Boolean getPermission(Professorship prof) {
+    Boolean getPermission(CourseTeacher prof) {
         return prof.getPermissions().getGroups();
     }
 
@@ -104,7 +104,7 @@ public class StudentGroupController extends ExecutionCourseController {
 
         if (grouping.getShiftType() != null) {
             for (final ExportGrouping exportGrouping : grouping.getExportGroupingsSet()) {
-                final ExecutionCourse executionCourse = exportGrouping.getExecutionCourse();
+                final Course executionCourse = exportGrouping.getExecutionCourse();
                 for (final Shift shf : executionCourse.getAssociatedShifts()) {
                     if (shf.containsType(grouping.getShiftType())) {
                         shiftList.add(shf);
@@ -112,7 +112,7 @@ public class StudentGroupController extends ExecutionCourseController {
                 }
             }
         }
-        ArrayList<Attends> studentsWithoutStudentGroup = new ArrayList<Attends>();
+        ArrayList<Attendance> studentsWithoutStudentGroup = new ArrayList<Attendance>();
         studentsWithoutStudentGroup.addAll(grouping
                 .getAttendsSet()
                 .stream()
@@ -164,7 +164,7 @@ public class StudentGroupController extends ExecutionCourseController {
         ArrayList<Recipient> recipients = new ArrayList<Recipient>();
         recipients.add(Recipient.newInstance(
                 label,
-                UserGroup.of(studentGroup.getAttendsSet().stream().map(Attends::getRegistration).map(Registration::getPerson)
+                UserGroup.of(studentGroup.getAttendsSet().stream().map(Attendance::getRegistration).map(Registration::getPerson)
                         .map(Person::getUser).collect(Collectors.toSet()))));
         String sendEmailUrl =
                 UriBuilder

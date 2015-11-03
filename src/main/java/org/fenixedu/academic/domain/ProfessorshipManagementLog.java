@@ -24,7 +24,7 @@ public class ProfessorshipManagementLog extends ProfessorshipManagementLog_Base 
         super();
     }
 
-    public ProfessorshipManagementLog(ExecutionCourse executionCourse, String description) {
+    public ProfessorshipManagementLog(Course executionCourse, String description) {
         super();
         if (getExecutionCourse() == null) {
             setExecutionCourse(executionCourse);
@@ -32,11 +32,11 @@ public class ProfessorshipManagementLog extends ProfessorshipManagementLog_Base 
         setDescription(description);
     }
 
-    public static ProfessorshipManagementLog createProfessorshipManagementLog(ExecutionCourse executionCourse, String description) {
+    public static ProfessorshipManagementLog createProfessorshipManagementLog(Course executionCourse, String description) {
         return new ProfessorshipManagementLog(executionCourse, description);
     }
 
-    public static ProfessorshipManagementLog createLog(ExecutionCourse executionCourse, String bundle, String key, String... args) {
+    public static ProfessorshipManagementLog createLog(Course executionCourse, String bundle, String key, String... args) {
         final String label = generateLabelDescription(bundle, key, args);
         return createProfessorshipManagementLog(executionCourse, label);
     }

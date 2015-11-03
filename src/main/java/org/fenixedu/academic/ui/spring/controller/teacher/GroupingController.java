@@ -25,10 +25,10 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.ExportGrouping;
 import org.fenixedu.academic.domain.Grouping;
-import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.ShiftType;
 import org.fenixedu.academic.domain.StudentGroup;
@@ -62,7 +62,7 @@ public class GroupingController extends ExecutionCourseController {
     }
 
     @Override
-    Boolean getPermission(Professorship prof) {
+    Boolean getPermission(CourseTeacher prof) {
         return prof.getPermissions().getGroups();
     }
 
@@ -85,7 +85,7 @@ public class GroupingController extends ExecutionCourseController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public AbstractUrlBasedView create(Model model, @ModelAttribute("projectGroup") ProjectGroupBean projectGroup,
-            @PathVariable ExecutionCourse executionCourse, BindingResult bindingResult) {
+            @PathVariable Course executionCourse, BindingResult bindingResult) {
 
         ArrayList<String> errors = new ArrayList<>();
 
@@ -230,7 +230,7 @@ public class GroupingController extends ExecutionCourseController {
 
     @RequestMapping(value = "/editAttends/{grouping}", method = RequestMethod.POST)
     public TeacherView editAttends(Model model, @PathVariable Grouping grouping,
-            @ModelAttribute("attends") @Validated AttendsBean attendsBean, @PathVariable ExecutionCourse executionCourse,
+            @ModelAttribute("attends") @Validated AttendsBean attendsBean, @PathVariable Course executionCourse,
             BindingResult bindingResult) {
 
         Map<String, Boolean> studentsToRemove = attendsBean.getRemoveStudent();

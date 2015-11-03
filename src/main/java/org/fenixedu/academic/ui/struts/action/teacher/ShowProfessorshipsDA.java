@@ -29,10 +29,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.predicate.AccessControl;
 import org.fenixedu.academic.ui.struts.action.base.FenixAction;
 import org.fenixedu.academic.ui.struts.action.teacher.TeacherApplication.TeacherTeachingApp;
@@ -66,15 +66,15 @@ public class ShowProfessorshipsDA extends FenixAction {
         }
         request.setAttribute("executionPeriod", selectedExecutionPeriod);
 
-        final List<ExecutionCourse> executionCourses = new ArrayList<ExecutionCourse>();
+        final List<Course> executionCourses = new ArrayList<Course>();
         request.setAttribute("executionCourses", executionCourses);
 
         final Person person = AccessControl.getPerson();
         final SortedSet<ExecutionSemester> executionSemesters =
                 new TreeSet<ExecutionSemester>(Ordering.from(ExecutionSemester.COMPARATOR_BY_SEMESTER_AND_YEAR).reverse());
         if (person != null) {
-            for (final Professorship professorship : person.getProfessorshipsSet()) {
-                final ExecutionCourse executionCourse = professorship.getExecutionCourse();
+            for (final CourseTeacher professorship : person.getProfessorshipsSet()) {
+                final Course executionCourse = professorship.getExecutionCourse();
                 final ExecutionSemester executionSemester = executionCourse.getExecutionPeriod();
 
                 executionSemesters.add(executionSemester);

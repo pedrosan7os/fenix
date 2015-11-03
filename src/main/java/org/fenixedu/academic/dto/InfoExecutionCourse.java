@@ -27,13 +27,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.CourseLoad;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.CurricularCourseScope;
 import org.fenixedu.academic.domain.EntryPhase;
 import org.fenixedu.academic.domain.Evaluation;
 import org.fenixedu.academic.domain.Exam;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Grouping;
 import org.fenixedu.academic.domain.Shift;
@@ -45,17 +45,17 @@ import org.fenixedu.academic.domain.time.calendarStructure.AcademicInterval;
  */
 public class InfoExecutionCourse extends InfoObject {
 
-    private final ExecutionCourse executionCourseDomainReference;
+    private final Course executionCourseDomainReference;
 
-    public InfoExecutionCourse(final ExecutionCourse executionCourse) {
+    public InfoExecutionCourse(final Course executionCourse) {
         executionCourseDomainReference = executionCourse;
     }
 
-    public static InfoExecutionCourse newInfoFromDomain(final ExecutionCourse executionCourse) {
+    public static InfoExecutionCourse newInfoFromDomain(final Course executionCourse) {
         return executionCourse == null ? null : new InfoExecutionCourse(executionCourse);
     }
 
-    public ExecutionCourse getExecutionCourse() {
+    public Course getExecutionCourse() {
         return executionCourseDomainReference;
     }
 

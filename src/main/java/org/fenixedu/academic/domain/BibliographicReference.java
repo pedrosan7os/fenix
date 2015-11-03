@@ -63,7 +63,7 @@ public class BibliographicReference extends BibliographicReference_Base {
         setReference(reference);
         setYear(year);
         setOptional(optional);
-        ExecutionCourse executionCourse = getExecutionCourse();
+        Course executionCourse = getExecutionCourse();
         final String type;
         if (optional) {
             type = BundleUtil.getString(Bundle.APPLICATION, "option.bibliographicReference.optional");
@@ -76,7 +76,7 @@ public class BibliographicReference extends BibliographicReference_Base {
     }
 
     public void delete() {
-        ExecutionCourse executionCourse = getExecutionCourse();
+        Course executionCourse = getExecutionCourse();
         String blBibliographicReference = getTitle();
         Boolean optional = getOptional();
 

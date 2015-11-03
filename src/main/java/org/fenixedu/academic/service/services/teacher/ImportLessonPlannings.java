@@ -18,7 +18,7 @@
  */
 package org.fenixedu.academic.service.services.teacher;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.service.filter.ExecutionCourseLecturingTeacherAuthorizationFilter;
 import org.fenixedu.academic.service.services.exceptions.NotAuthorizedException;
@@ -27,7 +27,7 @@ import pt.ist.fenixframework.Atomic;
 
 public class ImportLessonPlannings {
 
-    protected void run(String executionCourseID, ExecutionCourse executionCourseTo, ExecutionCourse executionCourseFrom,
+    protected void run(String executionCourseID, Course executionCourseTo, Course executionCourseFrom,
             Shift shift) {
         if (executionCourseTo != null && executionCourseFrom != null) {
             if (shift == null) {
@@ -43,8 +43,8 @@ public class ImportLessonPlannings {
     private static final ImportLessonPlannings serviceInstance = new ImportLessonPlannings();
 
     @Atomic
-    public static void runImportLessonPlannings(String executionCourseID, ExecutionCourse executionCourseTo,
-            ExecutionCourse executionCourseFrom, Shift shift) throws NotAuthorizedException {
+    public static void runImportLessonPlannings(String executionCourseID, Course executionCourseTo,
+            Course executionCourseFrom, Shift shift) throws NotAuthorizedException {
         ExecutionCourseLecturingTeacherAuthorizationFilter.instance.execute(executionCourseID);
         serviceInstance.run(executionCourseID, executionCourseTo, executionCourseFrom, shift);
     }

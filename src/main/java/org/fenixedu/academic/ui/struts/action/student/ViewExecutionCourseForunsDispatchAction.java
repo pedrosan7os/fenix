@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.service.services.exceptions.FenixServiceException;
 import org.fenixedu.academic.ui.struts.action.exceptions.FenixActionException;
 import org.fenixedu.academic.ui.struts.action.messaging.ForunsManagement;
@@ -64,8 +64,8 @@ public class ViewExecutionCourseForunsDispatchAction extends ForunsManagement {
     public ActionForward prepare(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
             throws FenixActionException, FenixServiceException {
 
-        SortedSet<Attends> attendsForCurrentExecutionPeriod =
-                new TreeSet<Attends>(Attends.ATTENDS_COMPARATOR_BY_EXECUTION_COURSE_NAME);
+        SortedSet<Attendance> attendsForCurrentExecutionPeriod =
+                new TreeSet<Attendance>(Attendance.ATTENDS_COMPARATOR_BY_EXECUTION_COURSE_NAME);
         attendsForCurrentExecutionPeriod.addAll(getLoggedPerson(request).getCurrentAttends());
 
         request.setAttribute("attendsForExecutionPeriod", attendsForCurrentExecutionPeriod);

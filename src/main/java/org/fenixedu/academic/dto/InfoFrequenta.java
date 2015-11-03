@@ -18,7 +18,7 @@
  */
 package org.fenixedu.academic.dto;
 
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.EvaluationSeason;
 
 public class InfoFrequenta extends InfoObject {
@@ -102,14 +102,14 @@ public class InfoFrequenta extends InfoObject {
         this.evaluationSeason = evaluationSeason;
     }
 
-    public void copyFromDomain(Attends frequenta) {
+    public void copyFromDomain(Attendance frequenta) {
         super.copyFromDomain(frequenta);
         this.setAluno(InfoStudent.newInfoFromDomain(frequenta.getRegistration()));
         this.setDisciplinaExecucao(InfoExecutionCourse.newInfoFromDomain(frequenta.getExecutionCourse()));
         this.setInfoEnrolment(InfoEnrolment.newInfoFromDomain(frequenta.getEnrolment()));
     }
 
-    public static InfoFrequenta newInfoFromDomain(Attends frequenta) {
+    public static InfoFrequenta newInfoFromDomain(Attendance frequenta) {
         InfoFrequenta infoFrequenta = null;
         if (frequenta != null) {
             infoFrequenta = new InfoFrequenta();

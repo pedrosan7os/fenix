@@ -30,7 +30,7 @@ public class Mark extends Mark_Base {
         setRootDomainObject(Bennu.getInstance());
     }
 
-    public Mark(final Attends attends, final Evaluation evaluation, final String mark) {
+    public Mark(final Attendance attends, final Evaluation evaluation, final String mark) {
         this();
         setAttend(attends);
         setEvaluation(evaluation);

@@ -78,7 +78,7 @@ public class ProjectSubmission extends ProjectSubmission_Base {
                 .addComparator(COMPARATOR_BY_MOST_RECENT_SUBMISSION_DATE);
     }
 
-    public ProjectSubmission(Project project, StudentGroup studentGroup, Attends attends,
+    public ProjectSubmission(Project project, StudentGroup studentGroup, Attendance attends,
             ProjectSubmissionFile projectSubmissionFile) {
         super();
 

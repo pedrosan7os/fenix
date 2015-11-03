@@ -34,13 +34,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeModuleScope;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.Professorship;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.Teacher;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.time.calendarStructure.AcademicInterval;
@@ -125,12 +125,12 @@ public class ListExecutionCourseGroupingsDA extends FenixDispatchAction {
         headers.add("Degree Types");
         headers.add("Emails");
         headers.add("Enrolments");
-        headers.add("Attends");
+        headers.add("Attendance");
         return headers;
     }
 
     private void fillSpreadSheet(final Spreadsheet spreadsheet, final AcademicInterval academicInterval) {
-        for (final ExecutionCourse executionCourse : ExecutionCourse.filterByAcademicInterval(academicInterval)) {
+        for (final Course executionCourse : Course.filterByAcademicInterval(academicInterval)) {
             final Row row = spreadsheet.addRow();
 
             row.setCell(executionCourse.getNome());
@@ -138,7 +138,7 @@ public class ListExecutionCourseGroupingsDA extends FenixDispatchAction {
             final StringBuilder responsibleForStringBuilder = new StringBuilder();
             final StringBuilder responsibleForEmailsStringBuilder = new StringBuilder();
             boolean isFirstResp = true;
-            for (final Professorship professorship : executionCourse.getProfessorshipsSet()) {
+            for (final CourseTeacher professorship : executionCourse.getProfessorshipsSet()) {
                 if (professorship.getResponsibleFor().booleanValue()) {
                     if (isFirstResp) {
                         isFirstResp = false;
@@ -217,7 +217,7 @@ public class ListExecutionCourseGroupingsDA extends FenixDispatchAction {
             row.setCell(responsibleForEmailsStringBuilder.toString());
 
             int enrolmentCount = 0;
-            for (final Attends attends : executionCourse.getAttendsSet()) {
+            for (final Attendance attends : executionCourse.getAttendsSet()) {
                 if (attends.getEnrolment() != null) {
                     enrolmentCount++;
                 }
@@ -229,7 +229,7 @@ public class ListExecutionCourseGroupingsDA extends FenixDispatchAction {
     }
 
     private Map<Degree, Set<Integer>> constructDegreeOccurenceMap(final AcademicInterval academicInterval,
-            final ExecutionCourse executionCourse) {
+            final Course executionCourse) {
         final Map<Degree, Set<Integer>> degreeOccurenceMap = new HashMap<Degree, Set<Integer>>();
         for (final CurricularCourse curricularCourse : executionCourse.getAssociatedCurricularCoursesSet()) {
             final List<DegreeModuleScope> degreeModuleScopes =

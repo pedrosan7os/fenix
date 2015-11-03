@@ -34,10 +34,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.Curriculum;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.GroupsAndShiftsManagementLog;
 import org.fenixedu.academic.domain.LessonPlanning;
 import org.fenixedu.academic.domain.Person;
@@ -111,12 +111,12 @@ public class ManageExecutionCourseDA extends ExecutionCourseBaseAction {
     }
 
     protected void importContent(HttpServletRequest request, String importContentService) throws FenixServiceException {
-        final ExecutionCourse executionCourseTo = (ExecutionCourse) request.getAttribute("executionCourse");
+        final Course executionCourseTo = (Course) request.getAttribute("executionCourse");
         final IViewState viewState = RenderUtils.getViewState("importContentBeanWithExecutionCourse");
         final ImportContentBean bean = (ImportContentBean) viewState.getMetaObject().getObject();
         request.setAttribute("importContentBean", bean);
 
-        final ExecutionCourse executionCourseFrom = bean.getExecutionCourse();
+        final Course executionCourseFrom = bean.getExecutionCourse();
         try {
             if (importContentService.equals("ImportBibliographicReferences")) {
                 ImportBibliographicReferences.runImportBibliographicReferences(executionCourseTo.getExternalId(),
@@ -133,7 +133,7 @@ public class ManageExecutionCourseDA extends ExecutionCourseBaseAction {
     }
 
     public void prepareCurricularCourse(HttpServletRequest request) {
-        final ExecutionCourse executionCourse = (ExecutionCourse) request.getAttribute("executionCourse");
+        final Course executionCourse = (Course) request.getAttribute("executionCourse");
         final String curricularCourseIDString = request.getParameter("curricularCourseID");
         if (executionCourse != null && curricularCourseIDString != null && curricularCourseIDString.length() > 0) {
             final CurricularCourse curricularCourse = findCurricularCourse(executionCourse, curricularCourseIDString);
@@ -141,7 +141,7 @@ public class ManageExecutionCourseDA extends ExecutionCourseBaseAction {
         }
     }
 
-    private CurricularCourse findCurricularCourse(final ExecutionCourse executionCourse, final String curricularCourseID) {
+    private CurricularCourse findCurricularCourse(final Course executionCourse, final String curricularCourseID) {
         for (final CurricularCourse curricularCourse : executionCourse.getAssociatedCurricularCoursesSet()) {
             if (curricularCourse.getExternalId().equals(curricularCourseID)) {
                 return curricularCourse;
@@ -178,7 +178,7 @@ public class ManageExecutionCourseDA extends ExecutionCourseBaseAction {
     public ActionForward prepareImportLessonPlannings(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) {
 
-        final ExecutionCourse executionCourseTo = (ExecutionCourse) request.getAttribute("executionCourse");
+        final Course executionCourseTo = (Course) request.getAttribute("executionCourse");
         request.setAttribute("importLessonPlanningBean", new ImportLessonPlanningsBean(executionCourseTo));
         return forward(request, "/teacher/executionCourse/importLessonPlannings.jsp");
     }
@@ -190,8 +190,8 @@ public class ManageExecutionCourseDA extends ExecutionCourseBaseAction {
         ImportLessonPlanningsBean bean = (ImportLessonPlanningsBean) viewState.getMetaObject().getObject();
         request.setAttribute("importLessonPlanningBean", bean);
 
-        ExecutionCourse executionCourseFrom = bean.getExecutionCourse();
-        ExecutionCourse executionCourseTo = bean.getExecutionCourseTo();
+        Course executionCourseFrom = bean.getExecutionCourse();
+        Course executionCourseTo = bean.getExecutionCourseTo();
         ImportType importType = bean.getImportType();
 
         if (importType != null && importType.equals(ImportLessonPlanningsBean.ImportType.PLANNING)) {
@@ -215,7 +215,7 @@ public class ManageExecutionCourseDA extends ExecutionCourseBaseAction {
         final IViewState viewState = RenderUtils.getViewState();
         ImportLessonPlanningsBean bean = (ImportLessonPlanningsBean) viewState.getMetaObject().getObject();
 
-        ExecutionCourse executionCourseTo = bean.getExecutionCourseTo();
+        Course executionCourseTo = bean.getExecutionCourseTo();
         Shift shiftFrom = bean.getShift();
 
         try {
@@ -232,7 +232,7 @@ public class ManageExecutionCourseDA extends ExecutionCourseBaseAction {
     public ActionForward lessonPlannings(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) {
 
-        final ExecutionCourse executionCourse = (ExecutionCourse) request.getAttribute("executionCourse");
+        final Course executionCourse = (Course) request.getAttribute("executionCourse");
         Map<ShiftType, List<LessonPlanning>> lessonPlanningsMap = new TreeMap<ShiftType, List<LessonPlanning>>();
         for (ShiftType shiftType : executionCourse.getShiftTypes()) {
             List<LessonPlanning> lessonPlanningsOrderedByOrder = executionCourse.getLessonPlanningsOrderedByOrder(shiftType);
@@ -275,7 +275,7 @@ public class ManageExecutionCourseDA extends ExecutionCourseBaseAction {
     public ActionForward prepareCreateLessonPlanning(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) {
 
-        final ExecutionCourse executionCourse = (ExecutionCourse) request.getAttribute("executionCourse");
+        final Course executionCourse = (Course) request.getAttribute("executionCourse");
         request.setAttribute("lessonPlanningBean", new CreateLessonPlanningBean(executionCourse));
         return forward(request, "/teacher/executionCourse/createLessonPlanning.jsp");
     }
@@ -325,7 +325,7 @@ public class ManageExecutionCourseDA extends ExecutionCourseBaseAction {
             HttpServletResponse response) throws FenixServiceException {
 
         ShiftType lessonType = ShiftType.valueOf(request.getParameter("shiftType"));
-        final ExecutionCourse executionCourse = (ExecutionCourse) request.getAttribute("executionCourse");
+        final Course executionCourse = (Course) request.getAttribute("executionCourse");
 
         if (lessonType != null && executionCourse != null) {
             try {
@@ -337,7 +337,7 @@ public class ManageExecutionCourseDA extends ExecutionCourseBaseAction {
         return lessonPlannings(mapping, form, request, response);
     }
 
-    protected Curriculum findCurriculum(final ExecutionCourse executionCourse, final String curriculumID) {
+    protected Curriculum findCurriculum(final Course executionCourse, final String curriculumID) {
         for (final CurricularCourse curricularCourse : executionCourse.getAssociatedCurricularCoursesSet()) {
             for (final Curriculum curriculum : curricularCourse.getAssociatedCurriculumsSet()) {
                 if (curriculum.getExternalId().equals(curriculumID)) {
@@ -379,8 +379,8 @@ public class ManageExecutionCourseDA extends ExecutionCourseBaseAction {
     }
 
     @Override
-    public ExecutionCourse getExecutionCourse(HttpServletRequest request) {
-        return (ExecutionCourse) request.getAttribute("executionCourse");
+    public Course getExecutionCourse(HttpServletRequest request) {
+        return (Course) request.getAttribute("executionCourse");
     }
 
     public ActionForward manageShifts(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request,
@@ -388,7 +388,7 @@ public class ManageExecutionCourseDA extends ExecutionCourseBaseAction {
 
         String executionCourseID = request.getParameter("executionCourseID");
 
-        ExecutionCourse executionCourse = FenixFramework.getDomainObject(executionCourseID);
+        Course executionCourse = FenixFramework.getDomainObject(executionCourseID);
         SortedSet<Shift> shifts = executionCourse.getShiftsOrderedByLessons();
 
         request.setAttribute("shifts", shifts);
@@ -409,7 +409,7 @@ public class ManageExecutionCourseDA extends ExecutionCourseBaseAction {
         }
 
         Shift shift = FenixFramework.getDomainObject(shiftID);
-        ExecutionCourse executionCourse = FenixFramework.getDomainObject(executionCourseID);
+        Course executionCourse = FenixFramework.getDomainObject(executionCourseID);
 
         if (registrationID != null) {
             Registration registration = FenixFramework.getDomainObject(registrationID);
@@ -419,7 +419,7 @@ public class ManageExecutionCourseDA extends ExecutionCourseBaseAction {
 
         request.setAttribute(
                 "registrations",
-                shift.getAttendsSet().stream().map(Attends::getRegistration).sorted(Registration.NUMBER_COMPARATOR)
+                shift.getAttendsSet().stream().map(Attendance::getRegistration).sorted(Registration.NUMBER_COMPARATOR)
                         .collect(Collectors.toList()));
         request.setAttribute("shift", shift);
         request.setAttribute("executionCourseID", executionCourseID);
@@ -447,7 +447,7 @@ public class ManageExecutionCourseDA extends ExecutionCourseBaseAction {
             } catch (NumberFormatException e) {
             }
         }
-        ExecutionCourse executionCourse = FenixFramework.getDomainObject(request.getParameter("executionCourseID"));
+        Course executionCourse = FenixFramework.getDomainObject(request.getParameter("executionCourseID"));
 
         final ActionErrors actionErrors = new ActionErrors();
         if (person != null) {
@@ -502,21 +502,21 @@ public class ManageExecutionCourseDA extends ExecutionCourseBaseAction {
 
         Shift shift = FenixFramework.getDomainObject(shiftID);
 
-        for (Attends attends : shift.getAttendsSet()) {
+        for (Attendance attends : shift.getAttendsSet()) {
             removeAttendFromShift(shift, attends);
         }
 
         request.setAttribute("shift", shift);
         request.setAttribute("executionCourseID", executionCourseID);
         request.setAttribute("registrations",
-                shift.getAttendsSet().stream().map(Attends::getRegistration).collect(Collectors.toSet()));
+                shift.getAttendsSet().stream().map(Attendance::getRegistration).collect(Collectors.toSet()));
         request.setAttribute("personBean", new PersonBean());
 
         return forward(request, "/teacher/executionCourse/editShift.jsp");
     }
 
     @Atomic
-    public static void removeAttendFromShift(Shift shift, Attends attends) {
+    public static void removeAttendFromShift(Shift shift, Attendance attends) {
         GroupsAndShiftsManagementLog.createLog(shift.getExecutionCourse(), Bundle.MESSAGING,
                 "log.executionCourse.groupAndShifts.shifts.attends.removed", attends.getRegistration().getNumber().toString(),
                 shift.getNome(), shift.getExecutionCourse().getNome(), shift.getExecutionCourse().getDegreePresentationString());

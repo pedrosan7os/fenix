@@ -20,7 +20,7 @@ package org.fenixedu.academic.dto.teacher;
 
 import java.io.Serializable;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.dto.teacher.executionCourse.ImportContentBean;
 
@@ -30,19 +30,19 @@ public class ImportLessonPlanningsBean extends ImportContentBean implements Seri
 
     private Shift shiftReference;
 
-    private ExecutionCourse executionCourseToReference;
+    private Course executionCourseToReference;
 
-    public ImportLessonPlanningsBean(ExecutionCourse executionCourse) {
+    public ImportLessonPlanningsBean(Course executionCourse) {
         super();
         setExecutionCourseTo(executionCourse);
         setShift(null);
     }
 
-    public ExecutionCourse getExecutionCourseTo() {
+    public Course getExecutionCourseTo() {
         return this.executionCourseToReference;
     }
 
-    public void setExecutionCourseTo(ExecutionCourse executionCourse) {
+    public void setExecutionCourseTo(Course executionCourse) {
         this.executionCourseToReference = executionCourse;
     }
 

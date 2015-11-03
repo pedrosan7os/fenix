@@ -42,6 +42,7 @@ import org.apache.commons.collections.comparators.ComparatorChain;
 import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.util.MessageResources;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.CurricularCourseScope;
 import org.fenixedu.academic.domain.CurricularCourseScope.DegreeModuleScopeCurricularCourseScope;
@@ -50,7 +51,6 @@ import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.DegreeModuleScope;
 import org.fenixedu.academic.domain.Evaluation;
 import org.fenixedu.academic.domain.Exam;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.OccupationPeriod;
 import org.fenixedu.academic.domain.WrittenEvaluation;
@@ -490,8 +490,8 @@ public class SOPEvaluationManagementBackingBean extends EvaluationManagementBack
         return degrees
                 .stream()
                 .sorted(ExecutionDegree.EXECUTION_DEGREE_COMPARATORY_BY_DEGREE_TYPE_AND_NAME)
-                .map(executionDegree -> new SelectItem(executionDegree.getExternalId(), executionDegree.getDegree().getPresentationName(
-                        executionDegree.getExecutionYear()))).collect(Collectors.toList());
+                .map(executionDegree -> new SelectItem(executionDegree.getExternalId(), executionDegree.getDegree()
+                        .getPresentationName(executionDegree.getExecutionYear()))).collect(Collectors.toList());
     }
 
     private AcademicInterval getAcademicIntervalFromParameter(String academicInterval) {
@@ -691,7 +691,7 @@ public class SOPEvaluationManagementBackingBean extends EvaluationManagementBack
         if (curricularYearIDs != null && getExecutionDegree() != null) {
             List<Integer> curricularYears = Arrays.asList(getCurricularYearIDs());
             DegreeCurricularPlan degreeCurricularPlan = getExecutionDegree().getDegreeCurricularPlan();
-            for (final ExecutionCourse executionCourse : getExecutionCourses()) {
+            for (final Course executionCourse : getExecutionCourses()) {
                 for (final Evaluation evaluation : executionCourse.getAssociatedEvaluationsSet()) {
                     if (evaluation instanceof WrittenEvaluation) {
                         final WrittenEvaluation writtenEvaluation = (WrittenEvaluation) evaluation;
@@ -709,8 +709,7 @@ public class SOPEvaluationManagementBackingBean extends EvaluationManagementBack
         return result;
     }
 
-    private Map<String, String> constructLinkParameters(final ExecutionCourse executionCourse,
-            final WrittenEvaluation writtenEvaluation) {
+    private Map<String, String> constructLinkParameters(final Course executionCourse, final WrittenEvaluation writtenEvaluation) {
         final Map<String, String> linkParameters = new HashMap<String, String>();
         linkParameters.put("executionCourseID", executionCourse.getExternalId().toString());
         linkParameters.put("evaluationID", writtenEvaluation.getExternalId().toString());
@@ -721,12 +720,12 @@ public class SOPEvaluationManagementBackingBean extends EvaluationManagementBack
         return linkParameters;
     }
 
-    private List<ExecutionCourse> getExecutionCourses() throws FenixServiceException {
-        final List<ExecutionCourse> executionCourses = new ArrayList<ExecutionCourse>();
+    private List<Course> getExecutionCourses() throws FenixServiceException {
+        final List<Course> executionCourses = new ArrayList<Course>();
         Integer[] curricularYears = getCurricularYearIDs();
         if (curricularYears != null) {
             for (final Integer curricularYearID : curricularYears) {
-                executionCourses.addAll(ExecutionCourse.filterByAcademicIntervalAndDegreeCurricularPlanAndCurricularYearAndName(
+                executionCourses.addAll(Course.filterByAcademicIntervalAndDegreeCurricularPlanAndCurricularYearAndName(
                         getAcademicIntervalFromParameter(getAcademicInterval()), getExecutionDegree().getDegreeCurricularPlan(),
                         CurricularYear.readByYear(curricularYearID), "%"));
             }
@@ -737,7 +736,7 @@ public class SOPEvaluationManagementBackingBean extends EvaluationManagementBack
         // final Object args[] = {
         // this.getExecutionDegree().getDegreeCurricularPlan().getExternalId(),
         // this.getExecutionPeriodID(), curricularYearID };
-        // executionCourses.addAll((Collection<ExecutionCourse>)
+        // executionCourses.addAll((Collection<Course>)
         // ServiceManagerServiceFactory.executeService(
         // "ReadExecutionCoursesByDegreeCurricularPlanAndExecutionPeriodAndCurricularYear"
         // , args));
@@ -759,17 +758,17 @@ public class SOPEvaluationManagementBackingBean extends EvaluationManagementBack
             for (final Integer curricularYearID : curricularYears) {
                 // final Object args[] = { degreeCurricularPlan.getExternalId(),
                 // this.getExecutionPeriodID(), curricularYearID };
-                // final Collection<ExecutionCourse> executionCourses =
-                // (Collection<ExecutionCourse>) ServiceManagerServiceFactory
+                // final Collection<Course> executionCourses =
+                // (Collection<Course>) ServiceManagerServiceFactory
                 // .executeService(
                 // "ReadExecutionCoursesByDegreeCurricularPlanAndExecutionPeriodAndCurricularYear"
                 // , args);
-                final List<ExecutionCourse> executionCourses = new ArrayList<ExecutionCourse>();
-                executionCourses.addAll(ExecutionCourse.filterByAcademicIntervalAndDegreeCurricularPlanAndCurricularYearAndName(
+                final List<Course> executionCourses = new ArrayList<Course>();
+                executionCourses.addAll(Course.filterByAcademicIntervalAndDegreeCurricularPlanAndCurricularYearAndName(
                         getAcademicIntervalFromParameter(getAcademicInterval()), getExecutionDegree().getDegreeCurricularPlan(),
                         CurricularYear.readByYear(curricularYearID), "%"));
 
-                for (final ExecutionCourse executionCourse : executionCourses) {
+                for (final Course executionCourse : executionCourses) {
                     final Set<WrittenEvaluation> writtenEvaluations =
                             new TreeSet<WrittenEvaluation>(WrittenEvaluation.COMPARATOR_BY_BEGIN_DATE);
                     for (final Evaluation evaluation : executionCourse.getAssociatedEvaluationsSet()) {
@@ -795,14 +794,14 @@ public class SOPEvaluationManagementBackingBean extends EvaluationManagementBack
         return executionCourseWrittenEvaluationAgregationBean;
     }
 
-    public List<ExecutionCourse> getExecutionCoursesWithWrittenEvaluations() throws FenixServiceException {
+    public List<Course> getExecutionCoursesWithWrittenEvaluations() throws FenixServiceException {
 
         writtenEvaluations.clear();
         writtenEvaluationsMissingPlaces.clear();
         writtenEvaluationsRooms.clear();
         executionCoursesEnroledStudents.clear();
 
-        List<ExecutionCourse> executionCoursesWithWrittenEvaluations = new ArrayList<ExecutionCourse>();
+        List<Course> executionCoursesWithWrittenEvaluations = new ArrayList<Course>();
         Integer[] curricularYearIDs = getCurricularYearIDs();
 
         if (curricularYearIDs != null && getExecutionDegree() != null) {
@@ -810,7 +809,7 @@ public class SOPEvaluationManagementBackingBean extends EvaluationManagementBack
             DegreeCurricularPlan degreeCurricularPlan = getExecutionDegree().getDegreeCurricularPlan();
             List<Integer> curricularYears = Arrays.asList(curricularYearIDs);
 
-            for (final ExecutionCourse executionCourse : getExecutionCourses()) {
+            for (final Course executionCourse : getExecutionCourses()) {
 
                 List<WrittenEvaluation> executionCourseWrittenEvaluations = new ArrayList<WrittenEvaluation>();
                 for (WrittenEvaluation writtenEvaluation : executionCourse.getAssociatedWrittenEvaluations()) {
@@ -830,7 +829,7 @@ public class SOPEvaluationManagementBackingBean extends EvaluationManagementBack
         return executionCoursesWithWrittenEvaluations;
     }
 
-    private void processWrittenTestAdditionalValues(final ExecutionCourse executionCourse,
+    private void processWrittenTestAdditionalValues(final Course executionCourse,
             final List<WrittenEvaluation> associatedWrittenEvaluations) {
         for (final WrittenEvaluation writtenTest : associatedWrittenEvaluations) {
             int totalCapacity = 0;
@@ -850,15 +849,15 @@ public class SOPEvaluationManagementBackingBean extends EvaluationManagementBack
         }
     }
 
-    public List<ExecutionCourse> getExecutionCoursesWithoutWrittenEvaluations() throws FenixServiceException {
-        List<ExecutionCourse> result = new ArrayList<ExecutionCourse>();
+    public List<Course> getExecutionCoursesWithoutWrittenEvaluations() throws FenixServiceException {
+        List<Course> result = new ArrayList<Course>();
         Integer[] curricularYearIDs = getCurricularYearIDs();
 
         if (curricularYearIDs != null && getExecutionDegree() != null) {
             List<Integer> curricularYears = Arrays.asList(curricularYearIDs);
             DegreeCurricularPlan degreeCurricularPlan = getExecutionDegree().getDegreeCurricularPlan();
 
-            for (final ExecutionCourse executionCourse : getExecutionCourses()) {
+            for (final Course executionCourse : getExecutionCourses()) {
                 if (executionCourse.getAssociatedWrittenEvaluationsForScopeAndContext(curricularYears, degreeCurricularPlan)
                         .isEmpty()) {
                     result.add(executionCourse);
@@ -879,7 +878,7 @@ public class SOPEvaluationManagementBackingBean extends EvaluationManagementBack
 
     public List<SelectItem> getExecutionCoursesLabels() throws FenixServiceException {
         final List<SelectItem> result = new ArrayList<SelectItem>();
-        for (final ExecutionCourse executionCourse : getExecutionCourses()) {
+        for (final Course executionCourse : getExecutionCourses()) {
             result.add(new SelectItem(executionCourse.getExternalId(), executionCourse.getNome()));
         }
         Collections.sort(result, COMPARATOR_BY_LABEL);
@@ -1219,7 +1218,7 @@ public class SOPEvaluationManagementBackingBean extends EvaluationManagementBack
             this.associatedExecutionCourses = (List<String>) this.getViewState().getAttribute("associatedExecutionCourses");
         } else if (this.getEvaluationID() != null) {
             List<String> result = new ArrayList<String>();
-            for (ExecutionCourse executionCourse : this.getEvaluation().getAssociatedExecutionCoursesSet()) {
+            for (Course executionCourse : this.getEvaluation().getAssociatedExecutionCoursesSet()) {
                 result.add(executionCourse.getExternalId());
                 List<String> selectedScopes = new ArrayList<String>();
                 List<String> selectedContexts = new ArrayList<String>();
@@ -1258,7 +1257,7 @@ public class SOPEvaluationManagementBackingBean extends EvaluationManagementBack
 
         for (String executionCourseID : this.associatedExecutionCourses) {
 
-            ExecutionCourse executionCourse = FenixFramework.getDomainObject(executionCourseID);
+            Course executionCourse = FenixFramework.getDomainObject(executionCourseID);
             this.associatedExecutionCoursesNames.put(executionCourseID, executionCourse.getNome());
 
             List<SelectItem> items = new ArrayList<SelectItem>();
@@ -1362,7 +1361,7 @@ public class SOPEvaluationManagementBackingBean extends EvaluationManagementBack
                 list.add(integer);
             }
 
-            ExecutionCourse executionCourse = FenixFramework.getDomainObject(integer);
+            Course executionCourse = FenixFramework.getDomainObject(integer);
             List<String> auxiliarArray = new ArrayList<String>();
             for (CurricularCourse curricularCourse : executionCourse.getAssociatedCurricularCoursesSet()) {
                 for (DegreeModuleScope degreeModuleScope : curricularCourse.getDegreeModuleScopes()) {
@@ -1506,10 +1505,10 @@ public class SOPEvaluationManagementBackingBean extends EvaluationManagementBack
         setSelectedExecutionCourseID((String) valueChangeEvent.getNewValue());
     }
 
-    private List<ExecutionCourse> readExecutionCourses() throws FenixServiceException {
+    private List<Course> readExecutionCourses() throws FenixServiceException {
         ExecutionDegree executionDegree = FenixFramework.getDomainObject(this.getSelectedExecutionDegreeID());
-        final List<ExecutionCourse> executionCourses = new ArrayList<ExecutionCourse>();
-        executionCourses.addAll(ExecutionCourse.filterByAcademicIntervalAndDegreeCurricularPlanAndCurricularYearAndName(
+        final List<Course> executionCourses = new ArrayList<Course>();
+        executionCourses.addAll(Course.filterByAcademicIntervalAndDegreeCurricularPlanAndCurricularYearAndName(
                 getAcademicIntervalFromParameter(getAcademicInterval()), executionDegree.getDegreeCurricularPlan(),
                 CurricularYear.readByYear(curricularYearID), "%"));
         Collections.sort(executionCourses, new BeanComparator("sigla"));
@@ -1518,7 +1517,7 @@ public class SOPEvaluationManagementBackingBean extends EvaluationManagementBack
 
     public List<SelectItem> getExecutionCoursesItems() throws FenixServiceException {
         final List<SelectItem> result = new ArrayList<SelectItem>();
-        for (final ExecutionCourse executionCourse : readExecutionCourses()) {
+        for (final Course executionCourse : readExecutionCourses()) {
             result.add(new SelectItem(executionCourse.getExternalId(), executionCourse.getNome()));
         }
         Collections.sort(result, new BeanComparator("label"));

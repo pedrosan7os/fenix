@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.ShiftType;
 import org.fenixedu.academic.dto.teacher.ImportLessonPlanningsBean;
@@ -41,8 +41,8 @@ public class ListShiftsToImportLessonPlanningsProvider implements DataProvider {
         ImportLessonPlanningsBean bean = (ImportLessonPlanningsBean) source;
         Set<Shift> shifts = new TreeSet<Shift>(Shift.SHIFT_COMPARATOR_BY_TYPE_AND_ORDERED_LESSONS);
 
-        ExecutionCourse executionCourseFrom = bean.getExecutionCourse();
-        ExecutionCourse executionCourseTo = bean.getExecutionCourseTo();
+        Course executionCourseFrom = bean.getExecutionCourse();
+        Course executionCourseTo = bean.getExecutionCourseTo();
 
         if (executionCourseFrom != null && executionCourseTo != null) {
 

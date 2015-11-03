@@ -24,7 +24,7 @@ public class CurricularManagementLog extends CurricularManagementLog_Base {
         super();
     }
 
-    public CurricularManagementLog(ExecutionCourse executionCourse, String description) {
+    public CurricularManagementLog(Course executionCourse, String description) {
         super();
         if (getExecutionCourse() == null) {
             setExecutionCourse(executionCourse);
@@ -32,11 +32,11 @@ public class CurricularManagementLog extends CurricularManagementLog_Base {
         setDescription(description);
     }
 
-    public static CurricularManagementLog createCurricularManagementLog(ExecutionCourse executionCourse, String description) {
+    public static CurricularManagementLog createCurricularManagementLog(Course executionCourse, String description) {
         return new CurricularManagementLog(executionCourse, description);
     }
 
-    public static CurricularManagementLog createLog(ExecutionCourse executionCourse, String bundle, String key, String... args) {
+    public static CurricularManagementLog createLog(Course executionCourse, String bundle, String key, String... args) {
         final String label = generateLabelDescription(bundle, key, args);
         return createCurricularManagementLog(executionCourse, label);
     }

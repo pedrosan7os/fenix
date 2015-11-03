@@ -21,7 +21,7 @@
  */
 package org.fenixedu.academic.service.filter;
 
-import org.fenixedu.academic.domain.Professorship;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.Summary;
 import org.fenixedu.academic.domain.person.RoleType;
 import org.fenixedu.academic.service.services.exceptions.NotAuthorizedException;
@@ -44,7 +44,7 @@ public class SummaryManagementToTeacherAuthorizationFilter extends Authorization
         return RoleType.TEACHER;
     }
 
-    public void execute(Summary summary, Professorship professorshipLogged) throws NotAuthorizedException {
+    public void execute(Summary summary, CourseTeacher professorshipLogged) throws NotAuthorizedException {
 
         try {
             User userViewLogged = Authenticate.getUser();

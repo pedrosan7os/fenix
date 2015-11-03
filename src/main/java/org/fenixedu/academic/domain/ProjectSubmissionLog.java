@@ -43,7 +43,7 @@ public class ProjectSubmissionLog extends ProjectSubmissionLog_Base {
     }
 
     public ProjectSubmissionLog(DateTime submissionDateTime, String filename, String fileMimeType, String fileChecksum,
-            String fileChecksumAlgorithm, Integer fileSize, StudentGroup studentGroup, Attends attends, Project project) {
+            String fileChecksumAlgorithm, Integer fileSize, StudentGroup studentGroup, Attendance attends, Project project) {
         this();
         setSubmissionDateTime(submissionDateTime);
         setFilename(filename);

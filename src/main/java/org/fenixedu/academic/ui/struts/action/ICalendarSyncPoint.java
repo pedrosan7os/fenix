@@ -32,11 +32,11 @@ import org.apache.commons.lang.CharEncoding;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.fenixedu.academic.domain.Attends;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Attendance;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.Lesson;
-import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.domain.Project;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.WrittenEvaluation;
@@ -78,7 +78,7 @@ public class ICalendarSyncPoint extends FenixDispatchAction {
         ExecutionSemester currentExecutionSemester = ExecutionSemester.readActualExecutionSemester();
 
         for (Registration registration : user.getPerson().getStudent().getRegistrationsSet()) {
-            for (Attends attends : registration.getAttendsForExecutionPeriod(currentExecutionSemester)) {
+            for (Attendance attends : registration.getAttendsForExecutionPeriod(currentExecutionSemester)) {
                 for (Shift shift : attends.getShiftsSet()) {
                     for (Lesson lesson : shift.getAssociatedLessonsSet()) {
                         allEvents.addAll(lesson.getAllLessonsEvents());
@@ -86,7 +86,7 @@ public class ICalendarSyncPoint extends FenixDispatchAction {
                 }
             }
 
-            for (Attends attends : registration.getAttendsForExecutionPeriod(currentExecutionSemester
+            for (Attendance attends : registration.getAttendsForExecutionPeriod(currentExecutionSemester
                     .getPreviousExecutionPeriod())) {
                 for (Shift shift : attends.getShiftsSet()) {
                     for (Lesson lesson : shift.getAssociatedLessonsSet()) {
@@ -102,8 +102,8 @@ public class ICalendarSyncPoint extends FenixDispatchAction {
 
         List<EventBean> allEvents = new ArrayList<EventBean>();
 
-        for (Professorship professorShip : user.getPerson().getProfessorshipsSet()) {
-            ExecutionCourse executionCourse = professorShip.getExecutionCourse();
+        for (CourseTeacher professorShip : user.getPerson().getProfessorshipsSet()) {
+            Course executionCourse = professorShip.getExecutionCourse();
             for (Lesson lesson : executionCourse.getLessons()) {
                 allEvents.addAll(lesson.getAllLessonsEvents());
             }
@@ -135,7 +135,7 @@ public class ICalendarSyncPoint extends FenixDispatchAction {
                 allEvents.addAll(writtenEvaluation.getAllEvents(registration));
             }
 
-            for (Attends attends : registration.getAttendsForExecutionPeriod(currentExecutionSemester)) {
+            for (Attendance attends : registration.getAttendsForExecutionPeriod(currentExecutionSemester)) {
                 for (Project project : attends.getExecutionCourse().getAssociatedProjects()) {
                     allEvents.addAll(project.getAllEvents(attends.getExecutionCourse()));
                 }
@@ -146,7 +146,7 @@ public class ICalendarSyncPoint extends FenixDispatchAction {
                 allEvents.addAll(writtenEvaluation.getAllEvents(registration));
             }
 
-            for (Attends attends : registration.getAttendsForExecutionPeriod(currentExecutionSemester
+            for (Attendance attends : registration.getAttendsForExecutionPeriod(currentExecutionSemester
                     .getPreviousExecutionPeriod())) {
                 for (Project project : attends.getExecutionCourse().getAssociatedProjects()) {
                     allEvents.addAll(project.getAllEvents(attends.getExecutionCourse()));
@@ -160,8 +160,8 @@ public class ICalendarSyncPoint extends FenixDispatchAction {
 
         List<EventBean> allEvents = new ArrayList<EventBean>();
 
-        for (Professorship professorShip : user.getPerson().getProfessorshipsSet()) {
-            ExecutionCourse executionCourse = professorShip.getExecutionCourse();
+        for (CourseTeacher professorShip : user.getPerson().getProfessorshipsSet()) {
+            Course executionCourse = professorShip.getExecutionCourse();
 
             for (WrittenEvaluation writtenEvaluation : executionCourse.getWrittenEvaluations()) {
                 allEvents.addAll(writtenEvaluation.getAllEvents(null));

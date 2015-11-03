@@ -18,13 +18,13 @@
  */
 package org.fenixedu.academic.dto;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.ShiftType;
 
 public class ShiftToEnrol extends DataTranferObject {
 
-    private ExecutionCourse executionCourse;
+    private Course executionCourse;
 
     private ShiftType theoricType;
 
@@ -64,11 +64,11 @@ public class ShiftToEnrol extends DataTranferObject {
         this.enrolled = enrolled;
     }
 
-    public ExecutionCourse getExecutionCourse() {
+    public Course getExecutionCourse() {
         return executionCourse;
     }
 
-    public void setExecutionCourse(ExecutionCourse executionCourse) {
+    public void setExecutionCourse(Course executionCourse) {
         this.executionCourse = executionCourse;
     }
 

@@ -35,7 +35,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.fenixedu.academic.domain.CurricularYear;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.Shift;
@@ -55,16 +55,16 @@ import pt.ist.fenixframework.FenixFramework;
 public class SearchExecutionCourses {
 
     public List<InfoExecutionCourse> run(AcademicInterval academicInterval, ExecutionDegree executionDegree, String courseName) {
-        List<ExecutionCourse> executionCourses =
-                ExecutionCourse.searchByAcademicIntervalAndExecutionDegreeYearAndName(academicInterval, executionDegree, null,
+        List<Course> executionCourses =
+                Course.searchByAcademicIntervalAndExecutionDegreeYearAndName(academicInterval, executionDegree, null,
                         courseName);
         return fillInfoExecutionCourses(academicInterval, executionCourses);
     }
 
     public List<InfoExecutionCourse> run(AcademicInterval academicInterval, ExecutionDegree executionDegree,
             CurricularYear curricularYear, String courseName) {
-        List<ExecutionCourse> executionCourses =
-                ExecutionCourse.searchByAcademicIntervalAndExecutionDegreeYearAndName(academicInterval, executionDegree,
+        List<Course> executionCourses =
+                Course.searchByAcademicIntervalAndExecutionDegreeYearAndName(academicInterval, executionDegree,
                         curricularYear, courseName);
         return fillInfoExecutionCourses(academicInterval, executionCourses);
     }
@@ -86,7 +86,7 @@ public class SearchExecutionCourses {
             curricularYear = FenixFramework.getDomainObject(infoCurricularYear.getExternalId());
         }
 
-        List<ExecutionCourse> executionCourses = new ArrayList<ExecutionCourse>();
+        List<Course> executionCourses = new ArrayList<Course>();
         if (executionSemester != null) {
             executionCourses =
                     executionSemester.getExecutionCoursesByDegreeCurricularPlanAndSemesterAndCurricularYearAndName(
@@ -97,7 +97,7 @@ public class SearchExecutionCourses {
     }
 
     private List<InfoExecutionCourse> fillInfoExecutionCourses(final AcademicInterval academicInterval,
-            List<ExecutionCourse> executionCourses) {
+            List<Course> executionCourses) {
         List<InfoExecutionCourse> result;
         result = (List<InfoExecutionCourse>) CollectionUtils.collect(executionCourses, new Transformer() {
             @Override
@@ -110,7 +110,7 @@ public class SearchExecutionCourses {
             private InfoExecutionCourse getOccupancyLevels(Object arg0) {
 
                 InfoExecutionCourse infoExecutionCourse;
-                ExecutionCourse executionCourse = (ExecutionCourse) arg0;
+                Course executionCourse = (Course) arg0;
 
                 Integer theoreticalCapacity = Integer.valueOf(0);
                 Integer theoPraticalCapacity = Integer.valueOf(0);

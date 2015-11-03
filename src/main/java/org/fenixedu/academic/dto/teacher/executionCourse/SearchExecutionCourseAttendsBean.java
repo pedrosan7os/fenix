@@ -26,10 +26,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.Attends.StudentAttendsStateType;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.util.Bundle;
@@ -42,13 +42,13 @@ import org.fenixedu.bennu.core.i18n.BundleUtil;
 
 public class SearchExecutionCourseAttendsBean implements Serializable {
 
-    private ExecutionCourse executionCourse;
+    private Course executionCourse;
     private Boolean viewPhoto;
     private Collection<StudentAttendsStateType> attendsStates;
     private Collection<WorkingStudentSelectionType> workingStudentTypes;
     private Collection<DegreeCurricularPlan> degreeCurricularPlans;
     private Collection<Shift> shifts;
-    private Collection<Attends> attendsResult;
+    private Collection<Attendance> attendsResult;
     private transient Map<Integer, Integer> enrolmentsNumberMap;
 
     public String getEnumerationResourcesString(String name) {
@@ -59,21 +59,21 @@ public class SearchExecutionCourseAttendsBean implements Serializable {
         return BundleUtil.getString(Bundle.APPLICATION, name);
     }
 
-    public SearchExecutionCourseAttendsBean(ExecutionCourse executionCourse) {
+    public SearchExecutionCourseAttendsBean(Course executionCourse) {
         setExecutionCourse(executionCourse);
         setViewPhoto(false);
         setAttendsStates(Arrays.asList(StudentAttendsStateType.values()));
         setWorkingStudentTypes(Arrays.asList(WorkingStudentSelectionType.values()));
         setShifts(getExecutionCourse().getAssociatedShifts());
         setDegreeCurricularPlans(getExecutionCourse().getAttendsDegreeCurricularPlans());
-        attendsResult = new ArrayList<Attends>();
+        attendsResult = new ArrayList<Attendance>();
     }
 
-    public ExecutionCourse getExecutionCourse() {
+    public Course getExecutionCourse() {
         return this.executionCourse;
     }
 
-    public void setExecutionCourse(ExecutionCourse executionCourse) {
+    public void setExecutionCourse(Course executionCourse) {
         this.executionCourse = executionCourse;
     }
 
@@ -133,17 +133,17 @@ public class SearchExecutionCourseAttendsBean implements Serializable {
         this.workingStudentTypes = workingStudentTypes;
     }
 
-    public Collection<Attends> getAttendsResult() {
-        Collection<Attends> attends = new ArrayList<Attends>();
-        for (Attends attendRef : attendsResult) {
+    public Collection<Attendance> getAttendsResult() {
+        Collection<Attendance> attends = new ArrayList<Attendance>();
+        for (Attendance attendRef : attendsResult) {
             attends.add(attendRef);
         }
         return attends;
     }
 
-    public void setAttendsResult(Collection<Attends> atts) {
-        ArrayList<Attends> results = new ArrayList<Attends>();
-        for (Attends attend : atts) {
+    public void setAttendsResult(Collection<Attendance> atts) {
+        ArrayList<Attendance> results = new ArrayList<Attendance>();
+        for (Attendance attend : atts) {
             results.add(attend);
         }
         this.attendsResult = results;
@@ -157,15 +157,15 @@ public class SearchExecutionCourseAttendsBean implements Serializable {
         this.enrolmentsNumberMap = enrolmentsNumberMap;
     }
 
-    public Predicate<Attends> getFilters() {
+    public Predicate<Attendance> getFilters() {
 
-        Collection<Predicate<Attends>> filters = new ArrayList<Predicate<Attends>>();
+        Collection<Predicate<Attendance>> filters = new ArrayList<Predicate<Attendance>>();
 
         if (getAttendsStates().size() < StudentAttendsStateType.values().length) {
-            filters.add(new InlinePredicate<Attends, Collection<StudentAttendsStateType>>(getAttendsStates()) {
+            filters.add(new InlinePredicate<Attendance, Collection<StudentAttendsStateType>>(getAttendsStates()) {
 
                 @Override
-                public boolean test(Attends attends) {
+                public boolean test(Attendance attends) {
                     return getValue().contains(attends.getAttendsStateType());
                 }
 
@@ -173,14 +173,14 @@ public class SearchExecutionCourseAttendsBean implements Serializable {
         }
 
         if (getWorkingStudentTypes().size() < WorkingStudentSelectionType.values().length) {
-            filters.add(new InlinePredicate<Attends, Collection<WorkingStudentSelectionType>>(getWorkingStudentTypes()) {
+            filters.add(new InlinePredicate<Attendance, Collection<WorkingStudentSelectionType>>(getWorkingStudentTypes()) {
 
                 @Override
-                public boolean test(Attends attends) {
+                public boolean test(Attendance attends) {
                     return getValue().contains(getWorkingStudentType(attends));
                 }
 
-                private WorkingStudentSelectionType getWorkingStudentType(Attends attends) {
+                private WorkingStudentSelectionType getWorkingStudentType(Attendance attends) {
                     if (attends.getRegistration().getStudent().hasWorkingStudentStatuteInPeriod(attends.getExecutionPeriod())) {
                         return WorkingStudentSelectionType.WORKING_STUDENT;
                     } else {
@@ -191,10 +191,10 @@ public class SearchExecutionCourseAttendsBean implements Serializable {
         }
 
         if (shifts.size() < getExecutionCourse().getAssociatedShifts().size()) {
-            filters.add(new InlinePredicate<Attends, Collection<Shift>>(getShifts()) {
+            filters.add(new InlinePredicate<Attendance, Collection<Shift>>(getShifts()) {
 
                 @Override
-                public boolean test(Attends attends) {
+                public boolean test(Attendance attends) {
                     for (Shift shift : getValue()) {
                         if (shift.getAttendsSet().contains(attends)) {
                             return true;
@@ -206,10 +206,10 @@ public class SearchExecutionCourseAttendsBean implements Serializable {
         }
 
         if (degreeCurricularPlans.size() < getExecutionCourse().getAttendsDegreeCurricularPlans().size()) {
-            filters.add(new InlinePredicate<Attends, Collection<DegreeCurricularPlan>>(getDegreeCurricularPlans()) {
+            filters.add(new InlinePredicate<Attendance, Collection<DegreeCurricularPlan>>(getDegreeCurricularPlans()) {
 
                 @Override
-                public boolean test(Attends attends) {
+                public boolean test(Attendance attends) {
                     return getValue().contains(attends.getStudentCurricularPlanFromAttends().getDegreeCurricularPlan());
                 }
 
@@ -217,12 +217,12 @@ public class SearchExecutionCourseAttendsBean implements Serializable {
 
         }
 
-        return new AndPredicate<Attends>(filters);
+        return new AndPredicate<Attendance>(filters);
     }
 
     public Group getAttendsGroup() {
         List<Person> persons = new ArrayList<Person>();
-        for (Attends attends : getAttendsResult()) {
+        for (Attendance attends : getAttendsResult()) {
             persons.add(attends.getRegistration().getStudent().getPerson());
         }
         return UserGroup.of(Person.convertToUsers(persons));

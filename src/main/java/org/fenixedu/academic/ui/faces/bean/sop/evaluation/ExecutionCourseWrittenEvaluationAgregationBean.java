@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Set;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.WrittenEvaluation;
 
 public class ExecutionCourseWrittenEvaluationAgregationBean {
@@ -39,11 +39,11 @@ public class ExecutionCourseWrittenEvaluationAgregationBean {
 
             };
 
-    private final ExecutionCourse executionCourse;
+    private final Course executionCourse;
     private final Integer curricularYear;
     private final Collection<WrittenEvaluation> writtenEvaluations;
 
-    public ExecutionCourseWrittenEvaluationAgregationBean(Integer curricularYear, ExecutionCourse executionCourse,
+    public ExecutionCourseWrittenEvaluationAgregationBean(Integer curricularYear, Course executionCourse,
             Set<WrittenEvaluation> writtenEvaluations) {
         this.curricularYear = curricularYear;
         this.executionCourse = executionCourse;
@@ -54,7 +54,7 @@ public class ExecutionCourseWrittenEvaluationAgregationBean {
         return curricularYear;
     }
 
-    public ExecutionCourse getExecutionCourse() {
+    public Course getExecutionCourse() {
         return executionCourse;
     }
 

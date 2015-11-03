@@ -21,7 +21,7 @@ package org.fenixedu.academic.domain.accessControl;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.StudentGroup;
 import org.fenixedu.bennu.core.annotation.GroupArgument;
 import org.fenixedu.bennu.core.annotation.GroupOperator;
@@ -60,7 +60,7 @@ public class StudentGroupGroup extends FenixGroup {
     @Override
     public Set<User> getMembers() {
         Set<User> users = new HashSet<>();
-        for (Attends attends : studentGroup.getAttendsSet()) {
+        for (Attendance attends : studentGroup.getAttendsSet()) {
             User user = attends.getRegistration().getPerson().getUser();
             if (user != null) {
                 users.add(user);
@@ -79,7 +79,7 @@ public class StudentGroupGroup extends FenixGroup {
         if (user == null || user.getPerson().getStudent() == null) {
             return false;
         }
-        for (final Attends attends : studentGroup.getAttendsSet()) {
+        for (final Attendance attends : studentGroup.getAttendsSet()) {
             if (attends.getRegistration().getStudent().equals(user.getPerson().getStudent())) {
                 return true;
             }

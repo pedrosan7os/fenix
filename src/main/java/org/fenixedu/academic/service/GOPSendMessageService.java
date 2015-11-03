@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.util.MessageResources;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.WrittenTest;
 import org.fenixedu.academic.domain.person.RoleType;
@@ -90,7 +90,7 @@ public class GOPSendMessageService implements NotificationService {
         final Set<String> courseNames = new HashSet<String>();
         final Set<String> degreeNames = new HashSet<String>();
         final Set<ExecutionDegree> degrees = new HashSet<ExecutionDegree>();
-        for (ExecutionCourse course : test.getAssociatedExecutionCoursesSet()) {
+        for (Course course : test.getAssociatedExecutionCoursesSet()) {
             courseNames.add(course.getName());
             degreeNames.add(course.getDegreePresentationString());
             degrees.addAll(course.getExecutionDegrees());
@@ -124,7 +124,7 @@ public class GOPSendMessageService implements NotificationService {
         final Set<String> courseNames = new HashSet<String>();
         final Set<String> degreeNames = new HashSet<String>();
         final Set<ExecutionDegree> degrees = new HashSet<ExecutionDegree>();
-        for (ExecutionCourse course : test.getAssociatedExecutionCoursesSet()) {
+        for (Course course : test.getAssociatedExecutionCoursesSet()) {
             courseNames.add(course.getName());
             degreeNames.add(course.getDegreePresentationString());
             degrees.addAll(course.getExecutionDegrees());

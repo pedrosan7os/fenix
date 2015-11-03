@@ -32,10 +32,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.ExecutionCourseLog;
 import org.fenixedu.academic.domain.ExecutionCourseLog.ExecutionCourseLogTypes;
-import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.dto.teacher.executionCourse.SearchExecutionCourseLogBean;
 import org.fenixedu.academic.ui.struts.action.teacher.executionCourse.ExecutionCourseBaseAction;
 import org.fenixedu.academic.util.CollectionPager;
@@ -50,7 +50,7 @@ public class SearchExecutionCourseLogAction extends ExecutionCourseBaseAction {
 
     public ActionForward prepareInit(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) {
-        ExecutionCourse executionCourse = getExecutionCourse(request);
+        Course executionCourse = getExecutionCourse(request);
         SearchExecutionCourseLogBean seclb = new SearchExecutionCourseLogBean(executionCourse);
         seclb.setExecutionCourseLogTypes(new ArrayList<ExecutionCourseLogTypes>());
 
@@ -61,7 +61,7 @@ public class SearchExecutionCourseLogAction extends ExecutionCourseBaseAction {
     }
 
     public ActionForward prepare(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-        ExecutionCourse executionCourse = getExecutionCourse(request);
+        Course executionCourse = getExecutionCourse(request);
         SearchExecutionCourseLogBean seclb = readSearchBean(request, executionCourse);
 
         searchLogs(seclb);
@@ -72,8 +72,8 @@ public class SearchExecutionCourseLogAction extends ExecutionCourseBaseAction {
         return forward(request, "/teacher/viewLogSearch.jsp");
     }
 
-    private SearchExecutionCourseLogBean readSearchBean(HttpServletRequest request, ExecutionCourse executionCourse) {
-        ExecutionCourse course = getExecutionCourse(request);
+    private SearchExecutionCourseLogBean readSearchBean(HttpServletRequest request, Course executionCourse) {
+        Course course = getExecutionCourse(request);
         if (course != null) {
             SearchExecutionCourseLogBean seclb = new SearchExecutionCourseLogBean(course);
 
@@ -95,9 +95,9 @@ public class SearchExecutionCourseLogAction extends ExecutionCourseBaseAction {
 
             String professorships = request.getParameter("professorships");
             if (professorships != null) {
-                List<Professorship> list = new ArrayList<Professorship>();
+                List<CourseTeacher> list = new ArrayList<CourseTeacher>();
                 for (String professorship : professorships.split(":")) {
-                    list.add(FenixFramework.<Professorship> getDomainObject(professorship));
+                    list.add(FenixFramework.<CourseTeacher> getDomainObject(professorship));
                 }
                 seclb.setProfessorships(list);
             }
@@ -118,7 +118,7 @@ public class SearchExecutionCourseLogAction extends ExecutionCourseBaseAction {
     }
 
     private void prepareAttendsCollectionPages(HttpServletRequest request, SearchExecutionCourseLogBean seclb,
-            ExecutionCourse executionCourse) {
+            Course executionCourse) {
         Collection<ExecutionCourseLog> ecLogs = seclb.getExecutionCourseLogs();
         List<ExecutionCourseLog> listECLogs = new ArrayList<ExecutionCourseLog>(ecLogs);
         Collections.sort(listECLogs, ExecutionCourseLog.COMPARATOR_BY_WHEN_DATETIME);
@@ -141,7 +141,7 @@ public class SearchExecutionCourseLogAction extends ExecutionCourseBaseAction {
         request.setAttribute("logPagesBean", logPagesBean);
     }
 
-    // copied from ExecutionCourse, was public
+    // copied from Course, was public
     private void searchLogs(SearchExecutionCourseLogBean bean) {
         final Predicate<ExecutionCourseLog> filter = bean.getFilters();
         final Collection<ExecutionCourseLog> validLogs = new HashSet<ExecutionCourseLog>();

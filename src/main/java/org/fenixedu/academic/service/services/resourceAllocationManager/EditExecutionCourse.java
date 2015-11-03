@@ -20,7 +20,7 @@ package org.fenixedu.academic.service.services.resourceAllocationManager;
 
 import static org.fenixedu.academic.predicate.AccessControl.check;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.dto.resourceAllocationManager.CourseLoadBean;
 import org.fenixedu.academic.predicate.RolePredicates;
 import org.fenixedu.academic.service.services.exceptions.FenixServiceException;
@@ -33,7 +33,7 @@ public class EditExecutionCourse {
     public static void run(CourseLoadBean bean) throws FenixServiceException {
         check(RolePredicates.RESOURCE_ALLOCATION_MANAGER_PREDICATE);
         if (bean != null) {
-            ExecutionCourse executionCourse = bean.getExecutionCourse();
+            Course executionCourse = bean.getExecutionCourse();
             executionCourse.editCourseLoad(bean.getType(), bean.getUnitQuantity(), bean.getTotalQuantity());
         }
     }

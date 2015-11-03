@@ -31,7 +31,7 @@ import java.util.List;
 
 import org.fenixedu.academic.domain.CurricularYear;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.time.calendarStructure.AcademicInterval;
@@ -54,10 +54,10 @@ public class ReadShiftsByExecutionPeriodAndExecutionDegreeAndCurricularYear {
         final DegreeCurricularPlan degreeCurricularPlan = executionDegree.getDegreeCurricularPlan();
         final CurricularYear curricularYear = FenixFramework.getDomainObject(infoCurricularYear.getExternalId());
         final List<InfoShift> infoShifts = new ArrayList<InfoShift>();
-        final List<ExecutionCourse> executionCourses =
-                ExecutionCourse.filterByAcademicIntervalAndDegreeCurricularPlanAndCurricularYearAndName(academicInterval,
+        final List<Course> executionCourses =
+                Course.filterByAcademicIntervalAndDegreeCurricularPlanAndCurricularYearAndName(academicInterval,
                         degreeCurricularPlan, curricularYear, "%");
-        for (final ExecutionCourse executionCourse : executionCourses) {
+        for (final Course executionCourse : executionCourses) {
             for (final Shift shift : executionCourse.getAssociatedShifts()) {
                 final InfoShift infoShift = new InfoShift(shift);
                 infoShifts.add(infoShift);

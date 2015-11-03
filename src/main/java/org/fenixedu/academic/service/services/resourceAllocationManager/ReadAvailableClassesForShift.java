@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.SchoolClass;
@@ -55,7 +55,7 @@ public class ReadAvailableClassesForShift {
         check(RolePredicates.RESOURCE_ALLOCATION_MANAGER_PREDICATE);
 
         final Shift shift = FenixFramework.getDomainObject(shiftOID);
-        final ExecutionCourse executionCourse = shift.getDisciplinaExecucao();
+        final Course executionCourse = shift.getDisciplinaExecucao();
         final ExecutionSemester executionSemester = executionCourse.getExecutionPeriod();
         final ExecutionYear executionYear = executionSemester.getExecutionYear();
 

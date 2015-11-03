@@ -26,8 +26,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.CurricularCourseScope;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.WrittenEvaluation;
 import org.fenixedu.academic.domain.space.WrittenEvaluationSpaceOccupation;
 
@@ -166,7 +166,7 @@ public class InfoWrittenEvaluation extends InfoEvaluation {
             associatedExecutionCourse = new ArrayList<InfoExecutionCourse>();
             associatedRoomOccupation = new ArrayList<InfoRoomOccupation>();
             associatedCurricularCourseScope = new ArrayList<InfoCurricularCourseScope>();
-            for (ExecutionCourse executionCourse : writtenEvaluation.getAssociatedExecutionCoursesSet()) {
+            for (Course executionCourse : writtenEvaluation.getAssociatedExecutionCoursesSet()) {
                 associatedExecutionCourse.add(InfoExecutionCourse.newInfoFromDomain(executionCourse));
             }
             for (WrittenEvaluationSpaceOccupation roomOccupation : writtenEvaluation.getWrittenEvaluationSpaceOccupationsSet()) {

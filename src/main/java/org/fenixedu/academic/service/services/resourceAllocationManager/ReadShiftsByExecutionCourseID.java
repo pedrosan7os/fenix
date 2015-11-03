@@ -21,7 +21,7 @@ package org.fenixedu.academic.service.services.resourceAllocationManager;
 import java.util.ArrayList;
 import java.util.Set;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.dto.InfoExecutionCourse;
 import org.fenixedu.academic.dto.InfoExecutionCourseOccupancy;
@@ -39,7 +39,7 @@ public class ReadShiftsByExecutionCourseID {
         final InfoExecutionCourseOccupancy infoExecutionCourseOccupancy = new InfoExecutionCourseOccupancy();
         infoExecutionCourseOccupancy.setInfoShifts(new ArrayList());
 
-        final ExecutionCourse executionCourse = FenixFramework.getDomainObject(executionCourseID);
+        final Course executionCourse = FenixFramework.getDomainObject(executionCourseID);
         final Set<Shift> shifts = executionCourse.getAssociatedShifts();
 
         infoExecutionCourseOccupancy.setInfoExecutionCourse(InfoExecutionCourse.newInfoFromDomain(executionCourse));

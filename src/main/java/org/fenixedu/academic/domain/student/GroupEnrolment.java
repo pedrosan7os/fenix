@@ -28,7 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.Grouping;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.StudentGroup;
@@ -96,7 +96,7 @@ public class GroupEnrolment {
             throw new NotAuthorizedException();
         }
 
-        final Attends userAttend = grouping.getStudentAttend(userStudent);
+        final Attendance userAttend = grouping.getStudentAttend(userStudent);
         if (userAttend == null) {
             throw new InvalidStudentNumberServiceException();
         }
@@ -116,7 +116,7 @@ public class GroupEnrolment {
 
         newStudentGroup = new StudentGroup(groupNumber, grouping, shift);
         for (final String studentUsernameIter : studentUsernames) {
-            Attends attend = grouping.getStudentAttend(studentUsernameIter);
+            Attendance attend = grouping.getStudentAttend(studentUsernameIter);
             attend.addStudentGroups(newStudentGroup);
         }
         userAttend.addStudentGroups(newStudentGroup);

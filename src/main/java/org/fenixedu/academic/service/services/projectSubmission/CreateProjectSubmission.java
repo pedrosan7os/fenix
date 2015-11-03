@@ -22,7 +22,7 @@ import static org.fenixedu.academic.predicate.AccessControl.check;
 
 import java.io.IOException;
 
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.Project;
 import org.fenixedu.academic.domain.ProjectSubmission;
@@ -37,7 +37,7 @@ import pt.ist.fenixframework.Atomic;
 public class CreateProjectSubmission {
 
     @Atomic
-    public static void run(byte[] bytes, String filename, Attends attends, Project project, StudentGroup studentGroup,
+    public static void run(byte[] bytes, String filename, Attendance attends, Project project, StudentGroup studentGroup,
             Person person) throws FenixServiceException, IOException {
         check(RolePredicates.STUDENT_PREDICATE);
         final ProjectSubmissionFile projectSubmissionFile = new ProjectSubmissionFile(filename, filename, bytes);

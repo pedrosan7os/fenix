@@ -43,8 +43,7 @@ public class AdHocEvaluation extends AdHocEvaluation_Base {
         setCreationDateTime(new DateTime());
     }
 
-    public AdHocEvaluation(final ExecutionCourse executionCourse, final String name, final String description,
-            final GradeScale gradeScale) {
+    public AdHocEvaluation(final Course executionCourse, final String name, final String description, final GradeScale gradeScale) {
         this();
 
         if (name == null || executionCourse == null || gradeScale == null) {

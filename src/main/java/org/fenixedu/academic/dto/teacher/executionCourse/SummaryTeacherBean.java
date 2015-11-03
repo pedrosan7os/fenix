@@ -20,17 +20,17 @@ package org.fenixedu.academic.dto.teacher.executionCourse;
 
 import java.io.Serializable;
 
-import org.fenixedu.academic.domain.Professorship;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 
 public class SummaryTeacherBean implements Serializable {
 
-    private Professorship professorshipReference;
+    private CourseTeacher professorshipReference;
 
     private Boolean others;
 
-    public SummaryTeacherBean(Professorship professorship) {
+    public SummaryTeacherBean(CourseTeacher professorship) {
         if (professorship == null) {
             throw new RuntimeException();
         }
@@ -52,11 +52,11 @@ public class SummaryTeacherBean implements Serializable {
         this.others = others;
     }
 
-    public Professorship getProfessorship() {
+    public CourseTeacher getProfessorship() {
         return this.professorshipReference;
     }
 
-    public void setProfessorship(Professorship professorship) {
+    public void setProfessorship(CourseTeacher professorship) {
         this.professorshipReference = professorship;
     }
 

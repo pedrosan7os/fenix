@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
-import org.fenixedu.academic.domain.Professorship;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.dto.ShowSummariesBean;
 import org.fenixedu.academic.dto.teacher.executionCourse.SummaryTeacherBean;
 
@@ -35,12 +35,12 @@ public class ListExecutionCourseTeachersToShowSummariesProvider implements DataP
 
     @Override
     public Object provide(Object source, Object currentValue) {
-        ExecutionCourse executionCourse = ((ShowSummariesBean) source).getExecutionCourse();
+        Course executionCourse = ((ShowSummariesBean) source).getExecutionCourse();
         List<SummaryTeacherBean> teachers = new ArrayList<SummaryTeacherBean>();
-        Set<Professorship> professorships = new TreeSet<Professorship>(Professorship.COMPARATOR_BY_PERSON_NAME);
+        Set<CourseTeacher> professorships = new TreeSet<CourseTeacher>(CourseTeacher.COMPARATOR_BY_PERSON_NAME);
         if (executionCourse != null) {
             professorships.addAll(executionCourse.getProfessorshipsSet());
-            for (Professorship professorship : professorships) {
+            for (CourseTeacher professorship : professorships) {
                 teachers.add(teachers.size(), new SummaryTeacherBean(professorship));
             }
             teachers.add(teachers.size(), new SummaryTeacherBean(Boolean.TRUE));

@@ -39,7 +39,7 @@ import org.apache.struts.util.LabelValueBean;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeModuleScope;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.time.calendarStructure.AcademicInterval;
 import org.fenixedu.academic.domain.time.calendarStructure.AcademicPeriod;
@@ -124,8 +124,8 @@ public class WrittenEvaluationsSearchByDegreeAndYear extends FenixContextDispatc
             years.add(Integer.valueOf(yearString));
         }
 
-        final Map<ExecutionDegree, Map<Integer, Set<ExecutionCourse>>> executionCoursesByCurricularYearByExecutionDegree =
-                new TreeMap<ExecutionDegree, Map<Integer, Set<ExecutionCourse>>>(new Comparator<ExecutionDegree>() {
+        final Map<ExecutionDegree, Map<Integer, Set<Course>>> executionCoursesByCurricularYearByExecutionDegree =
+                new TreeMap<ExecutionDegree, Map<Integer, Set<Course>>>(new Comparator<ExecutionDegree>() {
                     @Override
                     public int compare(ExecutionDegree executionDegree1, ExecutionDegree executionDegree2) {
                         final Degree degree1 = executionDegree1.getDegreeCurricularPlan().getDegree();
@@ -137,8 +137,8 @@ public class WrittenEvaluationsSearchByDegreeAndYear extends FenixContextDispatc
         for (final ExecutionDegree executionDegree : ExecutionDegree.filterByAcademicInterval(academicInterval)) {
             if (executionDegreeID == null || executionDegreeID.length() == 0
                     || executionDegreeID.equals(executionDegree.getExternalId().toString())) {
-                final Map<Integer, Set<ExecutionCourse>> executionCoursesByCurricularYear =
-                        new TreeMap<Integer, Set<ExecutionCourse>>(new Comparator<Integer>() {
+                final Map<Integer, Set<Course>> executionCoursesByCurricularYear =
+                        new TreeMap<Integer, Set<Course>>(new Comparator<Integer>() {
                             @Override
                             public int compare(final Integer curricularYear1, final Integer curricularYear2) {
                                 return curricularYear1.compareTo(curricularYear2);
@@ -155,12 +155,12 @@ public class WrittenEvaluationsSearchByDegreeAndYear extends FenixContextDispatc
                                     .getCardinalityOfAcademicInterval(academicInterval)
                                     && (selectAllCurricularYears != null && selectAllCurricularYears.booleanValue())
                                     || years.contains(curricularYear)) {
-                                final Set<ExecutionCourse> executionCourses;
+                                final Set<Course> executionCourses;
                                 if (!executionCoursesByCurricularYear.containsKey(curricularYear)) {
-                                    executionCourses = new TreeSet<ExecutionCourse>(new Comparator<ExecutionCourse>() {
+                                    executionCourses = new TreeSet<Course>(new Comparator<Course>() {
                                         @Override
-                                        public int compare(final ExecutionCourse executionCourse1,
-                                                final ExecutionCourse executionCourse2) {
+                                        public int compare(final Course executionCourse1,
+                                                final Course executionCourse2) {
                                             return executionCourse1.getNome().compareTo(executionCourse2.getNome());
                                         }
                                     });
@@ -168,7 +168,7 @@ public class WrittenEvaluationsSearchByDegreeAndYear extends FenixContextDispatc
                                 } else {
                                     executionCourses = executionCoursesByCurricularYear.get(curricularYear);
                                 }
-                                for (final ExecutionCourse executionCourse : curricularCourse.getAssociatedExecutionCoursesSet()) {
+                                for (final Course executionCourse : curricularCourse.getAssociatedExecutionCoursesSet()) {
                                     if (academicInterval.equals(executionCourse.getAcademicInterval())) {
                                         executionCourses.add(executionCourse);
                                     }

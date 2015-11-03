@@ -24,7 +24,7 @@ package org.fenixedu.academic.service.services.resourceAllocationManager;
 
 import static org.fenixedu.academic.predicate.AccessControl.check;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.dto.InfoShift;
 import org.fenixedu.academic.dto.InfoShiftEditor;
@@ -39,7 +39,7 @@ public class EditarTurno {
     public static Object run(InfoShift infoShiftOld, InfoShiftEditor infoShiftNew) {
         check(RolePredicates.RESOURCE_ALLOCATION_MANAGER_PREDICATE);
         final Shift shiftToEdit = FenixFramework.getDomainObject(infoShiftOld.getExternalId());
-        final ExecutionCourse newExecutionCourse =
+        final Course newExecutionCourse =
                 FenixFramework.getDomainObject(infoShiftNew.getInfoDisciplinaExecucao().getExternalId());
         shiftToEdit.edit(infoShiftNew.getTipos(), infoShiftNew.getLotacao(), newExecutionCourse, infoShiftNew.getNome(),
                 infoShiftNew.getComment());

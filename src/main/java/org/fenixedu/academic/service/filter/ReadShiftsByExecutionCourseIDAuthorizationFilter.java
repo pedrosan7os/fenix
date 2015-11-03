@@ -24,11 +24,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.fenixedu.academic.domain.Coordinator;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.CurricularCourse;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.domain.Teacher;
 import org.fenixedu.academic.domain.person.RoleType;
 import org.fenixedu.academic.service.services.exceptions.NotAuthorizedException;
@@ -85,7 +85,7 @@ public class ReadShiftsByExecutionCourseIDAuthorizationFilter extends Filtro {
 
             final Person person = id.getPerson();
 
-            ExecutionCourse executionCourse = FenixFramework.getDomainObject(executionCourseID);
+            Course executionCourse = FenixFramework.getDomainObject(executionCourseID);
 
             // For all Associated Curricular Courses
             Iterator curricularCourseIterator = executionCourse.getAssociatedCurricularCoursesSet().iterator();
@@ -121,9 +121,9 @@ public class ReadShiftsByExecutionCourseIDAuthorizationFilter extends Filtro {
         try {
 
             Teacher teacher = Teacher.readTeacherByUsername(id.getUsername());
-            Professorship professorship = null;
+            CourseTeacher professorship = null;
             if (teacher != null) {
-                ExecutionCourse executionCourse = FenixFramework.getDomainObject(executionCourseID);
+                Course executionCourse = FenixFramework.getDomainObject(executionCourseID);
                 teacher.getProfessorshipByExecutionCourse(executionCourse);
             }
             return professorship != null;

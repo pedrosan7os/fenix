@@ -23,10 +23,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Predicate;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.ExecutionCourseLog;
 import org.fenixedu.academic.domain.ExecutionCourseLog.ExecutionCourseLogTypes;
-import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academic.util.Month;
 import org.fenixedu.academic.util.predicates.AndPredicate;
@@ -35,11 +35,11 @@ import org.fenixedu.bennu.core.i18n.BundleUtil;
 
 public class SearchExecutionCourseLogBean implements Serializable {
 
-    private ExecutionCourse executionCourse;
+    private Course executionCourse;
     private Boolean viewPhoto;
 
     private Collection<Month> months;
-    private Collection<Professorship> professorships;
+    private Collection<CourseTeacher> professorships;
     private Collection<ExecutionCourseLogTypes> executionCourseLogsTypes;
     private Collection<ExecutionCourseLog> executionCourseLogs;
 
@@ -51,7 +51,7 @@ public class SearchExecutionCourseLogBean implements Serializable {
         return BundleUtil.getString(Bundle.APPLICATION, name);
     }
 
-    public SearchExecutionCourseLogBean(ExecutionCourse executionCourse) {
+    public SearchExecutionCourseLogBean(Course executionCourse) {
         setExecutionCourse(executionCourse);
         setViewPhoto(true);
         setProfessorships(getExecutionCourse().getProfessorshipsSet());
@@ -60,11 +60,11 @@ public class SearchExecutionCourseLogBean implements Serializable {
         executionCourseLogs = new ArrayList<ExecutionCourseLog>();
     }
 
-    public ExecutionCourse getExecutionCourse() {
+    public Course getExecutionCourse() {
         return this.executionCourse;
     }
 
-    public void setExecutionCourse(ExecutionCourse executionCourse) {
+    public void setExecutionCourse(Course executionCourse) {
         this.executionCourse = executionCourse;
     }
 
@@ -88,17 +88,17 @@ public class SearchExecutionCourseLogBean implements Serializable {
         this.executionCourseLogsTypes = executionCourseLogsTypes;
     }
 
-    public Collection<Professorship> getProfessorships() {
-        Collection<Professorship> pfs = new ArrayList<Professorship>();
-        for (Professorship professorship : professorships) {
+    public Collection<CourseTeacher> getProfessorships() {
+        Collection<CourseTeacher> pfs = new ArrayList<CourseTeacher>();
+        for (CourseTeacher professorship : professorships) {
             pfs.add(professorship);
         }
         return pfs;
     }
 
-    public void setProfessorships(Collection<Professorship> professorships) {
-        Collection<Professorship> pfs = new ArrayList<Professorship>();
-        for (Professorship pf : professorships) {
+    public void setProfessorships(Collection<CourseTeacher> professorships) {
+        Collection<CourseTeacher> pfs = new ArrayList<CourseTeacher>();
+        for (CourseTeacher pf : professorships) {
             pfs.add(pf);
         }
         this.professorships = pfs;
@@ -167,11 +167,11 @@ public class SearchExecutionCourseLogBean implements Serializable {
         }
 
         if (professorships.size() < getExecutionCourse().getProfessorshipsSet().size()) {
-            filters.add(new InlinePredicate<ExecutionCourseLog, Collection<Professorship>>(getProfessorships()) {
+            filters.add(new InlinePredicate<ExecutionCourseLog, Collection<CourseTeacher>>(getProfessorships()) {
 
                 @Override
                 public boolean test(ExecutionCourseLog executionCourseLog) {
-                    for (Professorship pf : getValue()) {
+                    for (CourseTeacher pf : getValue()) {
                         if (pf.getPerson().getOid() == executionCourseLog.getPerson().getOid()) {
                             return true;
                         }
@@ -195,7 +195,7 @@ public class SearchExecutionCourseLogBean implements Serializable {
             logTypeValues += getEnumerationResourcesString(logType.getQualifiedName());
         }
 
-        for (Professorship prof : professorships) {
+        for (CourseTeacher prof : professorships) {
             if (!professorshipNameValues.isEmpty()) {
                 professorshipNameValues += ", ";
             }
@@ -230,7 +230,7 @@ public class SearchExecutionCourseLogBean implements Serializable {
         }
         if (getProfessorships() != null && !getProfessorships().isEmpty()) {
             parameters += "&amp;professorships=";
-            for (Professorship professorship : getProfessorships()) {
+            for (CourseTeacher professorship : getProfessorships()) {
                 parameters += professorship.getExternalId() + ":";
             }
         }

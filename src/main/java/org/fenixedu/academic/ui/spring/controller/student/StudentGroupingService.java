@@ -21,7 +21,7 @@ package org.fenixedu.academic.ui.spring.controller.student;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.Grouping;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.Shift;
@@ -107,7 +107,7 @@ public class StudentGroupingService {
         }
 
         List<Registration> registrationsList =
-                grouping.getAttendsSet().stream().map(Attends::getRegistration)
+                grouping.getAttendsSet().stream().map(Attendance::getRegistration)
                         .filter(reg -> personList.contains(reg.getPerson())).collect(Collectors.toList());
 
         if (!groupingIsOpenForEnrollment(grouping)) {
@@ -188,13 +188,13 @@ public class StudentGroupingService {
     }
 
     public Boolean personInStudentGroupAttends(StudentGroup studentGroup, Person person) {
-        return studentGroup.getAttendsSet().stream().map(Attends::getRegistration).map(Registration::getPerson)
+        return studentGroup.getAttendsSet().stream().map(Attendance::getRegistration).map(Registration::getPerson)
                 .anyMatch(p -> p.equals(AccessControl.getPerson()));
     }
 
     public Boolean personInGroupingAttends(Grouping grouping, Person person) {
         return grouping.getAttendsSet().stream()
                 .filter(attends -> grouping.getExecutionCourses().contains(attends.getExecutionCourse()))
-                .map(Attends::getRegistration).map(Registration::getPerson).anyMatch(p -> p.equals(AccessControl.getPerson()));
+                .map(Attendance::getRegistration).map(Registration::getPerson).anyMatch(p -> p.equals(AccessControl.getPerson()));
     }
 }

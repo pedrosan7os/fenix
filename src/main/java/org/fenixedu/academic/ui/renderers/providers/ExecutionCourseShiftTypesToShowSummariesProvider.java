@@ -18,13 +18,13 @@
  */
 package org.fenixedu.academic.ui.renderers.providers;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.dto.ShowSummariesBean;
 
 public class ExecutionCourseShiftTypesToShowSummariesProvider extends ExecutionCourseShiftTypesToCreateLessonPlanningProvider {
 
     @Override
-    public ExecutionCourse getExecutionCourse(Object source) {
+    public Course getExecutionCourse(Object source) {
         return ((ShowSummariesBean) source).getExecutionCourse();
     }
 }

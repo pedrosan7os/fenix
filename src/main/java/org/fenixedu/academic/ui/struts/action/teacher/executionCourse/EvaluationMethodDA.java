@@ -29,8 +29,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.fenixedu.academic.domain.CompetenceCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.EvaluationMethod;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.dto.teacher.executionCourse.ImportContentBean;
 import org.fenixedu.academic.service.services.exceptions.FenixServiceException;
 import org.fenixedu.academic.service.services.teacher.EditEvaluation;
@@ -49,12 +49,12 @@ public class EvaluationMethodDA extends ManageExecutionCourseDA {
     @Input
     public ActionForward evaluationMethod(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        final ExecutionCourse executionCourse = getExecutionCourse(request);
+        final Course executionCourse = getExecutionCourse(request);
         request.setAttribute("evaluationMethods", getEvaluationMethod(executionCourse));
         return forward(request, "/teacher/executionCourse/evaluationMethod.jsp");
     }
 
-    private LocalizedString getEvaluationMethod(ExecutionCourse executionCourse) {
+    private LocalizedString getEvaluationMethod(Course executionCourse) {
         if (executionCourse.getEvaluationMethod() != null) {
             return executionCourse.getEvaluationMethod().getEvaluationElements().toLocalizedString();
         } else {
@@ -67,7 +67,7 @@ public class EvaluationMethodDA extends ManageExecutionCourseDA {
 
     public ActionForward prepareEditEvaluationMethod(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        final ExecutionCourse executionCourse = (ExecutionCourse) request.getAttribute("executionCourse");
+        final Course executionCourse = (Course) request.getAttribute("executionCourse");
         EvaluationMethod evaluationMethod = executionCourse.getEvaluationMethod();
         MultiLanguageString evaluationElements = evaluationMethod == null ? null : evaluationMethod.getEvaluationElements();
         if (evaluationMethod == null || evaluationElements == null || evaluationElements.isEmpty()

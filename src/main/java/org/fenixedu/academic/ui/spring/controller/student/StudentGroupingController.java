@@ -23,7 +23,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExportGrouping;
 import org.fenixedu.academic.domain.Grouping;
@@ -74,7 +74,7 @@ public class StudentGroupingController extends JsonAwareResource {
                 .getRegistrationsSet()
                 .stream()
                 .flatMap(registration -> registration.getAssociatedAttendsSet().stream())
-                .map(Attends::getExecutionCourse)
+                .map(Attendance::getExecutionCourse)
                 .filter(executionCourse -> executionCourse.getExecutionPeriod() == ExecutionSemester
                         .readActualExecutionSemester())
                 .flatMap(executionCourse -> executionCourse.getGroupings().stream())
@@ -203,7 +203,7 @@ public class StudentGroupingController extends JsonAwareResource {
                 .stream()
                 .filter(attends -> grouping.getStudentGroupsSet().stream()
                         .noneMatch(sg -> sg.getAttendsSet().stream().anyMatch(at -> at.equals(attends))))
-                .map(Attends::getRegistration).map(Registration::getPerson).collect(Collectors.toList())), HttpStatus.OK);
+                .map(Attendance::getRegistration).map(Registration::getPerson).collect(Collectors.toList())), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/studentGroup/{studentGroup}/enrolled")
@@ -220,7 +220,7 @@ public class StudentGroupingController extends JsonAwareResource {
                     createErrorJson((new DomainException("error.grouping.notOpenToEnrollment")).getLocalizedMessage()),
                     HttpStatus.FORBIDDEN);
         }
-        return new ResponseEntity<String>(view(studentGroup.getAttendsSet().stream().map(Attends::getRegistration)
+        return new ResponseEntity<String>(view(studentGroup.getAttendsSet().stream().map(Attendance::getRegistration)
                 .map(Registration::getPerson).collect(Collectors.toList())), HttpStatus.OK);
     }
 
@@ -295,7 +295,7 @@ public class StudentGroupingController extends JsonAwareResource {
     }
 
     public Boolean personInGroupingAttends(Grouping grouping, Person person) {
-        return grouping.getAttendsSet().stream().map(Attends::getRegistration).map(Registration::getPerson)
+        return grouping.getAttendsSet().stream().map(Attendance::getRegistration).map(Registration::getPerson)
                 .anyMatch(p -> p.equals(AccessControl.getPerson()));
     }
 

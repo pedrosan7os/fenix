@@ -20,8 +20,8 @@ package org.fenixedu.academic.dto.teacher.executionCourse;
 
 import java.io.Serializable;
 
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.CurricularYear;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.interfaces.HasExecutionDegree;
@@ -34,7 +34,7 @@ public class ImportContentBean implements Serializable, HasExecutionDegree {
 
     private CurricularYear curricularYearReference;
 
-    private ExecutionCourse executionCourseReference;
+    private Course executionCourseReference;
 
     public ImportContentBean() {
         setExecutionPeriod(null);
@@ -43,11 +43,11 @@ public class ImportContentBean implements Serializable, HasExecutionDegree {
         setExecutionCourse(null);
     }
 
-    public ExecutionCourse getExecutionCourse() {
+    public Course getExecutionCourse() {
         return this.executionCourseReference;
     }
 
-    public void setExecutionCourse(ExecutionCourse executionCourse) {
+    public void setExecutionCourse(Course executionCourse) {
         this.executionCourseReference = executionCourse;
     }
 

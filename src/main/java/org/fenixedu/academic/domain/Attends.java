@@ -25,34 +25,26 @@
 package org.fenixedu.academic.domain;
 
 import java.text.Collator;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.fenixedu.academic.domain.exceptions.DomainException;
-import org.fenixedu.academic.domain.student.GroupEnrolment;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.Student;
 import org.fenixedu.academic.domain.student.WeeklyWorkLoad;
-import org.fenixedu.academic.service.services.exceptions.FenixServiceException;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.Interval;
 import org.joda.time.PeriodType;
-import org.joda.time.YearMonthDay;
 
 import pt.ist.fenixframework.Atomic;
-import pt.ist.fenixframework.dml.runtime.RelationAdapter;
 
 /**
  *
@@ -65,40 +57,6 @@ public class Attends extends Attends_Base {
         public String getQualifiedName() {
             return StudentAttendsStateType.class.getSimpleName() + "." + name();
         }
-    }
-
-    static {
-        getRelationExecutionCourseAttends().addListener(new RelationAdapter<ExecutionCourse, Attends>() {
-            @Override
-            public void afterAdd(ExecutionCourse executionCourse, Attends attends) {
-                if (executionCourse != null && attends != null) {
-                    for (Grouping grouping : executionCourse.getGroupings()) {
-                        if (grouping.getAutomaticEnrolment() && !grouping.getStudentGroupsSet().isEmpty()) {
-                            grouping.addAttends(attends);
-
-                            int groupNumber = 1;
-                            final List<StudentGroup> studentGroups = new ArrayList<StudentGroup>(grouping.getStudentGroupsSet());
-                            Collections.sort(studentGroups, StudentGroup.COMPARATOR_BY_GROUP_NUMBER);
-
-                            for (final StudentGroup studentGroup : studentGroups) {
-                                if (studentGroup.getGroupNumber() > groupNumber) {
-                                    break;
-                                }
-                                groupNumber = studentGroup.getGroupNumber() + 1;
-                            }
-
-                            grouping.setGroupMaximumNumber(grouping.getStudentGroupsSet().size() + 1);
-                            try {
-                                GroupEnrolment.enrole(grouping.getExternalId(), null, groupNumber, new ArrayList<String>(),
-                                        attends.getRegistration().getStudent().getPerson().getUsername());
-                            } catch (FenixServiceException e) {
-                                throw new Error(e);
-                            }
-                        }
-                    }
-                }
-            }
-        });
     }
 
     public static final Comparator<Attends> COMPARATOR_BY_STUDENT_NUMBER = new Comparator<Attends>() {
@@ -179,18 +137,12 @@ public class Attends extends Attends_Base {
     }
 
     public Collection<StudentGroup> getAllStudentGroups() {
-        return super.getStudentGroupsSet();
+        return getAttendance().getAllStudentGroups();
     }
 
-    @Override
+    @Deprecated
     public Set<StudentGroup> getStudentGroupsSet() {
-        Set<StudentGroup> result = new HashSet<StudentGroup>();
-        for (StudentGroup sg : super.getStudentGroupsSet()) {
-            if (sg.getValid()) {
-                result.add(sg);
-            }
-        }
-        return Collections.unmodifiableSet(result);
+        return getAttendance().getStudentGroupsSet();
     }
 
     @Override
@@ -220,57 +172,23 @@ public class Attends extends Attends_Base {
     }
 
     public FinalMark getFinalMark() {
-        for (Mark mark : getAssociatedMarksSet()) {
-            if (mark instanceof FinalMark) {
-                return (FinalMark) mark;
-            }
-        }
-        return null;
+        return getAttendance().getFinalMark();
     }
 
     public Mark getMarkByEvaluation(Evaluation evaluation) {
-        for (final Mark mark : getAssociatedMarksSet()) {
-            if (mark.getEvaluation().equals(evaluation)) {
-                return mark;
-            }
-        }
-        return null;
+        return getAttendance().getMarkByEvaluation(evaluation);
     }
 
     public List<Mark> getAssociatedMarksOrderedByEvaluationDate() {
-        final List<Evaluation> orderedEvaluations = getExecutionCourse().getOrderedAssociatedEvaluations();
-        final List<Mark> orderedMarks = new ArrayList<Mark>(orderedEvaluations.size());
-        for (int i = 0; i < orderedEvaluations.size(); i++) {
-            orderedMarks.add(null);
-        }
-        for (final Mark mark : getAssociatedMarksSet()) {
-            final Evaluation evaluation = mark.getEvaluation();
-            orderedMarks.set(orderedEvaluations.indexOf(evaluation), mark);
-        }
-        return orderedMarks;
+        return getAttendance().getAssociatedMarksOrderedByEvaluationDate();
     }
 
     public Interval getWeeklyWorkLoadInterval() {
-        final DateTime beginningOfSemester = new DateTime(getBegginingOfLessonPeriod());
-        final DateTime firstMonday = beginningOfSemester.withField(DateTimeFieldType.dayOfWeek(), 1);
-        final DateTime endOfSemester = new DateTime(getEndOfExamsPeriod());
-        final DateTime nextLastMonday = endOfSemester.withField(DateTimeFieldType.dayOfWeek(), 1).plusWeeks(1);
-        return new Interval(firstMonday, nextLastMonday);
+        return getAttendance().getWeeklyWorkLoadInterval();
     }
 
     public WeeklyWorkLoad getWeeklyWorkLoadOfPreviousWeek() {
-        final int currentWeekOffset = calculateCurrentWeekOffset();
-        if (currentWeekOffset < 1
-                || new YearMonthDay(getEndOfExamsPeriod()).plusDays(Lesson.NUMBER_OF_DAYS_IN_WEEK).isBefore(new YearMonthDay())) {
-            throw new DomainException("outside.weekly.work.load.response.period");
-        }
-        final int previousWeekOffset = currentWeekOffset - 1;
-        for (final WeeklyWorkLoad weeklyWorkLoad : getWeeklyWorkLoadsSet()) {
-            if (weeklyWorkLoad.getWeekOffset().intValue() == previousWeekOffset) {
-                return weeklyWorkLoad;
-            }
-        }
-        return null;
+        return getAttendance().getWeeklyWorkLoadOfPreviousWeek();
     }
 
     public Interval getCurrentWeek() {
@@ -314,43 +232,23 @@ public class Attends extends Attends_Base {
     }
 
     public Set<WeeklyWorkLoad> getSortedWeeklyWorkLoads() {
-        return new TreeSet<WeeklyWorkLoad>(getWeeklyWorkLoadsSet());
+        return getAttendance().getSortedWeeklyWorkLoads();
     }
 
     public int getWeeklyWorkLoadContact() {
-        int result = 0;
-        for (final WeeklyWorkLoad weeklyWorkLoad : getWeeklyWorkLoadsSet()) {
-            final int contact = weeklyWorkLoad.getContact() != null ? weeklyWorkLoad.getContact() : 0;
-            result += contact;
-        }
-        return result;
+        return getAttendance().getWeeklyWorkLoadContact();
     }
 
     public int getWeeklyWorkLoadAutonomousStudy() {
-        int result = 0;
-        for (final WeeklyWorkLoad weeklyWorkLoad : getWeeklyWorkLoadsSet()) {
-            final int contact = weeklyWorkLoad.getAutonomousStudy() != null ? weeklyWorkLoad.getAutonomousStudy() : 0;
-            result += contact;
-        }
-        return result;
+        return getAttendance().getWeeklyWorkLoadAutonomousStudy();
     }
 
     public int getWeeklyWorkLoadOther() {
-        int result = 0;
-        for (final WeeklyWorkLoad weeklyWorkLoad : getWeeklyWorkLoadsSet()) {
-            final int contact = weeklyWorkLoad.getOther() != null ? weeklyWorkLoad.getOther() : 0;
-            result += contact;
-        }
-        return result;
+        return getAttendance().getWeeklyWorkLoadOther();
     }
 
     public int getWeeklyWorkLoadTotal() {
-        int result = 0;
-        for (final WeeklyWorkLoad weeklyWorkLoad : getWeeklyWorkLoadsSet()) {
-            final int contact = weeklyWorkLoad.getTotal();
-            result += contact;
-        }
-        return result;
+        return getAttendance().getWeeklyWorkLoadTotal();
     }
 
     public Date getBegginingOfLessonPeriod() {
@@ -394,7 +292,7 @@ public class Attends extends Attends_Base {
     }
 
     public boolean isFor(final Shift shift) {
-        return isFor(shift.getExecutionCourse());
+        return getAttendance().isFor(shift);
     }
 
     public boolean isFor(final Student student) {
@@ -476,12 +374,7 @@ public class Attends extends Attends_Base {
     }
 
     public StudentGroup getStudentGroupByGrouping(final Grouping grouping) {
-        for (StudentGroup studentGroup : getStudentGroupsSet()) {
-            if (studentGroup.getGrouping().equals(grouping)) {
-                return studentGroup;
-            }
-        }
-        return null;
+        return getAttendance().getStudentGroupByGrouping(grouping);
     }
 
     public boolean hasExecutionCourseTo(final DegreeCurricularPlan degreeCurricularPlan) {
@@ -506,10 +399,7 @@ public class Attends extends Attends_Base {
 
     @Atomic
     public void deleteShiftEnrolments() {
-        final ExecutionCourse executionCourse = getExecutionCourse();
-        for (final Shift shift : executionCourse.getAssociatedShifts()) {
-            shift.removeAttends(this);
-        }
+        getAttendance().deleteShiftEnrolments();
     }
 
     @Atomic
@@ -523,4 +413,88 @@ public class Attends extends Attends_Base {
         delete();
     }
 
+    @Deprecated
+    public void addWeeklyWorkLoads(WeeklyWorkLoad weeklyWorkLoads) {
+        getAttendance().addWeeklyWorkLoads(weeklyWorkLoads);
+    }
+
+    @Deprecated
+    public void removeWeeklyWorkLoads(WeeklyWorkLoad weeklyWorkLoads) {
+        getAttendance().removeWeeklyWorkLoads(weeklyWorkLoads);
+    }
+
+    @Deprecated
+    public Set<WeeklyWorkLoad> getWeeklyWorkLoadsSet() {
+        return getAttendance().getWeeklyWorkLoadsSet();
+    }
+
+    @Deprecated
+    public void addGroupings(Grouping groupings) {
+        getAttendance().addGroupings(groupings);
+    }
+
+    @Deprecated
+    public void removeGroupings(Grouping groupings) {
+        getAttendance().removeGroupings(groupings);
+    }
+
+    @Deprecated
+    public Set<Grouping> getGroupingsSet() {
+        return getAttendance().getGroupingsSet();
+    }
+
+    @Deprecated
+    public void addAssociatedMarks(Mark associatedMarks) {
+        getAttendance().addAssociatedMarks(associatedMarks);
+    }
+
+    @Deprecated
+    public void removeAssociatedMarks(Mark associatedMarks) {
+        getAttendance().removeAssociatedMarks(associatedMarks);
+    }
+
+    @Deprecated
+    public Set<Mark> getAssociatedMarksSet() {
+        return getAttendance().getAssociatedMarksSet();
+    }
+
+    @Deprecated
+    public void addProjectSubmissions(ProjectSubmission projectSubmissions) {
+        getAttendance().addProjectSubmissions(projectSubmissions);
+    }
+
+    @Deprecated
+    public void removeProjectSubmissions(ProjectSubmission projectSubmissions) {
+        getAttendance().removeProjectSubmissions(projectSubmissions);
+    }
+
+    @Deprecated
+    public Set<ProjectSubmission> getProjectSubmissionsSet() {
+        return getAttendance().getProjectSubmissionsSet();
+    }
+
+    @Deprecated
+    public void addProjectSubmissionLogs(ProjectSubmissionLog projectSubmissionLogs) {
+        getAttendance().addProjectSubmissionLogs(projectSubmissionLogs);
+    }
+
+    @Deprecated
+    public void removeProjectSubmissionLogs(ProjectSubmissionLog projectSubmissionLogs) {
+        getAttendance().removeProjectSubmissionLogs(projectSubmissionLogs);
+    }
+
+    @Deprecated
+    public Set<ProjectSubmissionLog> getProjectSubmissionLogsSet() {
+        return getAttendance().getProjectSubmissionLogsSet();
+    }
+
+    @Deprecated
+    public void addStudentGroups(StudentGroup studentGroups) {
+        getAttendance().addStudentGroups(studentGroups);
+    }
+
+    @Deprecated
+    public void removeStudentGroups(StudentGroup studentGroups) {
+        getAttendance().removeStudentGroups(studentGroups);
+    }
 }

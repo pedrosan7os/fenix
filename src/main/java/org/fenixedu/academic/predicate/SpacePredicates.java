@@ -18,7 +18,7 @@
  */
 package org.fenixedu.academic.predicate;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.space.LessonInstanceSpaceOccupation;
 import org.fenixedu.academic.domain.space.LessonSpaceOccupation;
@@ -60,7 +60,7 @@ public class SpacePredicates {
 
                     Person loggedPerson = AccessControl.getPerson();
 
-                    ExecutionCourse executionCourse = spaceOccupation.getLesson().getExecutionCourse();
+                    Course executionCourse = spaceOccupation.getLesson().getExecutionCourse();
                     if (loggedPerson.hasProfessorshipForExecutionCourse(executionCourse)) {
                         return true;
                     }

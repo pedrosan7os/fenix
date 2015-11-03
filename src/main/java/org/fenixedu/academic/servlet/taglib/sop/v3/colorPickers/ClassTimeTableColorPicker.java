@@ -22,8 +22,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.DomainObjectUtil;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.Lesson;
 import org.fenixedu.academic.domain.WrittenEvaluation;
 import org.fenixedu.academic.dto.InfoLesson;
@@ -72,14 +72,14 @@ public class ClassTimeTableColorPicker extends ColorPicker {
     private String key(final InfoWrittenEvaluation infoWrittenEvaluation) {
         final StringBuilder stringBuilder = new StringBuilder();
         final WrittenEvaluation writtenEvaluation = infoWrittenEvaluation.getWrittenEvaluation();
-        for (final ExecutionCourse executionCourse : sort(writtenEvaluation.getAssociatedExecutionCoursesSet())) {
+        for (final Course executionCourse : sort(writtenEvaluation.getAssociatedExecutionCoursesSet())) {
             stringBuilder.append(executionCourse.getExternalId());
         }
         return stringBuilder.toString();
     }
 
-    private SortedSet<ExecutionCourse> sort(final Set<ExecutionCourse> associatedExecutionCoursesSet) {
-        final SortedSet<ExecutionCourse> result = new TreeSet<ExecutionCourse>(DomainObjectUtil.COMPARATOR_BY_ID);
+    private SortedSet<Course> sort(final Set<Course> associatedExecutionCoursesSet) {
+        final SortedSet<Course> result = new TreeSet<Course>(DomainObjectUtil.COMPARATOR_BY_ID);
         result.addAll(associatedExecutionCoursesSet);
         return result;
     }

@@ -34,8 +34,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
-import org.fenixedu.academic.domain.Attends;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Attendance;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.WeeklyWorkLoad;
@@ -66,11 +66,11 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
         LESSON_INTERVAL, EXAM_INTERVAL;
     }
 
-    private static final Comparator<Attends> ATTENDS_COMPARATOR = new Comparator<Attends>() {
+    private static final Comparator<Attendance> ATTENDS_COMPARATOR = new Comparator<Attendance>() {
         @Override
-        public int compare(final Attends attends1, final Attends attends2) {
-            final ExecutionCourse executionCourse1 = attends1.getExecutionCourse();
-            final ExecutionCourse executionCourse2 = attends2.getExecutionCourse();
+        public int compare(final Attendance attends1, final Attendance attends2) {
+            final Course executionCourse1 = attends1.getExecutionCourse();
+            final Course executionCourse2 = attends2.getExecutionCourse();
             return executionCourse1.getNome().compareTo(executionCourse2.getNome());
         }
     };
@@ -80,7 +80,7 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
 
         final int numberOfWeeks;
 
-        final Map<Attends, WeeklyWorkLoad[]> weeklyWorkLoadMap = new TreeMap<Attends, WeeklyWorkLoad[]>(ATTENDS_COMPARATOR);
+        final Map<Attendance, WeeklyWorkLoad[]> weeklyWorkLoadMap = new TreeMap<Attendance, WeeklyWorkLoad[]>(ATTENDS_COMPARATOR);
 
         final Interval[] intervals;
 
@@ -100,7 +100,7 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
             }
         }
 
-        public void add(final Attends attends) {
+        public void add(final Attendance attends) {
             final WeeklyWorkLoad[] weeklyWorkLoadArray = new WeeklyWorkLoad[numberOfWeeks];
             for (final WeeklyWorkLoad weeklyWorkLoad : attends.getWeeklyWorkLoadsSet()) {
                 weeklyWorkLoadArray[weeklyWorkLoad.getWeekOffset()] = weeklyWorkLoad;
@@ -116,7 +116,7 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
             return executionPeriodInterval;
         }
 
-        public Map<Attends, WeeklyWorkLoad[]> getWeeklyWorkLoadMap() {
+        public Map<Attendance, WeeklyWorkLoad[]> getWeeklyWorkLoadMap() {
             return weeklyWorkLoadMap;
         }
     }
@@ -141,20 +141,20 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
         // request.setAttribute("weeks", getWeeks(selectedExecutionPeriod));
         // }
 
-        final Attends firstAttends = findFirstAttends(request, selectedExecutionPeriod);
+        final Attendance firstAttends = findFirstAttends(request, selectedExecutionPeriod);
         request.setAttribute("firstAttends", firstAttends);
         if (firstAttends != null) {
             final Interval executionPeriodInterval = firstAttends.getWeeklyWorkLoadInterval();
             final WeeklyWorkLoadView weeklyWorkLoadView = new WeeklyWorkLoadView(executionPeriodInterval);
             request.setAttribute("weeklyWorkLoadView", weeklyWorkLoadView);
 
-            final Collection<Attends> attends = new ArrayList<Attends>();
+            final Collection<Attendance> attends = new ArrayList<Attendance>();
             request.setAttribute("attends", attends);
 
             for (final Registration registration : getUserView(request).getPerson().getStudents()) {
-                for (final Attends attend : registration.getOrderedAttends()) {
+                for (final Attendance attend : registration.getOrderedAttends()) {
                     if (attend.getEnrolment() != null) {
-                        final ExecutionCourse executionCourse = attend.getExecutionCourse();
+                        final Course executionCourse = attend.getExecutionCourse();
                         if (executionCourse.getExecutionPeriod() == selectedExecutionPeriod) {
                             weeklyWorkLoadView.add(attend);
                             attends.add(attend);
@@ -199,11 +199,11 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
         return null;
     }
 
-    private Attends findFirstAttends(final HttpServletRequest request, final ExecutionSemester selectedExecutionPeriod)
+    private Attendance findFirstAttends(final HttpServletRequest request, final ExecutionSemester selectedExecutionPeriod)
             throws FenixServiceException {
         for (final Registration registration : getUserView(request).getPerson().getStudents()) {
-            for (final Attends attend : registration.getOrderedAttends()) {
-                final ExecutionCourse executionCourse = attend.getExecutionCourse();
+            for (final Attendance attend : registration.getOrderedAttends()) {
+                final Course executionCourse = attend.getExecutionCourse();
                 if (executionCourse.getExecutionPeriod() == selectedExecutionPeriod && attend.getEnrolment() != null) {
                     return attend;
                 }

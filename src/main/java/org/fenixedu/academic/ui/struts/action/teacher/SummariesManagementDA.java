@@ -32,10 +32,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.Lesson;
 import org.fenixedu.academic.domain.LessonPlanning;
-import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.ShiftType;
 import org.fenixedu.academic.domain.Summary;
@@ -90,7 +90,7 @@ public class SummariesManagementDA extends FenixDispatchAction {
             HttpServletResponse response) throws Exception {
 
         final IViewState viewState = RenderUtils.getViewState();
-        ExecutionCourse executionCourse = null;
+        Course executionCourse = null;
 
         if (viewState != null && viewState.getMetaObject().getObject() instanceof SummariesManagementBean) {
             executionCourse = ((SummariesManagementBean) viewState.getMetaObject().getObject()).getExecutionCourse();
@@ -107,7 +107,7 @@ public class SummariesManagementDA extends FenixDispatchAction {
         String teacherId = request.getParameter("teacherId_");
 
         Teacher loggedTeacher;
-        Professorship loggedProfessorship;
+        CourseTeacher loggedProfessorship;
         if (!StringUtils.isEmpty(teacherId)) {
             loggedTeacher = Teacher.readByIstId(teacherId);
             loggedProfessorship = loggedTeacher.getProfessorshipByExecutionCourse(executionCourse);
@@ -350,8 +350,8 @@ public class SummariesManagementDA extends FenixDispatchAction {
         RenderUtils.invalidateViewState();
         DynaActionForm dynaActionForm = (DynaActionForm) form;
 
-        Professorship loggedProfessorship = (Professorship) request.getAttribute("loggedTeacherProfessorship");
-        ExecutionCourse executionCourse = (ExecutionCourse) request.getAttribute("executionCourse");
+        CourseTeacher loggedProfessorship = (CourseTeacher) request.getAttribute("loggedTeacherProfessorship");
+        Course executionCourse = (Course) request.getAttribute("executionCourse");
         dynaActionForm.set("teacher", loggedProfessorship.getExternalId().toString());
 
         SummariesManagementBean newBean =
@@ -367,7 +367,7 @@ public class SummariesManagementDA extends FenixDispatchAction {
     public ActionForward prepareEditSummary(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws FenixServiceException {
 
-        Professorship teacherLogged = ((Professorship) request.getAttribute("loggedTeacherProfessorship"));
+        CourseTeacher teacherLogged = ((CourseTeacher) request.getAttribute("loggedTeacherProfessorship"));
         DynaActionForm dynaActionForm = (DynaActionForm) form;
         Summary summary = getSummaryFromParameter(request);
 
@@ -387,8 +387,8 @@ public class SummariesManagementDA extends FenixDispatchAction {
         SummariesManagementBean bean =
                 new SummariesManagementBean(summary.getTitle(), summary.getSummaryText(), summary.getStudentsNumber(),
                         summaryType, summary.getProfessorship(), summary.getTeacherName(), summary.getShift(),
-                        summary.getLesson(), summary.getSummaryDateYearMonthDay(), summary.getRoom(), timePartial,
-                        summary, teacherLogged, summary.getSummaryType(), summary.getTaught());
+                        summary.getLesson(), summary.getSummaryDateYearMonthDay(), summary.getRoom(), timePartial, summary,
+                        teacherLogged, summary.getSummaryType(), summary.getTaught());
 
         return goToSummaryManagementPageAgain(mapping, request, dynaActionForm, bean);
     }
@@ -397,8 +397,8 @@ public class SummariesManagementDA extends FenixDispatchAction {
             HttpServletResponse response) throws FenixServiceException {
 
         Summary summary = getSummaryFromParameter(request);
-        Professorship professorshipLogged = (Professorship) request.getAttribute("loggedTeacherProfessorship");
-        ExecutionCourse executionCourse = (ExecutionCourse) request.getAttribute("executionCourse");
+        CourseTeacher professorshipLogged = (CourseTeacher) request.getAttribute("loggedTeacherProfessorship");
+        Course executionCourse = (Course) request.getAttribute("executionCourse");
 
         try {
             DeleteSummary.runDeleteSummary(executionCourse, summary, professorshipLogged);
@@ -416,8 +416,8 @@ public class SummariesManagementDA extends FenixDispatchAction {
     public ActionForward prepareShowSummaries(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) {
 
-        ExecutionCourse executionCourse = (ExecutionCourse) request.getAttribute("executionCourse");
-        Professorship professorshipLogged = (Professorship) request.getAttribute("loggedTeacherProfessorship");
+        Course executionCourse = (Course) request.getAttribute("executionCourse");
+        CourseTeacher professorshipLogged = (CourseTeacher) request.getAttribute("loggedTeacherProfessorship");
         Set<Summary> teacherSummaries = new TreeSet<Summary>(Summary.COMPARATOR_BY_DATE_AND_HOUR);
         teacherSummaries.addAll(professorshipLogged.getAssociatedSummariesSet());
 
@@ -437,12 +437,12 @@ public class SummariesManagementDA extends FenixDispatchAction {
         final IViewState viewState = RenderUtils.getViewState();
         ShowSummariesBean bean = (ShowSummariesBean) viewState.getMetaObject().getObject();
 
-        ExecutionCourse executionCourse = bean.getExecutionCourse();
+        Course executionCourse = bean.getExecutionCourse();
         ShiftType shiftType = bean.getShiftType();
         Shift shift = bean.getShift();
 
         SummaryTeacherBean summaryTeacher = bean.getSummaryTeacher();
-        Professorship teacher = (summaryTeacher != null) ? summaryTeacher.getProfessorship() : null;
+        CourseTeacher teacher = (summaryTeacher != null) ? summaryTeacher.getProfessorship() : null;
         Boolean otherTeachers = (summaryTeacher != null) ? summaryTeacher.getOthers() : null;
         SummariesOrder summariesOrder = bean.getSummariesOrder();
 
@@ -473,8 +473,8 @@ public class SummariesManagementDA extends FenixDispatchAction {
     public ActionForward prepareCreateComplexSummaryInSummariesCalendarMode(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws FenixActionException {
 
-        Professorship loggedProfessorship = (Professorship) request.getAttribute("loggedTeacherProfessorship");
-        ExecutionCourse executionCourse = (ExecutionCourse) request.getAttribute("executionCourse");
+        CourseTeacher loggedProfessorship = (CourseTeacher) request.getAttribute("loggedTeacherProfessorship");
+        Course executionCourse = (Course) request.getAttribute("executionCourse");
         NextPossibleSummaryLessonsAndDatesBean nextSummaryDateBean = getNextSummaryDateBeanFromParameter(request);
 
         if (!executionCourse.getLessons().contains(nextSummaryDateBean.getLesson())) {
@@ -528,8 +528,8 @@ public class SummariesManagementDA extends FenixDispatchAction {
     public ActionForward prepareCreateComplexSummary(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) {
 
-        Professorship loggedProfessorship = (Professorship) request.getAttribute("loggedTeacherProfessorship");
-        ExecutionCourse executionCourse = (ExecutionCourse) request.getAttribute("executionCourse");
+        CourseTeacher loggedProfessorship = (CourseTeacher) request.getAttribute("loggedTeacherProfessorship");
+        Course executionCourse = (Course) request.getAttribute("executionCourse");
         DynaActionForm dynaActionForm = (DynaActionForm) form;
         String[] selectedLessons = request.getParameterValues("selectedLessonAndDate");
 
@@ -669,7 +669,7 @@ public class SummariesManagementDA extends FenixDispatchAction {
     public ActionForward showSummariesCalendar(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) {
 
-        ExecutionCourse executionCourse = getExecutinCourseFromParameter(request);
+        Course executionCourse = getExecutinCourseFromParameter(request);
         SummariesCalendarBean summariesCalendarBean = new SummariesCalendarBean(executionCourse);
         Set<NextPossibleSummaryLessonsAndDatesBean> summariesCalendar =
                 new TreeSet<NextPossibleSummaryLessonsAndDatesBean>(
@@ -696,7 +696,7 @@ public class SummariesManagementDA extends FenixDispatchAction {
         final IViewState viewState = RenderUtils.getViewState();
         SummariesCalendarBean bean = (SummariesCalendarBean) viewState.getMetaObject().getObject();
 
-        ExecutionCourse executionCourse = bean.getExecutionCourse();
+        Course executionCourse = bean.getExecutionCourse();
         Shift shift = bean.getShift();
         ShiftType shiftType = bean.getShiftType();
         LessonCalendarViewType calendarViewType = bean.getCalendarViewType();
@@ -766,8 +766,8 @@ public class SummariesManagementDA extends FenixDispatchAction {
 
     private void buildSummariesManagementBean(ActionForm form, HttpServletRequest request, SummaryType summaryType) {
         DynaActionForm dynaActionForm = (DynaActionForm) form;
-        Professorship loggedProfessorship = (Professorship) request.getAttribute("loggedTeacherProfessorship");
-        ExecutionCourse executionCourse = (ExecutionCourse) request.getAttribute("executionCourse");
+        CourseTeacher loggedProfessorship = (CourseTeacher) request.getAttribute("loggedTeacherProfessorship");
+        Course executionCourse = (Course) request.getAttribute("executionCourse");
         dynaActionForm.set("teacher", loggedProfessorship.getExternalId().toString());
         request.setAttribute("summariesManagementBean", new SummariesManagementBean(summaryType, executionCourse,
                 loggedProfessorship, null));
@@ -799,7 +799,7 @@ public class SummariesManagementDA extends FenixDispatchAction {
     private void readAndSaveTeacher(SummariesManagementBean bean, DynaActionForm dynaActionForm, HttpServletRequest request,
             ActionMapping mapping) {
 
-        Professorship professorship = getProfessorshipFromParameter(request);
+        CourseTeacher professorship = getProfessorshipFromParameter(request);
         if (professorship != null) {
             bean.setProfessorship(professorship);
             bean.setTeacher(null);
@@ -829,7 +829,7 @@ public class SummariesManagementDA extends FenixDispatchAction {
         }
     }
 
-    private void readAndSaveNextPossibleSummaryLessonsAndDates(HttpServletRequest request, ExecutionCourse executionCourse) {
+    private void readAndSaveNextPossibleSummaryLessonsAndDates(HttpServletRequest request, Course executionCourse) {
         Set<NextPossibleSummaryLessonsAndDatesBean> possibleLessonsAndDates =
                 new TreeSet<NextPossibleSummaryLessonsAndDatesBean>(
                         NextPossibleSummaryLessonsAndDatesBean.COMPARATOR_BY_DATE_AND_HOUR);
@@ -861,13 +861,13 @@ public class SummariesManagementDA extends FenixDispatchAction {
         }
     }
 
-    private ExecutionCourse readAndSaveExecutionCourse(HttpServletRequest request) {
-        ExecutionCourse executionCourse = getExecutinCourseFromParameter(request);
+    private Course readAndSaveExecutionCourse(HttpServletRequest request) {
+        Course executionCourse = getExecutinCourseFromParameter(request);
         request.setAttribute("executionCourse", executionCourse);
         return executionCourse;
     }
 
-    private ExecutionCourse getExecutinCourseFromParameter(final HttpServletRequest request) {
+    private Course getExecutinCourseFromParameter(final HttpServletRequest request) {
         final String executionCourseIDString =
                 request.getParameterMap().containsKey("executionCourseID") ? request.getParameter("executionCourseID") : (String) request
                         .getAttribute("executionCourseID");
@@ -889,7 +889,7 @@ public class SummariesManagementDA extends FenixDispatchAction {
                 .getNewInstance(summaryDateString);
     }
 
-    private Professorship getProfessorshipFromParameter(final HttpServletRequest request) {
+    private CourseTeacher getProfessorshipFromParameter(final HttpServletRequest request) {
         final String professorshipIDString =
                 request.getParameterMap().containsKey("teacher") ? request.getParameter("teacher") : (String) request
                         .getAttribute("teacher");

@@ -27,8 +27,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.DynaActionForm;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Curriculum;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.Teacher;
 import org.fenixedu.academic.service.services.exceptions.FenixServiceException;
 import org.fenixedu.academic.ui.struts.action.exceptions.FenixActionException;
@@ -59,7 +59,7 @@ public class ExecutionCourseProgramDA extends ManageExecutionCourseDA {
 
     public ActionForward prepareEditProgram(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        final ExecutionCourse executionCourse = (ExecutionCourse) request.getAttribute("executionCourse");
+        final Course executionCourse = (Course) request.getAttribute("executionCourse");
 
         final Teacher teacher = getUserView(request).getPerson().getTeacher();
         if (teacher.isResponsibleFor(executionCourse) == null) {

@@ -21,7 +21,7 @@
  */
 package org.fenixedu.academic.servlet.taglib.sop.v3.renderers;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.dto.InfoExecutionCourse;
 import org.fenixedu.academic.dto.InfoLesson;
@@ -123,7 +123,7 @@ public class ShiftEnrollmentTimeTableLessonContentRenderer extends LessonSlotCon
         } else if (showOccupation instanceof InfoLessonInstanceAggregation) {
             final InfoLessonInstanceAggregation infoLessonInstanceAggregation = (InfoLessonInstanceAggregation) showOccupation;
 
-            final ExecutionCourse executionCourse = infoLessonInstanceAggregation.getShift().getExecutionCourse();
+            final Course executionCourse = infoLessonInstanceAggregation.getShift().getExecutionCourse();
             final String siteUrl = executionCourse.getSiteUrl();
 
             strBuffer.append("<span class=\"float-left\">");

@@ -20,6 +20,7 @@ package org.fenixedu.academic.domain.reports;
 
 import java.nio.charset.StandardCharsets;
 
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Evaluation;
 import org.fenixedu.academic.domain.Exam;
 import org.fenixedu.academic.domain.ExecutionCourse;
@@ -116,7 +117,7 @@ public class WrittenEvaluationReportFile extends WrittenEvaluationReportFile_Bas
         return Hashing.murmur3_128().hashBytes(code.toString().getBytes(StandardCharsets.UTF_8)).toString();
     }
 
-    public static String getExecutionCourseCode(ExecutionCourse executionCourse) {
+    public static String getExecutionCourseCode(Course executionCourse) {
         return executionCourse.getSigla() + CODE_SEPARATOR + getExecutionSemesterCode(executionCourse.getExecutionPeriod());
     }
 }

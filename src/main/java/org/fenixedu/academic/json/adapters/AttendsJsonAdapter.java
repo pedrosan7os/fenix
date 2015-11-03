@@ -18,7 +18,7 @@
  */
 package org.fenixedu.academic.json.adapters;
 
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.ShiftType;
 import org.fenixedu.academic.domain.student.registrationStates.RegistrationState;
 import org.fenixedu.academic.util.Bundle;
@@ -30,10 +30,10 @@ import org.fenixedu.bennu.core.json.JsonViewer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-@DefaultJsonAdapter(Attends.class)
-public class AttendsJsonAdapter implements JsonViewer<Attends> {
+@DefaultJsonAdapter(Attendance.class)
+public class AttendsJsonAdapter implements JsonViewer<Attendance> {
     @Override
-    public JsonElement view(Attends attends, JsonBuilder ctx) {
+    public JsonElement view(Attendance attends, JsonBuilder ctx) {
         JsonObject object = new JsonObject();
         object.addProperty("externalId", attends.getExternalId());
         object.add("person", ctx.view(attends.getRegistration().getPerson()));

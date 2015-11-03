@@ -23,9 +23,9 @@
  */
 package org.fenixedu.academic.service.filter;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.domain.person.RoleType;
 import org.fenixedu.academic.dto.InfoExecutionCourse;
 import org.fenixedu.academic.dto.SummariesManagementBean;
@@ -61,7 +61,7 @@ public class ExecutionCourseLecturingTeacherAuthorizationFilter extends Authoriz
         execute(getExecutionCourse(executionCourseCode));
     }
 
-    public void execute(ExecutionCourse executionCourse) throws NotAuthorizedException {
+    public void execute(Course executionCourse) throws NotAuthorizedException {
         User id = Authenticate.getUser();
 
         try {
@@ -73,7 +73,7 @@ public class ExecutionCourseLecturingTeacherAuthorizationFilter extends Authoriz
         }
     }
 
-    private boolean lecturesExecutionCourse(User id, ExecutionCourse executionCourse) {
+    private boolean lecturesExecutionCourse(User id, Course executionCourse) {
         if (executionCourse == null) {
             return false;
         }
@@ -82,7 +82,7 @@ public class ExecutionCourseLecturingTeacherAuthorizationFilter extends Authoriz
         if (person == null) {
             return false;
         }
-        for (final Professorship professorship : executionCourse.getProfessorshipsSet()) {
+        for (final CourseTeacher professorship : executionCourse.getProfessorshipsSet()) {
             if (professorship.getPerson() == id.getPerson()) {
                 return true;
             }
@@ -90,12 +90,12 @@ public class ExecutionCourseLecturingTeacherAuthorizationFilter extends Authoriz
         return false;
     }
 
-    private ExecutionCourse getExecutionCourse(Object argument) {
+    private Course getExecutionCourse(Object argument) {
         if (argument == null) {
             return null;
 
-        } else if (argument instanceof ExecutionCourse) {
-            return (ExecutionCourse) argument;
+        } else if (argument instanceof Course) {
+            return (Course) argument;
 
         } else if (argument instanceof InfoExecutionCourse) {
             final InfoExecutionCourse infoExecutionCourse = (InfoExecutionCourse) argument;

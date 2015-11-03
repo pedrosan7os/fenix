@@ -29,7 +29,7 @@ import java.util.Locale;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.ComparatorChain;
 import org.apache.commons.lang.StringUtils;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.FrequencyType;
 import org.fenixedu.academic.domain.Lesson;
 import org.fenixedu.academic.domain.exceptions.DomainException;
@@ -367,8 +367,7 @@ public abstract class EventSpaceOccupation extends EventSpaceOccupation_Base {
                 + ")";
     }
 
-    public abstract boolean isOccupiedByExecutionCourse(final ExecutionCourse executionCourse, final DateTime start,
-            final DateTime end);
+    public abstract boolean isOccupiedByExecutionCourse(final Course executionCourse, final DateTime start, final DateTime end);
 
     @Override
     public void delete() {

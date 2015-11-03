@@ -20,7 +20,7 @@ package org.fenixedu.academic.domain.student;
 
 import static org.fenixedu.academic.predicate.AccessControl.check;
 
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.predicate.RolePredicates;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.joda.time.DateTime;
@@ -30,8 +30,8 @@ import org.joda.time.Interval;
 
 public class WeeklyWorkLoad extends WeeklyWorkLoad_Base implements Comparable<WeeklyWorkLoad> {
 
-    public WeeklyWorkLoad(final Attends attends, final Integer weekOffset, final Integer contact, final Integer autonomousStudy,
-            final Integer other) {
+    public WeeklyWorkLoad(final Attendance attends, final Integer weekOffset, final Integer contact,
+            final Integer autonomousStudy, final Integer other) {
         super();
         setRootDomainObject(Bennu.getInstance());
 

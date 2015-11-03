@@ -32,12 +32,12 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.CurricularYear;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.DegreeModuleScope;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.OccupationPeriod;
@@ -75,11 +75,10 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
 
         Interval[] intervals;
 
-        final Set<ExecutionCourse> executionCourses = new TreeSet<ExecutionCourse>(
-                ExecutionCourse.EXECUTION_COURSE_NAME_COMPARATOR);
+        final Set<Course> executionCourses = new TreeSet<Course>(Course.EXECUTION_COURSE_NAME_COMPARATOR);
 
         public CurricularYearWeeklyWorkLoadView(final DegreeCurricularPlan degreeCurricularPlan,
-                final ExecutionSemester executionSemester, final Set<ExecutionCourse> executionCourses) {
+                final ExecutionSemester executionSemester, final Set<Course> executionCourses) {
             final ExecutionDegree executionDegree = findExecutionDegree(executionSemester, degreeCurricularPlan);
 
             if (executionDegree != null) {
@@ -131,7 +130,7 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
             return interval;
         }
 
-        public Set<ExecutionCourse> getExecutionCourses() {
+        public Set<Course> getExecutionCourses() {
             return executionCourses;
         }
 
@@ -141,7 +140,7 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
     }
 
     public static class WeeklyWorkLoadView {
-        final ExecutionCourse executionCourse;
+        final Course executionCourse;
 
         final Interval executionPeriodInterval;
 
@@ -159,7 +158,7 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
 
         final int[] totalSum;
 
-        public WeeklyWorkLoadView(ExecutionCourse executionCourse, final Interval executionPeriodInterval) {
+        public WeeklyWorkLoadView(Course executionCourse, final Interval executionPeriodInterval) {
             this.executionCourse = executionCourse;
             this.executionPeriodInterval = executionPeriodInterval;
             final Period period = executionPeriodInterval.toPeriod();
@@ -178,7 +177,7 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
             }
         }
 
-        public void add(final Attends attends) {
+        public void add(final Attendance attends) {
             for (final WeeklyWorkLoad weeklyWorkLoad : attends.getWeeklyWorkLoadsSet()) {
                 final int weekIndex = weeklyWorkLoad.getWeekOffset();
                 if (consistentAnswers(attends, weekIndex)) {
@@ -198,9 +197,9 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
             }
         }
 
-        private boolean consistentAnswers(final Attends attends, final int weekIndex) {
+        private boolean consistentAnswers(final Attendance attends, final int weekIndex) {
             int weeklyTotal = 0;
-            for (final Attends someAttends : attends.getRegistration().getAssociatedAttendsSet()) {
+            for (final Attendance someAttends : attends.getRegistration().getAssociatedAttendsSet()) {
                 for (final WeeklyWorkLoad weeklyWorkLoad : someAttends.getWeeklyWorkLoadsSet()) {
                     if (weeklyWorkLoad.getWeekOffset().intValue() == weekIndex) {
                         weeklyTotal += weeklyWorkLoad.getTotal();
@@ -298,7 +297,7 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
 
         private int getNumberWeeksForAverageCalculation() {
             if (!executionCourse.getAttendsSet().isEmpty()) {
-                final Attends attends = findAttendsWithEnrolment(executionCourse);
+                final Attendance attends = findAttendsWithEnrolment(executionCourse);
                 if (attends != null) {
                     int currentWeekOffset = attends.calculateCurrentWeekOffset();
                     if (currentWeekOffset > 0 && currentWeekOffset < numberOfWeeks) {
@@ -335,12 +334,12 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
         }
     }
 
-    public static WeeklyWorkLoadView createWeeklyWorkLoadView(ExecutionCourse executionCourse) {
-        final Attends attends = findAttendsWithEnrolment(executionCourse);
+    public static WeeklyWorkLoadView createWeeklyWorkLoadView(Course executionCourse) {
+        final Attendance attends = findAttendsWithEnrolment(executionCourse);
         if (attends != null) {
             final Interval interval = attends.getWeeklyWorkLoadInterval();
             final WeeklyWorkLoadView weeklyWorkLoadView = new WeeklyWorkLoadView(executionCourse, interval);
-            for (final Attends attend : executionCourse.getAttendsSet()) {
+            for (final Attendance attend : executionCourse.getAttendsSet()) {
                 weeklyWorkLoadView.add(attend);
             }
             return weeklyWorkLoadView;
@@ -349,8 +348,8 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
         }
     }
 
-    private static Attends findAttendsWithEnrolment(ExecutionCourse executionCourse) {
-        for (final Attends attends : executionCourse.getAttendsSet()) {
+    private static Attendance findAttendsWithEnrolment(Course executionCourse) {
+        for (final Attendance attends : executionCourse.getAttendsSet()) {
             if (attends.getEnrolment() != null) {
                 return attends;
             }
@@ -383,11 +382,10 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
         final Set<CurricularYear> curricularYears = new TreeSet<CurricularYear>(rootDomainObject.getCurricularYearsSet());
         request.setAttribute("curricularYears", curricularYears);
 
-        final Set<ExecutionCourse> executionCourses =
-                new TreeSet<ExecutionCourse>(ExecutionCourse.EXECUTION_COURSE_NAME_COMPARATOR);
+        final Set<Course> executionCourses = new TreeSet<Course>(Course.EXECUTION_COURSE_NAME_COMPARATOR);
         request.setAttribute("executionCourses", executionCourses);
 
-        final ExecutionCourse selectedExecutionCourse =
+        final Course selectedExecutionCourse =
                 setDomainObjectInRequest(dynaActionForm, request, "executionCourseID", "executionCourse");
         request.setAttribute("weeklyWorkLoadView", createWeeklyWorkLoadView(selectedExecutionCourse));
 
@@ -405,7 +403,7 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
                     curricularYears.add(curricularYear);
 
                     if (curricularYearID == null || curricularYear.getExternalId().equals(curricularYearID)) {
-                        for (final ExecutionCourse executionCourse : curricularCourse
+                        for (final Course executionCourse : curricularCourse
                                 .getExecutionCoursesByExecutionPeriod(selectedExecutionPeriod)) {
                             executionCourses.add(executionCourse);
                         }

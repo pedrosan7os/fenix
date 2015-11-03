@@ -22,9 +22,9 @@ import java.util.Optional;
 
 import javax.ws.rs.core.Response.Status;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.predicate.AccessControl;
 import org.fenixedu.academic.ui.spring.StrutsFunctionalityController;
@@ -33,20 +33,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 public abstract class ExecutionCourseController extends StrutsFunctionalityController {
 
-    ExecutionCourse executionCourse;
+    Course executionCourse;
 
     public ExecutionCourseController() {
         super();
     }
 
-    private Professorship findProfessorship(final ExecutionCourse executionCourse) {
+    private CourseTeacher findProfessorship(final Course executionCourse) {
         final Person person = AccessControl.getPerson();
         if (person != null) {
-            Optional<Professorship> professorshipOpt =
+            Optional<CourseTeacher> professorshipOpt =
                     person.getProfessorshipsSet().stream()
                             .filter(professorship -> professorship.getExecutionCourse().equals(executionCourse)).findFirst();
             if (professorshipOpt.isPresent()) {
-                Professorship prof = professorshipOpt.get();
+                CourseTeacher prof = professorshipOpt.get();
                 if (!this.getPermission(prof)) {
                     throw new DomainException(Status.FORBIDDEN, "message.error.notAuthorized");
                 } else {
@@ -63,14 +63,14 @@ public abstract class ExecutionCourseController extends StrutsFunctionalityContr
     }
 
     @ModelAttribute("professorship")
-    public Professorship setProfessorship(@PathVariable ExecutionCourse executionCourse) {
+    public CourseTeacher setProfessorship(@PathVariable Course executionCourse) {
         return findProfessorship(executionCourse);
     }
 
-    abstract Boolean getPermission(Professorship prof);
+    abstract Boolean getPermission(CourseTeacher prof);
 
     @ModelAttribute("executionCourse")
-    public ExecutionCourse getExecutionCourse(@PathVariable ExecutionCourse executionCourse) {
+    public Course getExecutionCourse(@PathVariable Course executionCourse) {
         this.executionCourse = executionCourse;
         return executionCourse;
     }

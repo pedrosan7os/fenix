@@ -19,7 +19,7 @@
 package org.fenixedu.academic.service.services.teacher;
 
 import org.fenixedu.academic.domain.Evaluation;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Mark;
 import org.fenixedu.academic.service.filter.ExecutionCourseLecturingTeacherAuthorizationFilter;
 import org.fenixedu.academic.service.services.ExcepcaoInexistente;
@@ -40,7 +40,7 @@ public class PublishMarks {
     protected Object run(String executionCourseCode, String evaluationCode, String publishmentMessage, String announcementTitle)
             throws ExcepcaoInexistente, FenixServiceException {
 
-        final ExecutionCourse executionCourse = FenixFramework.getDomainObject(executionCourseCode);
+        final Course executionCourse = FenixFramework.getDomainObject(executionCourseCode);
         final Evaluation evaluation = FenixFramework.getDomainObject(evaluationCode);
 
         if (publishmentMessage == null || publishmentMessage.length() == 0) {
@@ -63,17 +63,17 @@ public class PublishMarks {
 
     public static class MarkPublishingBean {
 
-        private final ExecutionCourse course;
+        private final Course course;
         private final Evaluation evaluation;
         private final String title;
 
-        public MarkPublishingBean(ExecutionCourse course, Evaluation evaluation, String title) {
+        public MarkPublishingBean(Course course, Evaluation evaluation, String title) {
             this.course = course;
             this.evaluation = evaluation;
             this.title = title;
         }
 
-        public ExecutionCourse getCourse() {
+        public Course getCourse() {
             return course;
         }
 

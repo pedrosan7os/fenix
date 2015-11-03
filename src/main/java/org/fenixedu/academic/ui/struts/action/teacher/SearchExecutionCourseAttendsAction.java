@@ -33,10 +33,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.Attends.StudentAttendsStateType;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.accessControl.SearchDegreeStudentsGroup;
@@ -69,8 +69,8 @@ public class SearchExecutionCourseAttendsAction extends ExecutionCourseBaseActio
     public ActionForward prepare(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         // Integer objectCode =
         // Integer.valueOf(request.getParameter("objectCode"));
-        ExecutionCourse executionCourse = getExecutionCourse(request);
-        // ExecutionCourse executionCourse =
+        Course executionCourse = getExecutionCourse(request);
+        // Course executionCourse =
         // FenixFramework.getDomainObject(objectCode);
         SearchExecutionCourseAttendsBean searchExecutionCourseAttendsBean = readSearchBean(request, executionCourse);
 
@@ -83,12 +83,12 @@ public class SearchExecutionCourseAttendsAction extends ExecutionCourseBaseActio
         return forward(request, "/teacher/viewAttendsSearch.jsp");
     }
 
-    private SearchExecutionCourseAttendsBean readSearchBean(HttpServletRequest request, ExecutionCourse executionCourse) {
+    private SearchExecutionCourseAttendsBean readSearchBean(HttpServletRequest request, Course executionCourse) {
         String executionCourseID = request.getParameter("executionCourse");
         SearchExecutionCourseAttendsBean searchExecutionCourseAttendsBean;
         if (executionCourseID != null) {
             searchExecutionCourseAttendsBean =
-                    new SearchExecutionCourseAttendsBean(FenixFramework.<ExecutionCourse> getDomainObject(executionCourseID));
+                    new SearchExecutionCourseAttendsBean(FenixFramework.<Course> getDomainObject(executionCourseID));
         } else {
             searchExecutionCourseAttendsBean = new SearchExecutionCourseAttendsBean(executionCourse);
         }
@@ -141,11 +141,11 @@ public class SearchExecutionCourseAttendsAction extends ExecutionCourseBaseActio
     }
 
     private void prepareAttendsCollectionPages(HttpServletRequest request,
-            SearchExecutionCourseAttendsBean searchExecutionCourseAttendsBean, ExecutionCourse executionCourse) {
-        Collection<Attends> executionCourseAttends = searchExecutionCourseAttendsBean.getAttendsResult();
-        List<Attends> listExecutionCourseAttends = new ArrayList<Attends>(executionCourseAttends);
-        Collections.sort(listExecutionCourseAttends, Attends.COMPARATOR_BY_STUDENT_NUMBER);
-        final CollectionPager<Attends> pager = new CollectionPager<Attends>(listExecutionCourseAttends, 50);
+            SearchExecutionCourseAttendsBean searchExecutionCourseAttendsBean, Course executionCourse) {
+        Collection<Attendance> executionCourseAttends = searchExecutionCourseAttendsBean.getAttendsResult();
+        List<Attendance> listExecutionCourseAttends = new ArrayList<Attendance>(executionCourseAttends);
+        Collections.sort(listExecutionCourseAttends, Attendance.COMPARATOR_BY_STUDENT_NUMBER);
+        final CollectionPager<Attendance> pager = new CollectionPager<Attendance>(listExecutionCourseAttends, 50);
         request.setAttribute("numberOfPages", (listExecutionCourseAttends.size() / 50) + 1);
 
         final String pageParameter = request.getParameter("pageNumber");
@@ -157,7 +157,7 @@ public class SearchExecutionCourseAttendsAction extends ExecutionCourseBaseActio
         executionCourse.searchAttends(attendsPagesBean);
 
         Map<Integer, Integer> enrolmentsNumberMap = new HashMap<Integer, Integer>();
-        for (Attends attends : pager.getCollection()) {
+        for (Attendance attends : pager.getCollection()) {
             executionCourse.addAttendsToEnrolmentNumberMap(attends, enrolmentsNumberMap);
         }
         attendsPagesBean.setEnrolmentsNumberMap(enrolmentsNumberMap);
@@ -170,7 +170,7 @@ public class SearchExecutionCourseAttendsAction extends ExecutionCourseBaseActio
 
     public ActionForward sendEmail(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) {
-        ExecutionCourse executionCourse;
+        Course executionCourse;
         Group studentsGroup = null;
         String label;
         Sender sender;

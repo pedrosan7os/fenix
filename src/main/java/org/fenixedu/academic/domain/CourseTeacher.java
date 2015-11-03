@@ -1,21 +1,3 @@
-/**
- * Copyright © 2002 Instituto Superior Técnico
- *
- * This file is part of FenixEdu Academic.
- *
- * FenixEdu Academic is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * FenixEdu Academic is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with FenixEdu Academic.  If not, see <http://www.gnu.org/licenses/>.
- */
 package org.fenixedu.academic.domain;
 
 import java.text.Collator;
@@ -37,17 +19,26 @@ import org.fenixedu.bennu.core.security.Authenticate;
 
 import pt.ist.fenixframework.Atomic;
 
-/**
- * @author João Mota
- */
-public class Professorship extends Professorship_Base {
+public class CourseTeacher extends CourseTeacher_Base {
 
-    public static final Comparator<Professorship> COMPARATOR_BY_PERSON_NAME = new BeanComparator("person.name",
+    public static final Comparator<CourseTeacher> COMPARATOR_BY_PERSON_NAME = new BeanComparator("person.name",
             Collator.getInstance());
 
-    public Professorship() {
+    public CourseTeacher() {
         super();
         setRootDomainObject(Bennu.getInstance());
+        new ProfessorshipPermissions(this);
+    }
+
+    public CourseTeacher(Professorship professorship) {
+        this();
+        setExecutionCourse(professorship.getExecutionCourse().getCourse());
+        setResponsibleFor(professorship.getResponsibleFor());
+        setSourceProfessorship(professorship);
+        setUser(professorship.getPerson().getUser());
+        ProfessorshipManagementLog.createLog(getExecutionCourse(), Bundle.MESSAGING, "log.executionCourse.professorship.added",
+                professorship.getPerson().getPresentationName(), getExecutionCourse().getNome(), getExecutionCourse()
+                        .getDegreePresentationString());
     }
 
     public boolean belongsToExecutionPeriod(ExecutionSemester executionSemester) {
@@ -55,7 +46,7 @@ public class Professorship extends Professorship_Base {
     }
 
     @Atomic
-    public static Professorship create(Boolean responsibleFor, ExecutionCourse executionCourse, Person person) {
+    public static CourseTeacher create(Boolean responsibleFor, Course executionCourse, Person person) {
 
         Objects.requireNonNull(responsibleFor);
         Objects.requireNonNull(executionCourse);
@@ -65,23 +56,27 @@ public class Professorship extends Professorship_Base {
             throw new DomainException("error.teacher.already.associated.to.professorship");
         }
 
-        Professorship professorShip = new Professorship();
+        CourseTeacher professorShip = new CourseTeacher();
         professorShip.setExecutionCourse(executionCourse);
         professorShip.setPerson(person);
         professorShip.setCreator(Authenticate.getUser().getPerson());
 
         professorShip.setResponsibleFor(responsibleFor);
 
-        new CourseTeacher(professorShip);
+        ProfessorshipManagementLog.createLog(professorShip.getExecutionCourse(), Bundle.MESSAGING,
+                "log.executionCourse.professorship.added", professorShip.getPerson().getPresentationName(), professorShip
+                        .getExecutionCourse().getNome(), professorShip.getExecutionCourse().getDegreePresentationString());
         return professorShip;
     }
 
     public void delete() {
         DomainException.throwWhenDeleteBlocked(getDeletionBlockers());
-        getCourseTeacher().delete();
+        ProfessorshipManagementLog.createLog(getExecutionCourse(), Bundle.MESSAGING, "log.executionCourse.professorship.removed",
+                getPerson().getPresentationName(), getExecutionCourse().getNome(), getExecutionCourse()
+                        .getDegreePresentationString());
         setExecutionCourse(null);
         setPerson(null);
-        if (getPermissions() != null) {
+        if (super.getPermissions() != null) {
             getPermissions().delete();
         }
         setRootDomainObject(null);
@@ -105,84 +100,84 @@ public class Professorship extends Professorship_Base {
         return getResponsibleFor().booleanValue();
     }
 
-    public static List<Professorship> readByDegreeCurricularPlanAndExecutionYear(DegreeCurricularPlan degreeCurricularPlan,
+    public static List<CourseTeacher> readByDegreeCurricularPlanAndExecutionYear(DegreeCurricularPlan degreeCurricularPlan,
             ExecutionYear executionYear) {
 
-        Set<Professorship> professorships = new HashSet<Professorship>();
+        Set<CourseTeacher> professorships = new HashSet<CourseTeacher>();
         for (CurricularCourse curricularCourse : degreeCurricularPlan.getCurricularCoursesSet()) {
-            for (ExecutionCourse executionCourse : curricularCourse.getExecutionCoursesByExecutionYear(executionYear)) {
+            for (Course executionCourse : curricularCourse.getExecutionCoursesByExecutionYear(executionYear)) {
                 professorships.addAll(executionCourse.getProfessorshipsSet());
             }
         }
-        return new ArrayList<Professorship>(professorships);
+        return new ArrayList<CourseTeacher>(professorships);
     }
 
-    public static List<Professorship> readByDegreeCurricularPlanAndExecutionYearAndBasic(
+    public static List<CourseTeacher> readByDegreeCurricularPlanAndExecutionYearAndBasic(
             DegreeCurricularPlan degreeCurricularPlan, ExecutionYear executionYear, Boolean basic) {
 
-        Set<Professorship> professorships = new HashSet<Professorship>();
+        Set<CourseTeacher> professorships = new HashSet<CourseTeacher>();
         for (CurricularCourse curricularCourse : degreeCurricularPlan.getCurricularCoursesSet()) {
             if (curricularCourse.getBasic().equals(basic)) {
-                for (ExecutionCourse executionCourse : curricularCourse.getExecutionCoursesByExecutionYear(executionYear)) {
+                for (Course executionCourse : curricularCourse.getExecutionCoursesByExecutionYear(executionYear)) {
                     professorships.addAll(executionCourse.getProfessorshipsSet());
                 }
             }
         }
-        return new ArrayList<Professorship>(professorships);
+        return new ArrayList<CourseTeacher>(professorships);
     }
 
-    public static List<Professorship> readByDegreeCurricularPlanAndExecutionPeriod(DegreeCurricularPlan degreeCurricularPlan,
+    public static List<CourseTeacher> readByDegreeCurricularPlanAndExecutionPeriod(DegreeCurricularPlan degreeCurricularPlan,
             ExecutionSemester executionSemester) {
 
-        Set<Professorship> professorships = new HashSet<Professorship>();
+        Set<CourseTeacher> professorships = new HashSet<CourseTeacher>();
         for (CurricularCourse curricularCourse : degreeCurricularPlan.getCurricularCoursesSet()) {
-            for (ExecutionCourse executionCourse : curricularCourse.getExecutionCoursesByExecutionPeriod(executionSemester)) {
+            for (Course executionCourse : curricularCourse.getExecutionCoursesByExecutionPeriod(executionSemester)) {
                 professorships.addAll(executionCourse.getProfessorshipsSet());
             }
         }
-        return new ArrayList<Professorship>(professorships);
+        return new ArrayList<CourseTeacher>(professorships);
     }
 
-    public static List<Professorship> readByDegreeCurricularPlansAndExecutionYearAndBasic(
+    public static List<CourseTeacher> readByDegreeCurricularPlansAndExecutionYearAndBasic(
             List<DegreeCurricularPlan> degreeCurricularPlans, ExecutionYear executionYear, Boolean basic) {
 
-        Set<Professorship> professorships = new HashSet<Professorship>();
+        Set<CourseTeacher> professorships = new HashSet<CourseTeacher>();
         for (DegreeCurricularPlan degreeCurricularPlan : degreeCurricularPlans) {
             for (CurricularCourse curricularCourse : degreeCurricularPlan.getCurricularCoursesSet()) {
                 if (curricularCourse.getBasic() == null || curricularCourse.getBasic().equals(basic)) {
                     if (executionYear != null) {
-                        for (ExecutionCourse executionCourse : curricularCourse.getExecutionCoursesByExecutionYear(executionYear)) {
+                        for (Course executionCourse : curricularCourse.getExecutionCoursesByExecutionYear(executionYear)) {
                             professorships.addAll(executionCourse.getProfessorshipsSet());
                         }
                     } else {
-                        for (ExecutionCourse executionCourse : curricularCourse.getAssociatedExecutionCoursesSet()) {
+                        for (Course executionCourse : curricularCourse.getAssociatedExecutionCoursesSet()) {
                             professorships.addAll(executionCourse.getProfessorshipsSet());
                         }
                     }
                 }
             }
         }
-        return new ArrayList<Professorship>(professorships);
+        return new ArrayList<CourseTeacher>(professorships);
     }
 
-    public static List<Professorship> readByDegreeCurricularPlansAndExecutionYear(
+    public static List<CourseTeacher> readByDegreeCurricularPlansAndExecutionYear(
             List<DegreeCurricularPlan> degreeCurricularPlans, ExecutionYear executionYear) {
 
-        Set<Professorship> professorships = new HashSet<Professorship>();
+        Set<CourseTeacher> professorships = new HashSet<CourseTeacher>();
         for (DegreeCurricularPlan degreeCurricularPlan : degreeCurricularPlans) {
             for (CurricularCourse curricularCourse : degreeCurricularPlan.getCurricularCoursesSet()) {
                 if (executionYear != null) {
-                    for (ExecutionCourse executionCourse : curricularCourse.getExecutionCoursesByExecutionYear(executionYear)) {
+                    for (Course executionCourse : curricularCourse.getExecutionCoursesByExecutionYear(executionYear)) {
                         professorships.addAll(executionCourse.getProfessorshipsSet());
                     }
                 } else {
-                    for (ExecutionCourse executionCourse : curricularCourse.getAssociatedExecutionCoursesSet()) {
+                    for (Course executionCourse : curricularCourse.getAssociatedExecutionCoursesSet()) {
                         professorships.addAll(executionCourse.getProfessorshipsSet());
                     }
                 }
             }
         }
-        return new ArrayList<Professorship>(professorships);
+        return new ArrayList<CourseTeacher>(professorships);
     }
 
     public Teacher getTeacher() {
@@ -225,28 +220,20 @@ public class Professorship extends Professorship_Base {
         return StringUtils.join(degreeSiglas, ", ");
     }
 
-    @Deprecated
-    public void addAssociatedSummaries(Summary associatedSummaries) {
-        getCourseTeacher().addAssociatedSummaries(associatedSummaries);
+    public Person getPerson() {
+        return getSourceProfessorship().getPerson();
     }
 
-    @Deprecated
-    public void removeAssociatedSummaries(Summary associatedSummaries) {
-        getCourseTeacher().removeAssociatedSummaries(associatedSummaries);
+    public void setPerson(Person person) {
+        getSourceProfessorship().setPerson(person);
     }
 
-    @Deprecated
-    public Set<Summary> getAssociatedSummariesSet() {
-        return getCourseTeacher().getAssociatedSummariesSet();
+    public Person getCreator() {
+        return getSourceProfessorship().getCreator();
     }
 
-    @Deprecated
-    public ProfessorshipPermissions getPermissions() {
-        return getCourseTeacher().getPermissions();
+    public void setCreator(Person creator) {
+        getSourceProfessorship().setCreator(creator);
     }
 
-    @Deprecated
-    public void setPermissions(ProfessorshipPermissions permissions) {
-        getCourseTeacher().setPermissions(permissions);
-    }
 }

@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.dto.InfoExecutionCourse;
 import org.fenixedu.academic.dto.InfoShift;
@@ -46,7 +46,7 @@ public class LerTurnosDeDisciplinaExecucao {
 
         List<InfoShift> infoShifts = new ArrayList<InfoShift>();
 
-        ExecutionCourse executionCourse = FenixFramework.getDomainObject(infoExecutionCourse.getExternalId());
+        Course executionCourse = FenixFramework.getDomainObject(infoExecutionCourse.getExternalId());
         Iterator<Shift> itShiftList = executionCourse.getAssociatedShifts().iterator();
 
         while (itShiftList.hasNext()) {

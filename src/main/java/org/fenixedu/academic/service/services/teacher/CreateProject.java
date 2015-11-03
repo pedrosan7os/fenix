@@ -25,8 +25,8 @@ package org.fenixedu.academic.service.services.teacher;
 import java.util.Date;
 import java.util.List;
 
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Department;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.GradeScale;
 import org.fenixedu.academic.domain.Grouping;
 import org.fenixedu.academic.domain.Project;
@@ -44,7 +44,7 @@ public class CreateProject {
             Boolean onlineSubmissionsAllowed, Integer maxSubmissionsToKeep, String groupingID, GradeScale gradeScale,
             List<Department> departments) throws FenixServiceException {
 
-        final ExecutionCourse executionCourse = FenixFramework.getDomainObject(executionCourseID);
+        final Course executionCourse = FenixFramework.getDomainObject(executionCourseID);
         if (executionCourse == null) {
             throw new FenixServiceException("error.noExecutionCourse");
         }

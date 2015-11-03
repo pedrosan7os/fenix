@@ -37,12 +37,12 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.util.MessageResources;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.CurricularYear;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.DegreeModuleScope;
 import org.fenixedu.academic.domain.Exam;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExecutionYear;
@@ -220,7 +220,7 @@ public class WrittenEvaluationsByRoomBackingBean extends EvaluationManagementBac
                 matchesCriteria = false;
             } else if (normalCapacity != null && room.getCapacidadeNormal().intValue() < normalCapacity.intValue()) {
                 matchesCriteria = false;
-            } else if (examCapacity != null && (Integer) room.getCapacidadeExame() < examCapacity.intValue()) {
+            } else if (examCapacity != null && room.getCapacidadeExame() < examCapacity.intValue()) {
                 matchesCriteria = false;
             }
 
@@ -342,7 +342,7 @@ public class WrittenEvaluationsByRoomBackingBean extends EvaluationManagementBac
                                 ((WrittenEvaluationSpaceOccupation) roomOccupation).getWrittenEvaluationsSet();
                         for (WrittenEvaluation writtenEvaluation : writtenEvaluations) {
                             if (verifyWrittenEvaluationExecutionPeriod(writtenEvaluation, interval, otherAcademicInterval)) {
-                                final ExecutionCourse executionCourse =
+                                final Course executionCourse =
                                         writtenEvaluation.getAssociatedExecutionCoursesSet().iterator().next();
                                 final CalendarLink calendarLink =
                                         new CalendarLink(executionCourse, writtenEvaluation, I18N.getLocale());
@@ -362,7 +362,7 @@ public class WrittenEvaluationsByRoomBackingBean extends EvaluationManagementBac
 
     protected boolean verifyWrittenEvaluationExecutionPeriod(WrittenEvaluation writtenEvaluation, AcademicInterval interval,
             AcademicInterval otherAcademicInterval) {
-        for (ExecutionCourse executionCourse : writtenEvaluation.getAssociatedExecutionCoursesSet()) {
+        for (Course executionCourse : writtenEvaluation.getAssociatedExecutionCoursesSet()) {
             if (executionCourse.getAcademicInterval().equals(interval)
                     || (otherAcademicInterval != null && executionCourse.getAcademicInterval().equals(otherAcademicInterval))) {
                 return true;
@@ -376,8 +376,7 @@ public class WrittenEvaluationsByRoomBackingBean extends EvaluationManagementBac
         return (calendarLinks != null) ? new ArrayList<Entry<InfoRoom, List<CalendarLink>>>(calendarLinks.entrySet()) : null;
     }
 
-    private Map<String, String> constructLinkParameters(final ExecutionCourse executionCourse,
-            final WrittenEvaluation writtenEvaluation) {
+    private Map<String, String> constructLinkParameters(final Course executionCourse, final WrittenEvaluation writtenEvaluation) {
         final ExecutionSemester executionSemester = executionCourse.getExecutionPeriod();
         final ExecutionDegree executionDegree = findExecutionDegree(executionCourse);
         final Integer year = findCurricularYear(executionCourse);
@@ -396,7 +395,7 @@ public class WrittenEvaluationsByRoomBackingBean extends EvaluationManagementBac
         return linkParameters;
     }
 
-    private ExecutionDegree findExecutionDegree(final ExecutionCourse executionCourse) {
+    private ExecutionDegree findExecutionDegree(final Course executionCourse) {
         final ExecutionSemester executionSemester = executionCourse.getExecutionPeriod();
         final ExecutionYear executionYear = executionSemester.getExecutionYear();
 
@@ -411,7 +410,7 @@ public class WrittenEvaluationsByRoomBackingBean extends EvaluationManagementBac
         return null;
     }
 
-    private Integer findCurricularYear(final ExecutionCourse executionCourse) {
+    private Integer findCurricularYear(final Course executionCourse) {
         final ExecutionSemester executionSemester = executionCourse.getExecutionPeriod();
 
         for (final CurricularCourse curricularCourse : executionCourse.getAssociatedCurricularCoursesSet()) {
@@ -425,7 +424,7 @@ public class WrittenEvaluationsByRoomBackingBean extends EvaluationManagementBac
     }
 
     protected String constructEvaluationCalendarPresentarionString(final WrittenEvaluation writtenEvaluation,
-            final ExecutionCourse executionCourse) {
+            final Course executionCourse) {
         final StringBuilder stringBuilder = new StringBuilder();
         if (writtenEvaluation instanceof WrittenTest) {
             stringBuilder.append(messages.getMessage("label.evaluation.shortname.test"));

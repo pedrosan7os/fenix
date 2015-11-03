@@ -55,7 +55,7 @@ public class FinalEvaluation extends FinalEvaluation_Base {
     }
 
     @Override
-    public FinalMark addNewMark(Attends attends, String markValue) {
+    public FinalMark addNewMark(Attendance attends, String markValue) {
         if (attends.getMarkByEvaluation(this) != null) {
             throw new DomainException("error.Evaluation.attend.already.has.mark.for.evaluation");
         }
@@ -67,7 +67,7 @@ public class FinalEvaluation extends FinalEvaluation_Base {
         return EvaluationType.FINAL_TYPE;
     }
 
-    public List<FinalMark> getAlreadySubmitedMarks(ExecutionCourse executionCourse) {
+    public List<FinalMark> getAlreadySubmitedMarks(Course executionCourse) {
         List<FinalMark> result = new ArrayList<FinalMark>();
         for (Mark mark : getMarksSet()) {
             FinalMark finalMark = (FinalMark) mark;
@@ -79,10 +79,10 @@ public class FinalEvaluation extends FinalEvaluation_Base {
         return result;
     }
 
-    public List<Attends> getNotSubmitedMarkAttends(ExecutionCourse executionCourse) {
-        List<Attends> result = new ArrayList<Attends>();
+    public List<Attendance> getNotSubmitedMarkAttends(Course executionCourse) {
+        List<Attendance> result = new ArrayList<Attendance>();
 
-        for (Attends attends : executionCourse.getAttendsSet()) {
+        for (Attendance attends : executionCourse.getAttendsSet()) {
             if (attends.getEnrolment() != null && attends.getRegistration().getDegreeType().isPreBolonhaDegree()) {
                 FinalMark mark = getFinalMark(attends);
                 if (mark == null || (mark.getGradeListVersion() == 0 && mark.getSubmitedMark() == null)) {
@@ -93,7 +93,7 @@ public class FinalEvaluation extends FinalEvaluation_Base {
         return result;
     }
 
-    private FinalMark getFinalMark(Attends attends) {
+    private FinalMark getFinalMark(Attendance attends) {
         for (Mark mark : attends.getAssociatedMarksSet()) {
             if (mark.getEvaluation().equals(this)) {
                 return (FinalMark) mark;

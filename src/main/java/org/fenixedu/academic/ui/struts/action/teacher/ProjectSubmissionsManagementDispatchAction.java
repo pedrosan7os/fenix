@@ -32,10 +32,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.fenixedu.academic.domain.Attends;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Attendance;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.domain.Project;
 import org.fenixedu.academic.domain.ProjectSubmission;
 import org.fenixedu.academic.domain.ProjectSubmissionLog;
@@ -194,7 +194,7 @@ public class ProjectSubmissionsManagementDispatchAction extends ExecutionCourseB
 
         final Project project = getProject(request);
 
-        ExecutionCourse course = (ExecutionCourse) FenixFramework.getDomainObject(getExecutionCourseID(request));
+        Course course = (Course) FenixFramework.getDomainObject(getExecutionCourseID(request));
 
         NotifyStudentGroup.run(project.getLastProjectSubmissionForStudentGroup(getStudentGroup(request)), course,
                 getLoggedPerson(request));
@@ -224,7 +224,7 @@ public class ProjectSubmissionsManagementDispatchAction extends ExecutionCourseB
         }
         final Person person = getUserView(request).getPerson();
         final String projectId = request.getParameter("projectID");
-        for (final Professorship professorship : person.getProfessorshipsSet()) {
+        for (final CourseTeacher professorship : person.getProfessorshipsSet()) {
             for (final Project project : professorship.getExecutionCourse().getAssociatedProjects()) {
                 if (project.getExternalId().equals(projectId)) {
                     request.setAttribute("projectOID", project.getExternalId());
@@ -241,11 +241,11 @@ public class ProjectSubmissionsManagementDispatchAction extends ExecutionCourseB
     }
 
     private String getStudentsISTID(StudentGroup group) {
-        ArrayList<Attends> sortedAttends = new ArrayList(group.getAttendsSet());
-        Collections.sort(sortedAttends, Attends.COMPARATOR_BY_STUDENT_NUMBER);
+        ArrayList<Attendance> sortedAttends = new ArrayList(group.getAttendsSet());
+        Collections.sort(sortedAttends, Attendance.COMPARATOR_BY_STUDENT_NUMBER);
 
         String studentsISTID = "";
-        for (Attends attends : sortedAttends) {
+        for (Attendance attends : sortedAttends) {
             studentsISTID += "-" + attends.getAluno().getStudent().getPerson().getUsername();
         }
         return studentsISTID;

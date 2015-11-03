@@ -27,7 +27,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.Grouping;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.StudentGroup;
@@ -123,13 +123,13 @@ public abstract class GroupEnrolmentStrategy implements IGroupEnrolmentStrategy 
     @Override
     public boolean checkAlreadyEnroled(Grouping grouping, String studentUsername) {
 
-        final Attends studentAttend = grouping.getStudentAttend(studentUsername);
+        final Attendance studentAttend = grouping.getStudentAttend(studentUsername);
 
         if (studentAttend != null) {
             Collection<StudentGroup> groupingStudentGroups = grouping.getStudentGroupsSet();
             for (final StudentGroup studentGroup : groupingStudentGroups) {
-                Collection<Attends> studentGroupAttends = studentGroup.getAttendsSet();
-                for (final Attends attend : studentGroupAttends) {
+                Collection<Attendance> studentGroupAttends = studentGroup.getAttendsSet();
+                for (final Attendance attend : studentGroupAttends) {
                     if (attend == studentAttend) {
                         return true;
                     }
@@ -142,11 +142,11 @@ public abstract class GroupEnrolmentStrategy implements IGroupEnrolmentStrategy 
     @Override
     public boolean checkNotEnroledInGroup(Grouping grouping, StudentGroup studentGroup, String studentUsername) {
 
-        final Attends studentAttend = grouping.getStudentAttend(studentUsername);
+        final Attendance studentAttend = grouping.getStudentAttend(studentUsername);
 
         if (studentAttend != null) {
-            Collection<Attends> studentGroupAttends = studentGroup.getAttendsSet();
-            for (final Attends attend : studentGroupAttends) {
+            Collection<Attendance> studentGroupAttends = studentGroup.getAttendsSet();
+            for (final Attendance attend : studentGroupAttends) {
                 if (attend == studentAttend) {
                     return false;
                 }
@@ -171,7 +171,7 @@ public abstract class GroupEnrolmentStrategy implements IGroupEnrolmentStrategy 
     }
 
     @Override
-    public boolean checkIfStudentGroupIsEmpty(Attends attend, StudentGroup studentGroup) {
+    public boolean checkIfStudentGroupIsEmpty(Attendance attend, StudentGroup studentGroup) {
 
         final Collection allStudentGroupAttends = studentGroup.getAttendsSet();
         if (allStudentGroupAttends.size() == 1 && allStudentGroupAttends.contains(attend)) {
@@ -183,7 +183,7 @@ public abstract class GroupEnrolmentStrategy implements IGroupEnrolmentStrategy 
     @Override
     public boolean checkStudentInGrouping(Grouping grouping, String username) {
 
-        final Attends attend = grouping.getStudentAttend(username);
+        final Attendance attend = grouping.getStudentAttend(username);
         return attend != null;
     }
 

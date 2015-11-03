@@ -23,7 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.Shift;
@@ -39,21 +39,21 @@ import pt.ist.fenixframework.Atomic;
 public class ReadClassTimeTableByStudent {
 
     public List<InfoShowOccupation> run(final Registration registration, final SchoolClass schoolClass,
-            final ExecutionCourse executionCourse) throws FenixServiceException {
+            final Course executionCourse) throws FenixServiceException {
 
         final List<InfoShowOccupation> result = getOccupations(registration, schoolClass, executionCourse, null);
         return result;
     }
 
     public List<InfoShowOccupation> run(final Registration registration, final SchoolClass schoolClass,
-            final ExecutionCourse executionCourse, ExecutionSemester executionSemester) throws FenixServiceException {
+            final Course executionCourse, ExecutionSemester executionSemester) throws FenixServiceException {
 
         final List<InfoShowOccupation> result = getOccupations(registration, schoolClass, executionCourse, executionSemester);
         return result;
     }
 
     private List<InfoShowOccupation> getOccupations(final Registration registration, final SchoolClass schoolClass,
-            final ExecutionCourse executionCourse, ExecutionSemester executionSemester) throws FenixServiceException {
+            final Course executionCourse, ExecutionSemester executionSemester) throws FenixServiceException {
         if (registration == null) {
             throw new FenixServiceException("error.readClassTimeTableByStudent.noStudent");
         }
@@ -62,9 +62,9 @@ public class ReadClassTimeTableByStudent {
             throw new FenixServiceException("error.readClassTimeTableByStudent.noSchoolClass");
         }
 
-        Set<ExecutionCourse> attendingExecutionCourses = null;
+        Set<Course> attendingExecutionCourses = null;
         if (executionSemester != null) {
-            attendingExecutionCourses = new HashSet<ExecutionCourse>();
+            attendingExecutionCourses = new HashSet<Course>();
             attendingExecutionCourses.addAll(registration.getAttendingExecutionCoursesFor(executionSemester));
         } else {
             attendingExecutionCourses = registration.getAttendingExecutionCoursesForCurrentExecutionPeriod();
@@ -86,14 +86,14 @@ public class ReadClassTimeTableByStudent {
 
     @Atomic
     public static List<InfoShowOccupation> runReadClassTimeTableByStudent(Registration registration, SchoolClass schoolClass,
-            ExecutionCourse executionCourse) throws FenixServiceException, NotAuthorizedException {
+            Course executionCourse) throws FenixServiceException, NotAuthorizedException {
         ClassEnrollmentAuthorizationFilter.instance.execute(registration);
         return serviceInstance.run(registration, schoolClass, executionCourse);
     }
 
     @Atomic
     public static List<InfoShowOccupation> runReadClassTimeTableByStudent(Registration registration, SchoolClass schoolClass,
-            ExecutionCourse executionCourse, ExecutionSemester executionSemester) throws FenixServiceException,
+            Course executionCourse, ExecutionSemester executionSemester) throws FenixServiceException,
             NotAuthorizedException {
         ClassEnrollmentAuthorizationFilter.instance.execute(registration, executionSemester);
         return serviceInstance.run(registration, schoolClass, executionCourse, executionSemester);

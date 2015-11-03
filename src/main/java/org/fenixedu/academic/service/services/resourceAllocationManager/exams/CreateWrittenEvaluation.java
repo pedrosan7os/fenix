@@ -22,9 +22,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.DegreeModuleScope;
 import org.fenixedu.academic.domain.Exam;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.GradeScale;
 import org.fenixedu.academic.domain.WrittenEvaluation;
 import org.fenixedu.academic.domain.WrittenTest;
@@ -46,7 +46,7 @@ public class CreateWrittenEvaluation {
             Date writtenEvaluationEndTime, List<String> executionCourseIDs, List<String> degreeModuleScopeIDs,
             List<String> roomIDs, GradeScale gradeScale, Season examSeason, String writtenTestDescription)
             throws FenixServiceException {
-        final List<ExecutionCourse> executionCoursesToAssociate = readExecutionCourses(executionCourseIDs);
+        final List<Course> executionCoursesToAssociate = readExecutionCourses(executionCourseIDs);
         final List<DegreeModuleScope> degreeModuleScopesToAssociate = readCurricularCourseScopesAndContexts(degreeModuleScopeIDs);
 
         List<Space> roomsToAssociate = null;
@@ -71,14 +71,14 @@ public class CreateWrittenEvaluation {
         }
     }
 
-    private List<ExecutionCourse> readExecutionCourses(final List<String> executionCourseIDs) throws FenixServiceException {
+    private List<Course> readExecutionCourses(final List<String> executionCourseIDs) throws FenixServiceException {
         if (executionCourseIDs.isEmpty()) {
             throw new FenixServiceException("error.invalidExecutionCourse");
         }
 
-        final List<ExecutionCourse> result = new ArrayList<ExecutionCourse>();
+        final List<Course> result = new ArrayList<Course>();
         for (final String executionCourseID : executionCourseIDs) {
-            final ExecutionCourse executionCourse = FenixFramework.getDomainObject(executionCourseID);
+            final Course executionCourse = FenixFramework.getDomainObject(executionCourseID);
             if (executionCourse == null) {
                 throw new FenixServiceException("error.invalidExecutionCourse");
             }

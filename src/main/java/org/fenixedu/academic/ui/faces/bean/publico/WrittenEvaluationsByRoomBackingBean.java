@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.WrittenEvaluation;
 import org.fenixedu.academic.domain.space.WrittenEvaluationSpaceOccupation;
 import org.fenixedu.academic.dto.InfoRoom;
@@ -51,7 +51,7 @@ public class WrittenEvaluationsByRoomBackingBean extends
                                 ((WrittenEvaluationSpaceOccupation) roomOccupation).getWrittenEvaluationsSet();
                         for (WrittenEvaluation writtenEvaluation : writtenEvaluations) {
                             if (verifyWrittenEvaluationExecutionPeriod(writtenEvaluation, getAcademicIntervalObject(), null)) {
-                                final ExecutionCourse executionCourse =
+                                final Course executionCourse =
                                         writtenEvaluation.getAssociatedExecutionCoursesSet().iterator().next();
                                 final CalendarLink calendarLink =
                                         new CalendarLink(executionCourse, writtenEvaluation, I18N.getLocale());
@@ -70,8 +70,7 @@ public class WrittenEvaluationsByRoomBackingBean extends
         }
     }
 
-    private Map<String, String> constructLinkParameters(final ExecutionCourse executionCourse,
-            final WrittenEvaluation writtenEvaluation) {
+    private Map<String, String> constructLinkParameters(final Course executionCourse, final WrittenEvaluation writtenEvaluation) {
         final Map<String, String> linkParameters = new HashMap<String, String>();
         linkParameters.put("executionCourseID", executionCourse.getExternalId().toString());
         linkParameters.put("method", "firstPage");

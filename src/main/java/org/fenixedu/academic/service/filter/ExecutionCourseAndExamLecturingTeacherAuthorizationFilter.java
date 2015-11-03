@@ -22,9 +22,9 @@
  */
 package org.fenixedu.academic.service.filter;
 
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.Evaluation;
-import org.fenixedu.academic.domain.ExecutionCourse;
-import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.domain.Teacher;
 import org.fenixedu.academic.domain.person.RoleType;
 import org.fenixedu.academic.service.services.exceptions.NotAuthorizedException;
@@ -71,9 +71,9 @@ public class ExecutionCourseAndExamLecturingTeacherAuthorizationFilter extends A
         }
         try {
             Teacher teacher = Teacher.readTeacherByUsername(id.getUsername());
-            Professorship professorship = null;
+            CourseTeacher professorship = null;
             if (teacher != null) {
-                ExecutionCourse executionCourse = FenixFramework.getDomainObject(executionCourseID);
+                Course executionCourse = FenixFramework.getDomainObject(executionCourseID);
                 professorship = teacher.getProfessorshipByExecutionCourse(executionCourse);
             }
             return professorship != null;
@@ -88,7 +88,7 @@ public class ExecutionCourseAndExamLecturingTeacherAuthorizationFilter extends A
             return false;
         }
         try {
-            ExecutionCourse executionCourse = FenixFramework.getDomainObject(executionCourseID);
+            Course executionCourse = FenixFramework.getDomainObject(executionCourseID);
 
             if (executionCourse != null && evaluationID != null) {
                 for (Evaluation associatedEvaluation : executionCourse.getAssociatedEvaluationsSet()) {

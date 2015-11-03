@@ -29,7 +29,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 import org.fenixedu.academic.domain.BibliographicReference;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.dto.teacher.executionCourse.ImportContentBean;
 import org.fenixedu.academic.service.services.exceptions.FenixServiceException;
 import org.fenixedu.academic.service.services.teacher.CreateBibliographicReference;
@@ -66,7 +66,7 @@ public class ExecutionCourseBibliographyDA extends ManageExecutionCourseDA {
         final String year = dynaActionForm.getString("year");
         final String optional = dynaActionForm.getString("optional");
 
-        final ExecutionCourse executionCourse = (ExecutionCourse) request.getAttribute("executionCourse");
+        final Course executionCourse = (Course) request.getAttribute("executionCourse");
 
         CreateBibliographicReference.runCreateBibliographicReference(executionCourse.getExternalId(), title, authors, reference,
                 year, Boolean.valueOf(optional));
@@ -76,7 +76,7 @@ public class ExecutionCourseBibliographyDA extends ManageExecutionCourseDA {
 
     public ActionForward prepareEditBibliographicReference(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        final ExecutionCourse executionCourse = (ExecutionCourse) request.getAttribute("executionCourse");
+        final Course executionCourse = (Course) request.getAttribute("executionCourse");
         final String bibliographicReferenceIDString = request.getParameter("bibliographicReferenceID");
         if (executionCourse != null && bibliographicReferenceIDString != null && bibliographicReferenceIDString.length() > 0) {
             final BibliographicReference bibliographicReference =
@@ -104,7 +104,7 @@ public class ExecutionCourseBibliographyDA extends ManageExecutionCourseDA {
         final String year = dynaActionForm.getString("year");
         final String optional = dynaActionForm.getString("optional");
 
-        final ExecutionCourse executionCourse = (ExecutionCourse) request.getAttribute("executionCourse");
+        final Course executionCourse = (Course) request.getAttribute("executionCourse");
         final BibliographicReference bibliographicReference =
                 findBibliographicReference(executionCourse, bibliographicReferenceIDString);
 
@@ -158,7 +158,7 @@ public class ExecutionCourseBibliographyDA extends ManageExecutionCourseDA {
         return forward(request, "/teacher/executionCourse/bibliographicReference.jsp");
     }
 
-    private BibliographicReference findBibliographicReference(ExecutionCourse executionCourse, String bibliographicReferenceID) {
+    private BibliographicReference findBibliographicReference(Course executionCourse, String bibliographicReferenceID) {
         for (final BibliographicReference bibliographicReference : executionCourse.getAssociatedBibliographicReferencesSet()) {
             if (bibliographicReference.getExternalId().equals(bibliographicReferenceID)) {
                 return bibliographicReference;
@@ -169,7 +169,7 @@ public class ExecutionCourseBibliographyDA extends ManageExecutionCourseDA {
 
     public ActionForward prepareSortBibliography(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) {
-        ExecutionCourse executionCourse = getExecutionCourse(request);
+        Course executionCourse = getExecutionCourse(request);
         boolean optional = request.getParameter("optional") != null;
         List<BibliographicReference> references;
 
@@ -185,7 +185,7 @@ public class ExecutionCourseBibliographyDA extends ManageExecutionCourseDA {
         return forward(request, "/teacher/executionCourse/orderBibliographicReferences.jsp");
     }
 
-    private List<BibliographicReference> getMainBibliographicReferences(ExecutionCourse executionCourse) {
+    private List<BibliographicReference> getMainBibliographicReferences(Course executionCourse) {
         List<BibliographicReference> references = new ArrayList<BibliographicReference>();
 
         for (BibliographicReference reference : executionCourse.getOrderedBibliographicReferences()) {
@@ -197,7 +197,7 @@ public class ExecutionCourseBibliographyDA extends ManageExecutionCourseDA {
         return references;
     }
 
-    private List<BibliographicReference> getOptionalBibliographicReferences(ExecutionCourse executionCourse) {
+    private List<BibliographicReference> getOptionalBibliographicReferences(Course executionCourse) {
         List<BibliographicReference> references = new ArrayList<BibliographicReference>();
 
         for (BibliographicReference reference : executionCourse.getOrderedBibliographicReferences()) {
@@ -211,7 +211,7 @@ public class ExecutionCourseBibliographyDA extends ManageExecutionCourseDA {
 
     public ActionForward sortBibliographyReferences(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws FenixServiceException {
-        ExecutionCourse executionCourse = getExecutionCourse(request);
+        Course executionCourse = getExecutionCourse(request);
         boolean optional = request.getParameter("optional") != null;
 
         String orderString = request.getParameter("referencesOrder");

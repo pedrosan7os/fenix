@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.dto.InfoClass;
 import org.fenixedu.academic.service.filter.ResourceAllocationManagerAuthorizationFilter;
@@ -36,7 +36,7 @@ import pt.ist.fenixframework.Atomic;
  */
 public class ReadClassesByExecutionCourse {
 
-    public List<InfoClass> run(ExecutionCourse executionCourse) {
+    public List<InfoClass> run(Course executionCourse) {
 
         final Set<SchoolClass> classes = executionCourse.findSchoolClasses();
         final List<InfoClass> infoClasses = new ArrayList<InfoClass>(classes.size());
@@ -54,7 +54,7 @@ public class ReadClassesByExecutionCourse {
     private static final ReadClassesByExecutionCourse serviceInstance = new ReadClassesByExecutionCourse();
 
     @Atomic
-    public static List<InfoClass> runReadClassesByExecutionCourse(ExecutionCourse executionCourse) throws NotAuthorizedException {
+    public static List<InfoClass> runReadClassesByExecutionCourse(Course executionCourse) throws NotAuthorizedException {
         try {
             ResourceAllocationManagerAuthorizationFilter.instance.execute();
             return serviceInstance.run(executionCourse);

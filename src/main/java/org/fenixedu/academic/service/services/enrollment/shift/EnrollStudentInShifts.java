@@ -18,7 +18,7 @@
  */
 package org.fenixedu.academic.service.services.enrollment.shift;
 
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.student.Registration;
@@ -57,7 +57,7 @@ public class EnrollStudentInShifts {
             throw new FenixServiceException("error.exception.notAuthorized.student.warningTuition");
         }
 
-        Attends attends = selectedShift.getExecutionCourse().getAttendsByStudent(registration);
+        Attendance attends = selectedShift.getExecutionCourse().getAttendsByStudent(registration);
 
         if (attends == null) {
             throw new StudentNotFoundServiceException();
@@ -79,7 +79,7 @@ public class EnrollStudentInShifts {
         return errorReport;
     }
 
-    private Shift findShiftOfSameTypeForSameExecutionCourse(final Attends registration, final Shift shift) {
+    private Shift findShiftOfSameTypeForSameExecutionCourse(final Attendance registration, final Shift shift) {
         for (final Shift shiftFromStudent : registration.getShiftsSet()) {
             if (shiftFromStudent.getTypes().containsAll(shift.getTypes())
                     && shiftFromStudent.getExecutionCourse() == shift.getExecutionCourse()) {

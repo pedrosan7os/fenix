@@ -174,7 +174,7 @@ public class SchoolClass extends SchoolClass_Base {
         final Set<Shift> shifts = new HashSet<Shift>();
         for (final CurricularCourse curricularCourse : degreeCurricularPlan.getCurricularCoursesSet()) {
             if (curricularCourse.hasScopeForCurricularYear(getAnoCurricular(), getExecutionPeriod())) {
-                for (final ExecutionCourse executionCourse : curricularCourse.getAssociatedExecutionCoursesSet()) {
+                for (final Course executionCourse : curricularCourse.getAssociatedExecutionCoursesSet()) {
                     if (executionCourse.getExecutionPeriod() == getExecutionPeriod()) {
                         shifts.addAll(executionCourse.getAssociatedShifts());
                     }

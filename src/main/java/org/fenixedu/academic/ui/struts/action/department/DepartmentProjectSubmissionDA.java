@@ -29,8 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Department;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.Project;
 import org.fenixedu.academic.predicate.AccessControl;
 import org.fenixedu.academic.ui.struts.action.departmentMember.DepartmentMemberApp.DepartmentMemberMessagingApp;
@@ -56,9 +56,9 @@ public class DepartmentProjectSubmissionDA extends ProjectSubmissionsManagementD
     public ActionForward showProjects(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         final Department department = AccessControl.getPerson().getTeacher().getDepartment();
-        Map<ExecutionCourse, Set<Project>> coursesProjects = new HashMap<ExecutionCourse, Set<Project>>();
+        Map<Course, Set<Project>> coursesProjects = new HashMap<Course, Set<Project>>();
         for (Project project : department.getProjectsSet()) {
-            for (ExecutionCourse course : project.getAssociatedExecutionCoursesSet()) {
+            for (Course course : project.getAssociatedExecutionCoursesSet()) {
                 Set<Project> projects = coursesProjects.get(course);
                 if (projects == null) {
                     projects = new HashSet<Project>();

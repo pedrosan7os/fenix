@@ -43,9 +43,9 @@ public class StudentGroup extends StudentGroup_Base {
         getRelationStudentGroupAttend().addListener(new StudentGroupAttendListener());
     }
 
-    private static class StudentGroupAttendListener extends RelationAdapter<StudentGroup, Attends> {
+    private static class StudentGroupAttendListener extends RelationAdapter<StudentGroup, Attendance> {
         @Override
-        public void beforeRemove(StudentGroup studentGroup, Attends attends) {
+        public void beforeRemove(StudentGroup studentGroup, Attendance attends) {
             if (!studentGroup.getProjectSubmissionsSet().isEmpty()
                     && !studentGroup.getGrouping().isPersonTeacher(AccessControl.getPerson())) {
                 throw new DomainException("error.studentGroup.cannotRemoveAttendsBecauseAlreadyHasProjectSubmissions");
@@ -80,8 +80,8 @@ public class StudentGroup extends StudentGroup_Base {
     }
 
     public void delete() {
-        List<ExecutionCourse> ecs = getGrouping().getExecutionCourses();
-        for (ExecutionCourse ec : ecs) {
+        List<Course> ecs = getGrouping().getExecutionCourses();
+        for (Course ec : ecs) {
             GroupsAndShiftsManagementLog.createLog(ec, Bundle.MESSAGING,
                     "log.executionCourse.groupAndShifts.grouping.group.removed", getGroupNumber().toString(), getGrouping()
                             .getName(), ec.getNome(), ec.getDegreePresentationString());
@@ -113,7 +113,7 @@ public class StudentGroup extends StudentGroup_Base {
 
     public boolean isPersonInStudentGroup(Person person) {
 
-        for (Attends attend : getAttendsSet()) {
+        for (Attendance attend : getAttendsSet()) {
             if (attend.getRegistration().getStudent().getPerson().equals(person)) {
                 return true;
             }

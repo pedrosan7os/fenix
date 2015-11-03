@@ -18,9 +18,9 @@
  */
 package org.fenixedu.academic.service.services.teacher;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.predicate.AccessControl;
 import org.fenixedu.academic.service.services.exceptions.NotAuthorizedException;
 
@@ -29,13 +29,13 @@ import pt.ist.fenixframework.Atomic;
 public class DeleteProfessorshipWithPerson {
 
     @Atomic
-    public static Boolean run(Person person, ExecutionCourse executionCourse) throws NotAuthorizedException {
+    public static Boolean run(Person person, Course executionCourse) throws NotAuthorizedException {
         try {
 
             final Person loggedPerson = AccessControl.getPerson();
 
-            Professorship selectedProfessorship = null;
-            selectedProfessorship = person.getProfessorshipByExecutionCourse(executionCourse);
+            CourseTeacher selectedProfessorship = null;
+            selectedProfessorship = person.getProfessorswhipByExecutionCourse(executionCourse);
 
             if ((loggedPerson == null) || (selectedProfessorship == null) || loggedPerson == selectedProfessorship.getPerson()
                     || selectedProfessorship.getResponsibleFor()) {
@@ -45,7 +45,7 @@ public class DeleteProfessorshipWithPerson {
             throw new NotAuthorizedException();
         }
 
-        Professorship professorshipToDelete = person.getProfessorshipByExecutionCourse(executionCourse);
+        CourseTeacher professorshipToDelete = person.getProfessorshipByExecutionCourse(executionCourse);
 
         professorshipToDelete.delete();
 

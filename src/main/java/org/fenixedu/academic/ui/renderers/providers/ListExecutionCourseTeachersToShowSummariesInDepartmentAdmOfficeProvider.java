@@ -21,8 +21,8 @@ package org.fenixedu.academic.ui.renderers.providers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
-import org.fenixedu.academic.domain.Professorship;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.dto.ShowSummariesBean;
 import org.fenixedu.academic.dto.teacher.executionCourse.SummaryTeacherBean;
 
@@ -33,8 +33,8 @@ public class ListExecutionCourseTeachersToShowSummariesInDepartmentAdmOfficeProv
 
     @Override
     public Object provide(Object source, Object currentValue) {
-        ExecutionCourse executionCourse = ((ShowSummariesBean) source).getExecutionCourse();
-        Professorship professorshipLogged = ((ShowSummariesBean) source).getProfessorshipLogged();
+        Course executionCourse = ((ShowSummariesBean) source).getExecutionCourse();
+        CourseTeacher professorshipLogged = ((ShowSummariesBean) source).getProfessorshipLogged();
         List<SummaryTeacherBean> teachers = new ArrayList<SummaryTeacherBean>();
         if (executionCourse != null && professorshipLogged != null) {
             teachers.add(teachers.size(), new SummaryTeacherBean(professorshipLogged));

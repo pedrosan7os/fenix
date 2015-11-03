@@ -31,7 +31,7 @@ import org.apache.struts.action.ActionMapping;
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.EntryPhase;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.Shift;
@@ -102,7 +102,7 @@ public class ExportFirstYearShiftsDA extends FenixContextDispatchAction {
 
                             for (final Shift shift : schoolClass.getAssociatedShiftsSet()) {
 
-                                final ExecutionCourse executionCourse = shift.getExecutionCourse();
+                                final Course executionCourse = shift.getExecutionCourse();
                                 final String ecName = executionCourse.getNome();
 
                                 addRow(spreadsheet, degreeCurricularPlan, executionCourse, schoolClass, shift, phase);
@@ -134,7 +134,7 @@ public class ExportFirstYearShiftsDA extends FenixContextDispatchAction {
     }
 
     private void addRow(final Spreadsheet spreadsheet, final DegreeCurricularPlan degreeCurricularPlan,
-            final ExecutionCourse executionCourse, final SchoolClass schoolClass, final Shift shift, final EntryPhase phase) {
+            final Course executionCourse, final SchoolClass schoolClass, final Shift shift, final EntryPhase phase) {
         final Row row = spreadsheet.addRow();
 
         row.setCell(degreeCurricularPlan.getName());

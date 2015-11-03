@@ -31,10 +31,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.Enrolment;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.GradeScale;
 import org.fenixedu.academic.domain.Mark;
@@ -84,7 +84,7 @@ public class ShowStudentStatisticsDispatchAction extends FenixDispatchAction {
             HttpServletResponse response) throws Exception {
         final Student student = getLoggedPerson(request).getStudent();
 
-        ExecutionCourse executionCourse = getDomainObject(request, "executionCourseId");
+        Course executionCourse = getDomainObject(request, "executionCourseId");
         if (student != null && executionCourse != null) {
             request.setAttribute("executionCourse", executionCourse);
             request.setAttribute("executionCourseStatistics", computeStudentExecutionCourseStatistics(student, executionCourse));
@@ -115,7 +115,7 @@ public class ShowStudentStatisticsDispatchAction extends FenixDispatchAction {
             curricularCourseJsonObject.addProperty("name", curricularCourse.getNameI18N().getContent());
             JsonArray entriesArray = new JsonArray();
             Map<Integer, CurricularCourseYearStatistics> entries = new HashMap<Integer, CurricularCourseYearStatistics>();
-            for (ExecutionCourse executionCourse : curricularCourse.getAssociatedExecutionCoursesSet()) {
+            for (Course executionCourse : curricularCourse.getAssociatedExecutionCoursesSet()) {
                 AcademicInterval academicInterval = executionCourse.getAcademicInterval();
                 int startYear = academicInterval.getStart().getYear();
                 CurricularCourseYearStatistics curricularCourseYearStatistics =
@@ -184,12 +184,12 @@ public class ShowStudentStatisticsDispatchAction extends FenixDispatchAction {
 
     }
 
-    private CurricularCourseYearStatistics computeExecutionCourseJsonArray(ExecutionCourse executionCourse,
+    private CurricularCourseYearStatistics computeExecutionCourseJsonArray(Course executionCourse,
             CurricularCourseYearStatistics curricularCourseYearStatistics) {
         int approvedStudents = 0;
         int flunkedStudents = 0;
         int notEvaluatedStudents = 0;
-        for (Attends attends : executionCourse.getAttendsSet()) {
+        for (Attendance attends : executionCourse.getAttendsSet()) {
             if (attends.getEnrolment() != null) {
                 Enrolment enrolment = attends.getEnrolment();
                 if (enrolment.isApproved()) {
@@ -220,7 +220,7 @@ public class ShowStudentStatisticsDispatchAction extends FenixDispatchAction {
         return studentInfoJsonObject;
     }
 
-    private JsonElement computeStudentExecutionCourseStatistics(Student student, ExecutionCourse executionCourse) {
+    private JsonElement computeStudentExecutionCourseStatistics(Student student, Course executionCourse) {
         JsonObject executionCourseJsonObject = new JsonObject();
         executionCourseJsonObject.addProperty("acronym", executionCourse.getSigla());
         executionCourseJsonObject.addProperty("name", executionCourse.getNameI18N().getContent());
@@ -232,7 +232,7 @@ public class ShowStudentStatisticsDispatchAction extends FenixDispatchAction {
         return executionCourseJsonObject;
     }
 
-    private JsonArray computeExecutionCourseEvaluations(Student student, ExecutionCourse executionCourse) {
+    private JsonArray computeExecutionCourseEvaluations(Student student, Course executionCourse) {
         JsonArray evaluationsArray = new JsonArray();
         for (WrittenEvaluation writtenEvaluation : executionCourse.getAssociatedWrittenEvaluations()) {
             JsonObject writtenEvaluationJsonObject = computeWrittenEvaluation(writtenEvaluation);
@@ -299,7 +299,7 @@ public class ShowStudentStatisticsDispatchAction extends FenixDispatchAction {
     private JsonElement computeCurricularCourseOvertimeStatistics(CurricularCourse curricularCourse) {
         JsonObject jsonObject = new JsonObject();
         JsonArray entries = new JsonArray();
-        for (ExecutionCourse executionCourse : curricularCourse.getAssociatedExecutionCoursesSet()) {
+        for (Course executionCourse : curricularCourse.getAssociatedExecutionCoursesSet()) {
             if (executionCourse.getExecutionPeriod().isBefore(ExecutionSemester.readActualExecutionSemester())
                     && executionCourse.getEnrolmentCount() > 0) {
                 JsonElement executionCourseStatistics = computeExecutionCourseStatistics(executionCourse);
@@ -317,7 +317,7 @@ public class ShowStudentStatisticsDispatchAction extends FenixDispatchAction {
         return jsonObject;
     }
 
-    private JsonElement computeExecutionCourseStatistics(ExecutionCourse executionCourse) {
+    private JsonElement computeExecutionCourseStatistics(Course executionCourse) {
         JsonObject executionCourseJsonObject = new JsonObject();
         executionCourseJsonObject.addProperty("text", getShortExecutionSemesterName(executionCourse.getExecutionPeriod()));
         executionCourseJsonObject.addProperty("description", executionCourse.getNameI18N().getContent());
@@ -348,7 +348,7 @@ public class ShowStudentStatisticsDispatchAction extends FenixDispatchAction {
                 + executionSemester.getExecutionYear().getName().substring(7, 9) + " (S" + executionSemester.getSemester() + ")";
     }
 
-    private JsonObject computeFinalGrades(ExecutionCourse executionCourse) {
+    private JsonObject computeFinalGrades(Course executionCourse) {
         List<Enrolment> enrolments = executionCourse.getActiveEnrollments();
         if (enrolments.isEmpty()) {
             return null;

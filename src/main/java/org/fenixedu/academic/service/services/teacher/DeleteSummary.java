@@ -23,8 +23,8 @@
  */
 package org.fenixedu.academic.service.services.teacher;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
-import org.fenixedu.academic.domain.Professorship;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.Summary;
 import org.fenixedu.academic.service.ServiceMonitoring;
 import org.fenixedu.academic.service.filter.SummaryManagementToTeacherAuthorizationFilter;
@@ -43,8 +43,7 @@ import pt.ist.fenixframework.Atomic;
  */
 public class DeleteSummary {
 
-    protected Boolean run(ExecutionCourse executionCourse, Summary summary, Professorship professorship)
-            throws FenixServiceException {
+    protected Boolean run(Course executionCourse, Summary summary, CourseTeacher professorship) throws FenixServiceException {
 
         ServiceMonitoring.logService(this.getClass(), executionCourse, summary, professorship);
 
@@ -61,7 +60,7 @@ public class DeleteSummary {
     private static final DeleteSummary serviceInstance = new DeleteSummary();
 
     @Atomic
-    public static Boolean runDeleteSummary(ExecutionCourse executionCourse, Summary summary, Professorship professorship)
+    public static Boolean runDeleteSummary(Course executionCourse, Summary summary, CourseTeacher professorship)
             throws FenixServiceException, NotAuthorizedException {
         SummaryManagementToTeacherAuthorizationFilter.instance.execute(summary, professorship);
         return serviceInstance.run(executionCourse, summary, professorship);

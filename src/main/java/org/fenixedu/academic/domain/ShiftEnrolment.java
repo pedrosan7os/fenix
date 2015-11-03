@@ -33,7 +33,7 @@ public class ShiftEnrolment extends ShiftEnrolment_Base {
         }
     };
 
-    public ShiftEnrolment(final Shift shift, final Attends attends) {
+    public ShiftEnrolment(final Shift shift, final Attendance attends) {
         super();
         setRootDomainObject(Bennu.getInstance());
         setAttends(attends);

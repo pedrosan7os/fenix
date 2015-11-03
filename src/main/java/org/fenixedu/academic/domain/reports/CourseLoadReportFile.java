@@ -19,6 +19,7 @@
 package org.fenixedu.academic.domain.reports;
 
 import org.apache.commons.lang.StringUtils;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.CourseLoad;
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionSemester;
@@ -90,7 +91,7 @@ public class CourseLoadReportFile extends CourseLoadReportFile_Base {
         return shift.getNome() + CODE_SEPARATOR + getExecutionCourseCode(shift.getExecutionCourse());
     }
 
-    public static String getExecutionCourseCode(ExecutionCourse executionCourse) {
+    public static String getExecutionCourseCode(Course executionCourse) {
         return executionCourse.getSigla() + CODE_SEPARATOR + getExecutionSemesterCode(executionCourse.getExecutionPeriod());
     }
 }

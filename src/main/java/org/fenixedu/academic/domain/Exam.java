@@ -39,7 +39,7 @@ import org.fenixedu.spaces.domain.Space;
 
 public class Exam extends Exam_Base {
 
-    public Exam(Date examDay, Date examStartTime, Date examEndTime, List<ExecutionCourse> executionCoursesToAssociate,
+    public Exam(Date examDay, Date examStartTime, Date examEndTime, List<Course> executionCoursesToAssociate,
             List<DegreeModuleScope> curricularCourseScopesToAssociate, List<Space> rooms, GradeScale gradeScale, Season season) {
 
         super();
@@ -58,7 +58,7 @@ public class Exam extends Exam_Base {
         logCreate();
     }
 
-    public void edit(Date examDay, Date examStartTime, Date examEndTime, List<ExecutionCourse> executionCoursesToAssociate,
+    public void edit(Date examDay, Date examStartTime, Date examEndTime, List<Course> executionCoursesToAssociate,
             List<DegreeModuleScope> curricularCourseScopesToAssociate, List<Space> rooms, GradeScale gradeScale, Season season) {
 
         // It's necessary to remove this associations before check some
@@ -76,13 +76,13 @@ public class Exam extends Exam_Base {
         logEdit();
     }
 
-    private boolean checkScopeAndSeasonConstrains(List<ExecutionCourse> executionCoursesToAssociate,
+    private boolean checkScopeAndSeasonConstrains(List<Course> executionCoursesToAssociate,
             List<DegreeModuleScope> curricularCourseScopesToAssociate, Season season) {
 
         // for each execution course, there must not exist an exam for the same
         // season and scope
 
-        for (ExecutionCourse executionCourse : executionCoursesToAssociate) {
+        for (Course executionCourse : executionCoursesToAssociate) {
             for (Evaluation evaluation : executionCourse.getAssociatedEvaluationsSet()) {
                 if (evaluation instanceof Exam) {
                     Exam existingExam = (Exam) evaluation;
@@ -101,7 +101,7 @@ public class Exam extends Exam_Base {
     }
 
     public boolean isExamsMapPublished() {
-        for (final ExecutionCourse executionCourse : getAssociatedExecutionCoursesSet()) {
+        for (final Course executionCourse : getAssociatedExecutionCoursesSet()) {
             for (final CurricularCourse curricularCourse : executionCourse.getAssociatedCurricularCoursesSet()) {
                 final DegreeCurricularPlan degreeCurricularPlan = curricularCourse.getDegreeCurricularPlan();
                 for (final ExecutionDegree executionDegree : degreeCurricularPlan.getExecutionDegreesSet()) {
@@ -129,7 +129,7 @@ public class Exam extends Exam_Base {
                 }
             }
 
-            for (ExecutionCourse course : exam.getAssociatedExecutionCoursesSet()) {
+            for (Course course : exam.getAssociatedExecutionCoursesSet()) {
                 if (!course.getExecutionPeriod().getName().equals(executionPeriod)) {
                     continue outter;
                 }

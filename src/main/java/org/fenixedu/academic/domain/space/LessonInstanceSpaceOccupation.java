@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.FrequencyType;
 import org.fenixedu.academic.domain.Lesson;
 import org.fenixedu.academic.domain.LessonInstance;
@@ -67,7 +67,7 @@ public class LessonInstanceSpaceOccupation extends LessonInstanceSpaceOccupation
         }
 
         Space space = getSpace();
-        //final ExecutionCourse executionCourse = lessonInstance.getLesson().getExecutionCourse();
+        //final Course executionCourse = lessonInstance.getLesson().getExecutionCourse();
         if (/*!space.isOccupiedByExecutionCourse(executionCourse, lessonInstance.getBeginDateTime(),
                 lessonInstance.getEndDateTime())
                 &&*//*!space.isFree(lessonInstance.getDay(), lessonInstance.getDay(), lessonInstance.getStartTime(),
@@ -169,7 +169,7 @@ public class LessonInstanceSpaceOccupation extends LessonInstanceSpaceOccupation
     }
 
     @Override
-    public boolean isOccupiedByExecutionCourse(final ExecutionCourse executionCourse, final DateTime start, final DateTime end) {
+    public boolean isOccupiedByExecutionCourse(final Course executionCourse, final DateTime start, final DateTime end) {
         for (final LessonInstance lessonInstance : getLessonInstancesSet()) {
             final Lesson lesson = lessonInstance.getLesson();
             if (lesson.getExecutionCourse() == executionCourse && start.isBefore(lessonInstance.getEndDateTime())

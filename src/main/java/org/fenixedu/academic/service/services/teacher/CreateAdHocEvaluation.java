@@ -19,7 +19,7 @@
 package org.fenixedu.academic.service.services.teacher;
 
 import org.fenixedu.academic.domain.AdHocEvaluation;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.GradeScale;
 import org.fenixedu.academic.service.filter.ExecutionCourseCoordinatorAuthorizationFilter;
 import org.fenixedu.academic.service.filter.ExecutionCourseLecturingTeacherAuthorizationFilter;
@@ -34,7 +34,7 @@ public class CreateAdHocEvaluation {
     protected void run(String executionCourseID, String name, String description, GradeScale gradeScale)
             throws FenixServiceException {
 
-        ExecutionCourse executionCourse = FenixFramework.getDomainObject(executionCourseID);
+        Course executionCourse = FenixFramework.getDomainObject(executionCourseID);
 
         if (executionCourse == null) {
             throw new FenixServiceException("error.noExecutionCourse");

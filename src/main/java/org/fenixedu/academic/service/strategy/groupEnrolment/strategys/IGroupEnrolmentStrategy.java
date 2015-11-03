@@ -25,7 +25,7 @@ package org.fenixedu.academic.service.strategy.groupEnrolment.strategys;
 import java.util.Calendar;
 import java.util.List;
 
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.Grouping;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.StudentGroup;
@@ -44,7 +44,7 @@ public interface IGroupEnrolmentStrategy {
 
     public boolean checkNumberOfGroupElements(Grouping grouping, StudentGroup studentGroup);
 
-    public boolean checkIfStudentGroupIsEmpty(Attends attend, StudentGroup studentGroup);
+    public boolean checkIfStudentGroupIsEmpty(Attendance attend, StudentGroup studentGroup);
 
     public List checkShiftsType(Grouping groupProperties, List shifts);
 

@@ -56,7 +56,7 @@ public class WrittenEvaluationEnrolment extends WrittenEvaluationEnrolment_Base 
     }
 
     public boolean isForExecutionPeriod(final ExecutionSemester executionSemester) {
-        for (final ExecutionCourse executionCourse : getWrittenEvaluation().getAssociatedExecutionCoursesSet()) {
+        for (final Course executionCourse : getWrittenEvaluation().getAssociatedExecutionCoursesSet()) {
             if (executionCourse.getExecutionPeriod() == executionSemester) {
                 return true;
             }

@@ -23,8 +23,8 @@ import static org.fenixedu.academic.predicate.AccessControl.check;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.fenixedu.academic.domain.Attends;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Attendance;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.ProjectSubmission;
 import org.fenixedu.academic.domain.util.email.ExecutionCourseSender;
@@ -41,12 +41,12 @@ import pt.ist.fenixframework.Atomic;
 public class NotifyStudentGroup {
 
     @Atomic
-    public static void run(ProjectSubmission submission, ExecutionCourse course, Person person) {
+    public static void run(ProjectSubmission submission, Course course, Person person) {
         check(RolePredicates.TEACHER_PREDICATE);
 
         Set<Person> recievers = new HashSet<Person>();
 
-        for (Attends attend : submission.getStudentGroup().getAttendsSet()) {
+        for (Attendance attend : submission.getStudentGroup().getAttendsSet()) {
             recievers.add(attend.getRegistration().getStudent().getPerson());
         }
 

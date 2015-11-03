@@ -83,7 +83,7 @@ public class Shift extends Shift_Base {
         Shift.getRelationShiftAttends().addListener(new ShiftAttendsListener());
     }
 
-    public Shift(final ExecutionCourse executionCourse, Collection<ShiftType> types, final Integer lotacao) {
+    public Shift(final Course executionCourse, Collection<ShiftType> types, final Integer lotacao) {
 //        check(this, ResourceAllocationRolePredicates.checkPermissionsToManageShifts);
         super();
         setRootDomainObject(Bennu.getInstance());
@@ -96,11 +96,10 @@ public class Shift extends Shift_Base {
         }
     }
 
-    public void edit(List<ShiftType> newTypes, Integer newCapacity, ExecutionCourse newExecutionCourse, String newName,
-            String comment) {
+    public void edit(List<ShiftType> newTypes, Integer newCapacity, Course newExecutionCourse, String newName, String comment) {
         check(this, ResourceAllocationRolePredicates.checkPermissionsToManageShifts);
 
-        ExecutionCourse beforeExecutionCourse = getExecutionCourse();
+        Course beforeExecutionCourse = getExecutionCourse();
 
         final Shift otherShiftWithSameNewName = newExecutionCourse.findShiftByName(newName);
         if (otherShiftWithSameNewName != null && otherShiftWithSameNewName != this) {
@@ -145,7 +144,7 @@ public class Shift extends Shift_Base {
     public void delete() {
         check(this, ResourceAllocationRolePredicates.checkPermissionsToManageShifts);
         DomainException.throwWhenDeleteBlocked(getDeletionBlockers());
-        final ExecutionCourse executionCourse = getExecutionCourse();
+        final Course executionCourse = getExecutionCourse();
 
         for (; !getAssociatedLessonsSet().isEmpty(); getAssociatedLessonsSet().iterator().next().delete()) {
             ;
@@ -168,11 +167,11 @@ public class Shift extends Shift_Base {
     }
 
     @Deprecated
-    public ExecutionCourse getDisciplinaExecucao() {
+    public Course getDisciplinaExecucao() {
         return getExecutionCourse();
     }
 
-    public ExecutionCourse getExecutionCourse() {
+    public Course getExecutionCourse() {
         CourseLoad courseLoad = getCourseLoadsSet().iterator().next();
         if (courseLoad != null) {
             return courseLoad.getExecutionCourse();
@@ -185,7 +184,7 @@ public class Shift extends Shift_Base {
         return getExecutionCourse().getExecutionPeriod();
     }
 
-    private void shiftTypeManagement(Collection<ShiftType> types, ExecutionCourse executionCourse) {
+    private void shiftTypeManagement(Collection<ShiftType> types, Course executionCourse) {
         if (executionCourse != null) {
             getCourseLoadsSet().clear();
             for (ShiftType shiftType : types) {
@@ -349,7 +348,7 @@ public class Shift extends Shift_Base {
         return Integer.valueOf(stringBuilder.toString());
     }
 
-    public boolean reserveForStudent(final Attends attends) {
+    public boolean reserveForStudent(final Attendance attends) {
         final boolean result = getLotacao().intValue() > getAttendsSet().size();
         if (result || isResourceAllocationManager()) {
             GroupsAndShiftsManagementLog.createLog(getExecutionCourse(), Bundle.MESSAGING,
@@ -437,17 +436,17 @@ public class Shift extends Shift_Base {
         return result;
     }
 
-    private static class ShiftAttendsListener extends RelationAdapter<Shift, Attends> {
+    private static class ShiftAttendsListener extends RelationAdapter<Shift, Attendance> {
 
         @Override
-        public void afterAdd(Shift shift, Attends attends) {
+        public void afterAdd(Shift shift, Attendance attends) {
             if (!shift.getShiftEnrolmentsSet().stream().anyMatch(e -> e.getAttends() == attends)) {
                 new ShiftEnrolment(shift, attends);
             }
         }
 
         @Override
-        public void afterRemove(Shift shift, Attends attends) {
+        public void afterRemove(Shift shift, Attendance attends) {
             shift.getShiftEnrolmentsSet().stream().filter(e -> e.getAttends() == attends).forEach(ShiftEnrolment::delete);
         }
     }
@@ -560,7 +559,7 @@ public class Shift extends Shift_Base {
         final List<Shift> enroledShifts =
                 registration.getAssociatedAttendsSet().stream().filter(a -> a.isFor(executionSemester))
                         .flatMap(a -> a.getShiftsSet().stream()).collect(Collectors.toList());
-        for (final ExecutionCourse executionCourse : registration.getAttendingExecutionCoursesFor(executionSemester)) {
+        for (final Course executionCourse : registration.getAttendingExecutionCoursesFor(executionSemester)) {
             for (final ShiftType shiftType : executionCourse.getOldShiftTypesToEnrol()) {
                 if (!enroledShifts.stream().anyMatch(
                         enroledShift -> enroledShift.getExecutionCourse() == executionCourse

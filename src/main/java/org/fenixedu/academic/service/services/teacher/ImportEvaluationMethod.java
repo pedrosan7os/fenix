@@ -18,7 +18,7 @@
  */
 package org.fenixedu.academic.service.services.teacher;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.service.filter.ExecutionCourseLecturingTeacherAuthorizationFilter;
 import org.fenixedu.academic.service.services.exceptions.NotAuthorizedException;
@@ -27,8 +27,7 @@ import pt.ist.fenixframework.Atomic;
 
 public class ImportEvaluationMethod {
 
-    protected void run(String executionCourseToId, ExecutionCourse executionCourseTo, ExecutionCourse executionCourseFrom,
-            Shift shift) {
+    protected void run(String executionCourseToId, Course executionCourseTo, Course executionCourseFrom, Shift shift) {
         if (executionCourseTo != null && executionCourseFrom != null) {
             executionCourseTo.copyEvaluationMethodFrom(executionCourseFrom);
         }
@@ -39,8 +38,8 @@ public class ImportEvaluationMethod {
     private static final ImportEvaluationMethod serviceInstance = new ImportEvaluationMethod();
 
     @Atomic
-    public static void runImportEvaluationMethod(String executionCourseToId, ExecutionCourse executionCourseTo,
-            ExecutionCourse executionCourseFrom, Shift shift) throws NotAuthorizedException {
+    public static void runImportEvaluationMethod(String executionCourseToId, Course executionCourseTo,
+            Course executionCourseFrom, Shift shift) throws NotAuthorizedException {
         ExecutionCourseLecturingTeacherAuthorizationFilter.instance.execute(executionCourseToId);
         serviceInstance.run(executionCourseToId, executionCourseTo, executionCourseFrom, shift);
     }

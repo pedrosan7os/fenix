@@ -20,8 +20,8 @@ package org.fenixedu.academic.dto;
 
 import java.io.Serializable;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
-import org.fenixedu.academic.domain.Professorship;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.ShiftType;
 import org.fenixedu.academic.dto.teacher.executionCourse.SummaryTeacherBean;
@@ -36,9 +36,9 @@ public class ShowSummariesBean implements Serializable {
 
     private ListSummaryType listSummaryType;
 
-    private ExecutionCourse executionCourseReference;
+    private Course executionCourseReference;
 
-    private Professorship professorshipLoggedReference;
+    private CourseTeacher professorshipLoggedReference;
 
     private SummariesOrder summariesOrder;
 
@@ -46,8 +46,8 @@ public class ShowSummariesBean implements Serializable {
         // TODO Auto-generated constructor stub
     }
 
-    public ShowSummariesBean(SummaryTeacherBean teacher, ExecutionCourse executionCourse, ListSummaryType type,
-            Professorship loggedProfessorship) {
+    public ShowSummariesBean(SummaryTeacherBean teacher, Course executionCourse, ListSummaryType type,
+            CourseTeacher loggedProfessorship) {
         setSummaryTeacher(teacher);
         setExecutionCourse(executionCourse);
         setListSummaryType(type);
@@ -55,11 +55,11 @@ public class ShowSummariesBean implements Serializable {
         setSummariesOrder(SummariesOrder.DECREASING);
     }
 
-    public Professorship getProfessorshipLogged() {
+    public CourseTeacher getProfessorshipLogged() {
         return this.professorshipLoggedReference;
     }
 
-    public void setProfessorshipLogged(Professorship professorship) {
+    public void setProfessorshipLogged(CourseTeacher professorship) {
         this.professorshipLoggedReference = professorship;
     }
 
@@ -95,11 +95,11 @@ public class ShowSummariesBean implements Serializable {
         this.listSummaryType = listSummaryType;
     }
 
-    public ExecutionCourse getExecutionCourse() {
+    public Course getExecutionCourse() {
         return this.executionCourseReference;
     }
 
-    public void setExecutionCourse(ExecutionCourse executionCourse) {
+    public void setExecutionCourse(Course executionCourse) {
         this.executionCourseReference = executionCourse;
     }
 

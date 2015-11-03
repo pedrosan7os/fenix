@@ -22,10 +22,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Evaluation;
 import org.fenixedu.academic.domain.EvaluationManagementLog;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.Mark;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.exceptions.InvalidMarkDomainException;
@@ -46,7 +46,7 @@ public class WriteMarks {
             throws FenixServiceException {
 
         final Evaluation evaluation = FenixFramework.getDomainObject(evaluationOID);
-        final ExecutionCourse executionCourse = FenixFramework.getDomainObject(executioCourseOID);
+        final Course executionCourse = FenixFramework.getDomainObject(executioCourseOID);
 
         writeMarks(convertMarks(executionCourse, marks), executionCourse, evaluation);
     }
@@ -56,19 +56,19 @@ public class WriteMarks {
             throws FenixServiceException {
 
         final Evaluation evaluation = FenixFramework.getDomainObject(evaluationOID);
-        final ExecutionCourse executionCourse = FenixFramework.getDomainObject(executioCourseOID);
+        final Course executionCourse = FenixFramework.getDomainObject(executioCourseOID);
 
         writeMarks(marks, executionCourse, evaluation);
     }
 
-    private static List<AttendsMark> convertMarks(final ExecutionCourse executionCourse, final List<StudentMark> marks)
+    private static List<AttendsMark> convertMarks(final Course executionCourse, final List<StudentMark> marks)
             throws FenixServiceMultipleException {
 
         final List<DomainException> exceptionList = new ArrayList<DomainException>();
         final List<AttendsMark> result = new ArrayList<AttendsMark>();
 
         for (final StudentMark studentMark : marks) {
-            final Attends attend = findAttend(executionCourse, studentMark.studentNumber, exceptionList);
+            final Attendance attend = findAttend(executionCourse, studentMark.studentNumber, exceptionList);
             if (attend != null) {
                 addMark(result, studentMark, attend, exceptionList);
             }
@@ -81,7 +81,7 @@ public class WriteMarks {
         return result;
     }
 
-    private static void addMark(List<AttendsMark> result, StudentMark studentMark, Attends attend,
+    private static void addMark(List<AttendsMark> result, StudentMark studentMark, Attendance attend,
             List<DomainException> exceptionList) {
         if (studentMark.mark.length() - studentMark.mark.indexOf('.') - 1 > 2) {
             exceptionList.add(new DomainException("error.mark.more.than.two.decimals", studentMark.studentNumber));
@@ -90,11 +90,11 @@ public class WriteMarks {
         }
     }
 
-    private static Attends findAttend(final ExecutionCourse executionCourse, final String studentNumber,
+    private static Attendance findAttend(final Course executionCourse, final String studentNumber,
             final List<DomainException> exceptionList) {
 
-        final List<Attends> activeAttends = new ArrayList<Attends>(2);
-        for (final Attends attend : executionCourse.getAttendsSet()) {
+        final List<Attendance> activeAttends = new ArrayList<Attendance>(2);
+        for (final Attendance attend : executionCourse.getAttendsSet()) {
             final Student student = attend.getRegistration().getStudent();
             if ((student.getPerson().getUsername().equals(studentNumber) || student.getNumber().toString().equals(studentNumber))
                     && (isActive(attend) || belongsToActiveExternalCycle(attend))) {
@@ -115,7 +115,7 @@ public class WriteMarks {
         return null;
     }
 
-    private static boolean belongsToActiveExternalCycle(final Attends attend) {
+    private static boolean belongsToActiveExternalCycle(final Attendance attend) {
         if (attend.getEnrolment() != null) {
             final CycleCurriculumGroup cycle = attend.getEnrolment().getParentCycleCurriculumGroup();
             if (cycle != null && cycle.isExternal()) {
@@ -126,7 +126,7 @@ public class WriteMarks {
         return false;
     }
 
-    private static boolean isActive(final Attends attends) {
+    private static boolean isActive(final Attendance attends) {
         final RegistrationState state;
         if (attends.getEnrolment() != null) {
             state = attends.getEnrolment().getRegistration().getLastRegistrationState(attends.getExecutionYear());
@@ -136,14 +136,14 @@ public class WriteMarks {
         return state != null && state.isActive();
     }
 
-    private static void writeMarks(final List<AttendsMark> marks, final ExecutionCourse executionCourse,
-            final Evaluation evaluation) throws FenixServiceMultipleException {
+    private static void writeMarks(final List<AttendsMark> marks, final Course executionCourse, final Evaluation evaluation)
+            throws FenixServiceMultipleException {
 
         final List<DomainException> exceptionList = new ArrayList<DomainException>();
 
         for (final AttendsMark entry : marks) {
 
-            final Attends attend = findAttend(executionCourse, entry.attendId);
+            final Attendance attend = findAttend(executionCourse, entry.attendId);
             final String markValue = entry.mark;
 
             if (attend.getEnrolment() != null && attend.getEnrolment().isImpossible()) {
@@ -179,8 +179,8 @@ public class WriteMarks {
                 executionCourse.getName(), executionCourse.getDegreePresentationString());
     }
 
-    private static Attends findAttend(final ExecutionCourse executionCourse, final String attendId) {
-        for (final Attends attend : executionCourse.getAttendsSet()) {
+    private static Attendance findAttend(final Course executionCourse, final String attendId) {
+        for (final Attendance attend : executionCourse.getAttendsSet()) {
             if (attend.getExternalId().equals(attendId)) {
                 return attend;
             }

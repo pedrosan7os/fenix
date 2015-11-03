@@ -20,7 +20,7 @@ package org.fenixedu.academic.ui.renderers.providers;
 
 import java.util.HashSet;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.ShiftType;
 import org.fenixedu.academic.dto.teacher.CreateLessonPlanningBean;
 
@@ -30,13 +30,13 @@ import pt.ist.fenixWebFramework.renderers.converters.EnumConverter;
 
 public class ExecutionCourseShiftTypesToCreateLessonPlanningProvider implements DataProvider {
 
-    public ExecutionCourse getExecutionCourse(Object source) {
+    public Course getExecutionCourse(Object source) {
         return ((CreateLessonPlanningBean) source).getExecutionCourse();
     }
 
     @Override
     public Object provide(Object source, Object currentValue) {
-        ExecutionCourse executionCourse = getExecutionCourse(source);
+        Course executionCourse = getExecutionCourse(source);
         return (getExecutionCourse(source) != null) ? executionCourse.getShiftTypes() : new HashSet<ShiftType>();
     }
 

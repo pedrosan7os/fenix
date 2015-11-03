@@ -22,7 +22,7 @@ import static org.fenixedu.academic.predicate.AccessControl.check;
 
 import java.util.Collections;
 
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.Lesson;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.student.WeeklyWorkLoad;
@@ -37,23 +37,24 @@ public class CreateWeeklyWorkLoad {
     @Atomic
     public static void run(final String attendsID, final Integer contact, final Integer autonomousStudy, final Integer other) {
         check(RolePredicates.STUDENT_PREDICATE);
-        final Attends attends = FenixFramework.getDomainObject(attendsID);
+        final Attendance attends = FenixFramework.getDomainObject(attendsID);
         if (contact.intValue() < 0 || autonomousStudy.intValue() < 0 || other.intValue() < 0) {
             throw new DomainException("weekly.work.load.creation.invalid.data");
         }
-        
+
         if (attends.getEnrolment() == null) {
             throw new DomainException("weekly.work.load.creation.requires.enrolment");
         }
-        
+
         final int currentWeekOffset = attends.calculateCurrentWeekOffset();
         if (currentWeekOffset < 1
-                || new YearMonthDay(attends.getEndOfExamsPeriod()).plusDays(Lesson.NUMBER_OF_DAYS_IN_WEEK).isBefore(new YearMonthDay())) {
+                || new YearMonthDay(attends.getEndOfExamsPeriod()).plusDays(Lesson.NUMBER_OF_DAYS_IN_WEEK).isBefore(
+                        new YearMonthDay())) {
             throw new DomainException("outside.weekly.work.load.response.period");
         }
-        
+
         final int previousWeekOffset = currentWeekOffset - 1;
-        
+
         final WeeklyWorkLoad lastExistentWeeklyWorkLoad =
                 attends.getWeeklyWorkLoadsSet().isEmpty() ? null : Collections.max(attends.getWeeklyWorkLoadsSet());
         if (lastExistentWeeklyWorkLoad != null && lastExistentWeeklyWorkLoad.getWeekOffset().intValue() == previousWeekOffset) {

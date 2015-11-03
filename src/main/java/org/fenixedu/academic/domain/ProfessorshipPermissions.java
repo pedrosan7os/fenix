@@ -23,7 +23,7 @@ import org.fenixedu.bennu.core.domain.Bennu;
 
 public class ProfessorshipPermissions extends ProfessorshipPermissions_Base {
 
-    public ProfessorshipPermissions(final Professorship professorship) {
+    public ProfessorshipPermissions(final CourseTeacher professorship) {
         super();
         setRootDomainObject(Bennu.getInstance());
         if (professorship == null) {
@@ -52,7 +52,7 @@ public class ProfessorshipPermissions extends ProfessorshipPermissions_Base {
         setBibliografy(true);
     }
 
-    public ProfessorshipPermissions copyPremissions(Professorship professorship) {
+    public ProfessorshipPermissions copyPremissions(CourseTeacher professorship) {
         ProfessorshipPermissions p = professorship.getPermissions();
         p.setPersonalization(getPersonalization());
         p.setSiteArchive(getSiteArchive());
@@ -82,7 +82,7 @@ public class ProfessorshipPermissions extends ProfessorshipPermissions_Base {
     }
 
     public void logEditProfessorship() {
-        ExecutionCourse ec = getProfessorship().getExecutionCourse();
+        Course ec = getProfessorship().getExecutionCourse();
         ProfessorshipManagementLog.createLog(ec, Bundle.MESSAGING, "log.executionCourse.professorship.edited", getProfessorship()
                 .getPerson().getPresentationName(), ec.getNome(), ec.getDegreePresentationString());
     }

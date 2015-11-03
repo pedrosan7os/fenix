@@ -20,13 +20,13 @@ package org.fenixedu.academic.dto.teacher;
 
 import java.io.Serializable;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.ShiftType;
 import org.fenixedu.academic.util.MultiLanguageString;
 
 public class CreateLessonPlanningBean implements Serializable {
 
-    private ExecutionCourse executionCourseReference;
+    private Course executionCourseReference;
 
     private MultiLanguageString title;
 
@@ -34,15 +34,15 @@ public class CreateLessonPlanningBean implements Serializable {
 
     private ShiftType lessonType;
 
-    public CreateLessonPlanningBean(ExecutionCourse executionCourse) {
+    public CreateLessonPlanningBean(Course executionCourse) {
         setExecutionCourse(executionCourse);
     }
 
-    public ExecutionCourse getExecutionCourse() {
+    public Course getExecutionCourse() {
         return this.executionCourseReference;
     }
 
-    public void setExecutionCourse(ExecutionCourse executionCourseReference) {
+    public void setExecutionCourse(Course executionCourseReference) {
         this.executionCourseReference = executionCourseReference;
     }
 

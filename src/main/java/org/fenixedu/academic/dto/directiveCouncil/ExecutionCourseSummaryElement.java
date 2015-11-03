@@ -23,13 +23,13 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.Professorship;
 
 public class ExecutionCourseSummaryElement implements Serializable {
 
-    private ExecutionCourse executionCourse;
+    private Course executionCourse;
     private BigDecimal numberOfLessonInstances;
     private BigDecimal numberOfLessonInstancesWithSummary;
     // percentage value like xx.yy%
@@ -37,7 +37,7 @@ public class ExecutionCourseSummaryElement implements Serializable {
     private BigDecimal numberOfLessonInstancesWithNotTaughtSummary;
     private BigDecimal percentageOfLessonsWithNotTaughtSummary;
 
-    public ExecutionCourseSummaryElement(ExecutionCourse executionCourse, BigDecimal numberOfLessonInstance,
+    public ExecutionCourseSummaryElement(Course executionCourse, BigDecimal numberOfLessonInstance,
             BigDecimal numberOfLessonInstanceWithSummary, BigDecimal percentageOfLessonsWithSummary,
             BigDecimal numberOfLessonInstancesWithNotTaughtSummary, BigDecimal percentageOfLessonsWithNotTaughtSummary) {
         setExecutionCourse(executionCourse);
@@ -50,17 +50,17 @@ public class ExecutionCourseSummaryElement implements Serializable {
 
     public Set<Person> getPersons() {
         Set<Person> persons = new HashSet<Person>();
-        for (Professorship professorship : getExecutionCourse().getProfessorshipsSet()) {
+        for (CourseTeacher professorship : getExecutionCourse().getProfessorshipsSet()) {
             persons.add(professorship.getPerson());
         }
         return persons;
     }
 
-    public ExecutionCourse getExecutionCourse() {
+    public Course getExecutionCourse() {
         return executionCourse;
     }
 
-    public void setExecutionCourse(ExecutionCourse executionCourse) {
+    public void setExecutionCourse(Course executionCourse) {
         this.executionCourse = executionCourse;
     }
 

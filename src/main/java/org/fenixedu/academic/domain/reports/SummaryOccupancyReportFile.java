@@ -18,11 +18,11 @@
  */
 package org.fenixedu.academic.domain.reports;
 
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.CourseLoad;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.LessonInstance;
-import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.ShiftType;
 import org.fenixedu.academic.domain.Summary;
@@ -62,7 +62,7 @@ public class SummaryOccupancyReportFile extends SummaryOccupancyReportFile_Base 
         spreadsheet.setHeader("Sala");
         spreadsheet.setHeader("Numero Presencas");
         for (final ExecutionSemester executionSemester : getExecutionYear().getExecutionPeriodsSet()) {
-            for (final ExecutionCourse executionCourse : executionSemester.getAssociatedExecutionCoursesSet()) {
+            for (final Course executionCourse : executionSemester.getAssociatedExecutionCoursesSet()) {
                 for (final Summary summary : executionCourse.getAssociatedSummariesSet()) {
                     final Row row = spreadsheet.addRow();
                     row.setCell(getExecutionYear().getYear());
@@ -98,7 +98,7 @@ public class SummaryOccupancyReportFile extends SummaryOccupancyReportFile_Base 
     }
 
     private String getTeacherName(final Summary summary) {
-        final Professorship professorship = summary.getProfessorship();
+        final CourseTeacher professorship = summary.getProfessorship();
         if (professorship != null) {
             return professorship.getPerson().getName();
         }
@@ -110,7 +110,7 @@ public class SummaryOccupancyReportFile extends SummaryOccupancyReportFile_Base 
     }
 
     private String getTeacherId(Summary summary) {
-        final Professorship professorship = summary.getProfessorship();
+        final CourseTeacher professorship = summary.getProfessorship();
         if (professorship != null) {
             return professorship.getPerson().getUsername();
         }
@@ -121,7 +121,7 @@ public class SummaryOccupancyReportFile extends SummaryOccupancyReportFile_Base 
         return null;
     }
 
-    public static String getExecutionCourseCode(ExecutionCourse executionCourse) {
+    public static String getExecutionCourseCode(Course executionCourse) {
         return executionCourse.getSigla() + CODE_SEPARATOR + getExecutionSemesterCode(executionCourse.getExecutionPeriod());
     }
 }

@@ -18,7 +18,7 @@
  */
 package org.fenixedu.academic.predicate;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Lesson;
 import org.fenixedu.academic.domain.LessonInstance;
 import org.fenixedu.academic.domain.Person;
@@ -73,7 +73,7 @@ public class ResourceAllocationRolePredicates {
 
                     Person loggedPerson = AccessControl.getPerson();
 
-                    ExecutionCourse executionCourse = lessonInstance.getLesson().getExecutionCourse();
+                    Course executionCourse = lessonInstance.getLesson().getExecutionCourse();
                     if (loggedPerson.getProfessorshipsSet().size() > 0
                             && loggedPerson.hasProfessorshipForExecutionCourse(executionCourse)) {
                         return true;

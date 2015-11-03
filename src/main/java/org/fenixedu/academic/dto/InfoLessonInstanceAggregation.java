@@ -25,7 +25,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Lesson;
 import org.fenixedu.academic.domain.LessonInstance;
 import org.fenixedu.academic.domain.Shift;
@@ -143,7 +143,7 @@ public class InfoLessonInstanceAggregation extends InfoShowOccupation {
     }
 
     public SortedSet<Integer> getWeeks() {
-        final ExecutionCourse executionCourse = shift.getExecutionCourse();
+        final Course executionCourse = shift.getExecutionCourse();
         final YearMonthDay firstPossibleLessonDay = executionCourse.getMaxLessonsPeriod().getLeft();
         final YearMonthDay lastPossibleLessonDay = executionCourse.getMaxLessonsPeriod().getRight();
         return getWeeks(new Interval(firstPossibleLessonDay.toDateTimeAtMidnight(), lastPossibleLessonDay.toDateTimeAtMidnight()

@@ -18,7 +18,7 @@
  */
 package org.fenixedu.academic.domain.messaging;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.accessControl.StudentGroup;
 import org.fenixedu.academic.domain.accessControl.TeacherGroup;
 import org.fenixedu.academic.util.MultiLanguageString;
@@ -60,7 +60,7 @@ public class ExecutionCourseForum extends ExecutionCourseForum_Base {
     }
 
     private Group getExecutionCourseMembersGroup() {
-        ExecutionCourse executionCourse = getExecutionCourse();
+        Course executionCourse = getExecutionCourse();
         return TeacherGroup.get(executionCourse).or(StudentGroup.get(executionCourse));
     }
 }

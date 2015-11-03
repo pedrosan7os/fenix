@@ -18,7 +18,7 @@
  */
 package org.fenixedu.academic.service.services.teacher;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.service.filter.ExecutionCourseLecturingTeacherAuthorizationFilter;
 import org.fenixedu.academic.service.services.exceptions.FenixServiceException;
 import org.fenixedu.academic.service.services.exceptions.InvalidArgumentsServiceException;
@@ -36,7 +36,7 @@ public class CreateBibliographicReference {
             String newBibliographyReference, String newBibliographyYear, Boolean newBibliographyOptional)
             throws FenixServiceException {
 
-        final ExecutionCourse executionCourse = FenixFramework.getDomainObject(infoExecutionCourseID);
+        final Course executionCourse = FenixFramework.getDomainObject(infoExecutionCourseID);
         if (executionCourse == null) {
             throw new InvalidArgumentsServiceException();
         }

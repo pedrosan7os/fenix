@@ -23,7 +23,7 @@
  */
 package org.fenixedu.academic.servlet.taglib.sop.v3;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.dto.InfoExecutionCourse;
 import org.fenixedu.academic.dto.InfoLesson;
 import org.fenixedu.academic.dto.InfoLessonInstance;
@@ -109,7 +109,7 @@ public class ClassTimeTableWithLinksLessonContentRenderer extends LessonSlotCont
         } else if (showOccupation instanceof InfoLessonInstanceAggregation) {
             final InfoLessonInstanceAggregation aggregation = (InfoLessonInstanceAggregation) showOccupation;
 
-            final ExecutionCourse executionCourse = aggregation.getShift().getExecutionCourse();
+            final Course executionCourse = aggregation.getShift().getExecutionCourse();
             String siteUrl = executionCourse.getSiteUrl();
             if (Strings.isNullOrEmpty(siteUrl)) {
                 strBuffer.append(executionCourse.getSigla());

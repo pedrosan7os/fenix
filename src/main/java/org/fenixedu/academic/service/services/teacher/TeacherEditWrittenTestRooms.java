@@ -20,7 +20,7 @@ package org.fenixedu.academic.service.services.teacher;
 
 import java.util.List;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Teacher;
 import org.fenixedu.academic.domain.WrittenTest;
 import org.fenixedu.academic.service.filter.ExecutionCourseLecturingTeacherAuthorizationFilter;
@@ -31,7 +31,7 @@ import pt.ist.fenixframework.Atomic;
 
 public class TeacherEditWrittenTestRooms {
 
-    protected void run(ExecutionCourse executionCourse, Teacher teacher, WrittenTest writtenTest, List<Space> rooms) {
+    protected void run(Course executionCourse, Teacher teacher, WrittenTest writtenTest, List<Space> rooms) {
         writtenTest.teacherEditRooms(teacher, executionCourse.getExecutionPeriod(), rooms);
     }
 
@@ -40,7 +40,7 @@ public class TeacherEditWrittenTestRooms {
     private static final TeacherEditWrittenTestRooms serviceInstance = new TeacherEditWrittenTestRooms();
 
     @Atomic
-    public static void runTeacherEditWrittenTestRooms(ExecutionCourse executionCourse, Teacher teacher, WrittenTest writtenTest,
+    public static void runTeacherEditWrittenTestRooms(Course executionCourse, Teacher teacher, WrittenTest writtenTest,
             List<Space> rooms) throws NotAuthorizedException {
         ExecutionCourseLecturingTeacherAuthorizationFilter.instance.execute(executionCourse);
         serviceInstance.run(executionCourse, teacher, writtenTest, rooms);

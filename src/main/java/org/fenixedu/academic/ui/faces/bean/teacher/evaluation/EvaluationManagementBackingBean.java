@@ -51,14 +51,14 @@ import javax.servlet.http.Part;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.struts.util.MessageResources;
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.DegreeModuleScope;
 import org.fenixedu.academic.domain.Evaluation;
 import org.fenixedu.academic.domain.EvaluationConfiguration;
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.Exam;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.FinalEvaluation;
 import org.fenixedu.academic.domain.FinalMark;
@@ -183,7 +183,7 @@ public class EvaluationManagementBackingBean extends FenixBackingBean {
 
     protected List<FinalMark> alreadySubmitedMarks;
 
-    protected List<Attends> notSubmitedMarks;
+    protected List<Attendance> notSubmitedMarks;
 
     protected Integer[] roomsToDelete;
 
@@ -523,7 +523,7 @@ public class EvaluationManagementBackingBean extends FenixBackingBean {
     }
 
     public List<Exam> getExamList() throws FenixServiceException {
-        ExecutionCourse executionCourse = FenixFramework.getDomainObject(getExecutionCourseID());
+        Course executionCourse = FenixFramework.getDomainObject(getExecutionCourseID());
 
         List<Exam> examsList = new ArrayList(executionCourse.getAssociatedExams());
         Collections.sort(examsList, new BeanComparator("dayDate"));
@@ -531,7 +531,7 @@ public class EvaluationManagementBackingBean extends FenixBackingBean {
     }
 
     public List<WrittenTest> getWrittenTestList() throws FenixServiceException {
-        ExecutionCourse executionCourse = getExecutionCourse();
+        Course executionCourse = getExecutionCourse();
         Teacher teacher = AccessControl.getPerson().getTeacher();
 
         List<WrittenTest> writtenTestList = new ArrayList();
@@ -655,7 +655,7 @@ public class EvaluationManagementBackingBean extends FenixBackingBean {
         List<String> executionCourseIDs = new ArrayList<String>();
         executionCourseIDs.add(this.getExecutionCourseID().toString());
 
-        ExecutionCourse executionCourse = FenixFramework.getDomainObject(getExecutionCourseID());
+        Course executionCourse = FenixFramework.getDomainObject(getExecutionCourseID());
 
         final List<String> degreeModuleScopesIDs = getDegreeModuleScopeIDs(executionCourse);
 
@@ -680,21 +680,21 @@ public class EvaluationManagementBackingBean extends FenixBackingBean {
         return WrittenTest.class.getSimpleName();
     }
 
-    public ExecutionCourse getExecutionCourse() {
+    public Course getExecutionCourse() {
         return FenixFramework.getDomainObject(getExecutionCourseID());
     }
 
     public String getHackToStoreExecutionCourse() {
-        ExecutionCourse course = getExecutionCourse();
+        Course course = getExecutionCourse();
         setRequestAttribute("executionCourse", course);
         return "";
     }
 
     public Map<String, String> getMarks() throws FenixServiceException {
         final Evaluation evaluation = getEvaluation();
-        final ExecutionCourse executionCourse = getExecutionCourse();
+        final Course executionCourse = getExecutionCourse();
         if (executionCourse != null) {
-            for (final Attends attends : getExecutionCourseAttends()) {
+            for (final Attendance attends : getExecutionCourseAttends()) {
                 final Mark mark = attends.getMarkByEvaluation(evaluation);
                 if (mark != null && !marks.containsKey(attends.getExternalId())) {
                     marks.put(attends.getExternalId(), mark.getMark());
@@ -795,7 +795,7 @@ public class EvaluationManagementBackingBean extends FenixBackingBean {
         final List<String> executionCourseIDs = new ArrayList<String>();
         executionCourseIDs.add(this.getExecutionCourseID().toString());
 
-        ExecutionCourse executionCourse = FenixFramework.getDomainObject(getExecutionCourseID());
+        Course executionCourse = FenixFramework.getDomainObject(getExecutionCourseID());
 
         final List<String> degreeModuleScopesIDs = getDegreeModuleScopeIDs(executionCourse);
 
@@ -843,7 +843,7 @@ public class EvaluationManagementBackingBean extends FenixBackingBean {
         }
     }
 
-    private List<String> getDegreeModuleScopeIDs(ExecutionCourse executionCourse) {
+    private List<String> getDegreeModuleScopeIDs(Course executionCourse) {
         final List<String> degreeModuleScopesIDs = new ArrayList<String>();
         for (CurricularCourse curricularCourse : executionCourse.getAssociatedCurricularCoursesSet()) {
             List<DegreeModuleScope> degreeModuleScopes = curricularCourse.getDegreeModuleScopes();
@@ -1009,7 +1009,7 @@ public class EvaluationManagementBackingBean extends FenixBackingBean {
 
     public int getNumberOfAttendingStudents() throws FenixServiceException {
         int numberOfAttendingStudents = 0;
-        for (final ExecutionCourse executionCourse : getEvaluation().getAssociatedExecutionCoursesSet()) {
+        for (final Course executionCourse : getEvaluation().getAssociatedExecutionCoursesSet()) {
             numberOfAttendingStudents += executionCourse.getAttendsSet().size();
         }
         return numberOfAttendingStudents;
@@ -1024,11 +1024,11 @@ public class EvaluationManagementBackingBean extends FenixBackingBean {
         return null;
     }
 
-    public List<Attends> getExecutionCourseAttends() {
-        final List<Attends> result = new ArrayList<Attends>();
+    public List<Attendance> getExecutionCourseAttends() {
+        final List<Attendance> result = new ArrayList<Attendance>();
         String filter = getEnrolmentTypeFilter();
 
-        for (final Attends attends : getExecutionCourse().getAttendsSet()) {
+        for (final Attendance attends : getExecutionCourse().getAttendsSet()) {
             if (attends.getEnrolment() == null || !attends.getEnrolment().isImpossible()) {
                 if (filter.equals(ENROLMENT_TYPE_FILTER_ALL)) {
                     result.add(attends);
@@ -1044,13 +1044,13 @@ public class EvaluationManagementBackingBean extends FenixBackingBean {
                 }
             }
         }
-        Collections.sort(result, Attends.COMPARATOR_BY_STUDENT_NUMBER);
+        Collections.sort(result, Attendance.COMPARATOR_BY_STUDENT_NUMBER);
         return result;
     }
 
     public List<Student> getStudentsWithImpossibleEnrolments() {
         final List<Student> result = new ArrayList<Student>();
-        for (final Attends attends : getExecutionCourse().getAttendsSet()) {
+        for (final Attendance attends : getExecutionCourse().getAttendsSet()) {
             if (attends.getEnrolment() != null && attends.getEnrolment().isImpossible()) {
                 final Student student = attends.getEnrolment().getStudentCurricularPlan().getRegistration().getStudent();
                 if (!result.contains(student)) {
@@ -1172,17 +1172,17 @@ public class EvaluationManagementBackingBean extends FenixBackingBean {
     public List<FinalMark> getAlreadySubmitedMarks() throws FenixServiceException {
         if (this.alreadySubmitedMarks == null) {
             FinalEvaluation evaluation = (FinalEvaluation) getEvaluation();
-            ExecutionCourse executionCourse = getExecutionCourse();
+            Course executionCourse = getExecutionCourse();
             this.alreadySubmitedMarks = evaluation.getAlreadySubmitedMarks(executionCourse);
             Collections.sort(this.alreadySubmitedMarks, new BeanComparator("attend.aluno.number"));
         }
         return this.alreadySubmitedMarks;
     }
 
-    public List<Attends> getNotSubmitedMarks() throws FenixServiceException {
+    public List<Attendance> getNotSubmitedMarks() throws FenixServiceException {
         if (this.notSubmitedMarks == null) {
             FinalEvaluation evaluation = (FinalEvaluation) getEvaluation();
-            ExecutionCourse executionCourse = getExecutionCourse();
+            Course executionCourse = getExecutionCourse();
             this.notSubmitedMarks = evaluation.getNotSubmitedMarkAttends(executionCourse);
             Collections.sort(this.notSubmitedMarks, new BeanComparator("aluno.number"));
         }

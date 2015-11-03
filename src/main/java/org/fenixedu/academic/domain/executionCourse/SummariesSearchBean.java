@@ -22,35 +22,35 @@ import java.io.Serializable;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
-import org.fenixedu.academic.domain.Professorship;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.ShiftType;
 import org.fenixedu.academic.domain.Summary;
 
 public class SummariesSearchBean implements Serializable {
 
-    private final ExecutionCourse executionCourseDomainReference;
+    private final Course executionCourseDomainReference;
 
     private ShiftType shiftType;
     private Shift shiftDomainReference;
-    private Professorship professorshipDomainReference;
+    private CourseTeacher professorshipDomainReference;
     private Boolean showOtherProfessors;
     private Boolean ascendant = false;
 
-    public SummariesSearchBean(final ExecutionCourse executionCourse) {
+    public SummariesSearchBean(final Course executionCourse) {
         this.executionCourseDomainReference = executionCourse;
     }
 
-    public ExecutionCourse getExecutionCourse() {
+    public Course getExecutionCourse() {
         return executionCourseDomainReference;
     }
 
-    public Professorship getProfessorship() {
+    public CourseTeacher getProfessorship() {
         return professorshipDomainReference;
     }
 
-    public void setProfessorship(final Professorship professorship) {
+    public void setProfessorship(final CourseTeacher professorship) {
         professorshipDomainReference = professorship;
     }
 
@@ -91,7 +91,7 @@ public class SummariesSearchBean implements Serializable {
             final Shift shift = summary.getShift();
             if (getShift() == null || getShift() == shift) {
                 if (getShiftType() == null || getShiftType() == summary.getSummaryType()) {
-                    final Professorship professorship = summary.getProfessorship();
+                    final CourseTeacher professorship = summary.getProfessorship();
                     if (getProfessorship() == null && showOtherProfessors == null) {
                         summaries.add(summary);
                     } else if (professorship == null && showOtherProfessors != null && showOtherProfessors.booleanValue()) {

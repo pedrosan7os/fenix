@@ -24,9 +24,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.Professorship;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.predicate.AccessControl;
 import org.fenixedu.academic.ui.struts.action.base.FenixDispatchAction;
 
@@ -60,22 +61,22 @@ public abstract class ExecutionCourseBaseAction extends FenixDispatchAction {
         }
 
         if (executionCourseID != null && executionCourseID.length() > 0) {
-            final Professorship professorship = findProfessorship(request, executionCourseID);
+            final CourseTeacher professorship = findProfessorship(request, executionCourseID);
             request.setAttribute("professorship", professorship);
             request.setAttribute("executionCourse", professorship.getExecutionCourse());
             request.setAttribute("executionCourseID", executionCourseID);
         }
     }
 
-    protected ExecutionCourse getExecutionCourse(HttpServletRequest request) {
-        return (ExecutionCourse) request.getAttribute("executionCourse");
+    protected Course getExecutionCourse(HttpServletRequest request) {
+        return (Course) request.getAttribute("executionCourse");
     }
 
-    private static Professorship findProfessorship(final HttpServletRequest request, final String executionCourseID) {
+    private static CourseTeacher findProfessorship(final HttpServletRequest request, final String executionCourseID) {
         final Person person = AccessControl.getPerson();
         if (person != null) {
-            for (final Professorship professorship : person.getProfessorshipsSet()) {
-                final ExecutionCourse executionCourse = professorship.getExecutionCourse();
+            for (final CourseTeacher professorship : person.getProfessorshipsSet()) {
+                final Course executionCourse = professorship.getExecutionCourse();
                 if (executionCourse.getExternalId().equals(executionCourseID)) {
                     return professorship;
                 }

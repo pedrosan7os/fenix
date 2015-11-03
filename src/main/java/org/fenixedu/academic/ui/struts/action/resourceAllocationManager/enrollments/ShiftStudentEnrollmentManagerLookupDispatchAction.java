@@ -32,7 +32,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.student.Registration;
@@ -179,7 +179,7 @@ public class ShiftStudentEnrollmentManagerLookupDispatchAction extends FenixDisp
             return mapping.getInputForward();
         }
 
-        final ExecutionCourse executionCourse = getExecutionCourse(request);
+        final Course executionCourse = getExecutionCourse(request);
         final List<SchoolClass> schoolClassesToEnrol =
                 readStudentSchoolClassesToEnrolUsingExecutionCourse(request, registration, executionCourse);
         request.setAttribute("schoolClassesToEnrol", schoolClassesToEnrol);
@@ -227,7 +227,7 @@ public class ShiftStudentEnrollmentManagerLookupDispatchAction extends FenixDisp
     }
 
     private List<SchoolClass> readStudentSchoolClassesToEnrolUsingExecutionCourse(HttpServletRequest request,
-            final Registration registration, final ExecutionCourse executionCourse) {
+            final Registration registration, final Course executionCourse) {
 
         final List<SchoolClass> schoolClassesToEnrol = new ArrayList<SchoolClass>();
         if (executionCourse != null) {
@@ -242,7 +242,7 @@ public class ShiftStudentEnrollmentManagerLookupDispatchAction extends FenixDisp
         return schoolClassesToEnrol;
     }
 
-    private ExecutionCourse getExecutionCourse(HttpServletRequest request) {
+    private Course getExecutionCourse(HttpServletRequest request) {
         if (!StringUtils.isEmpty(request.getParameter("executionCourseID"))) {
             return FenixFramework.getDomainObject(request.getParameter("executionCourseID"));
         } else {

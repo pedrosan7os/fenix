@@ -18,7 +18,7 @@
  */
 package org.fenixedu.academic.service.services.teacher;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.LessonPlanning;
 import org.fenixedu.academic.domain.ShiftType;
 import org.fenixedu.academic.service.filter.ExecutionCourseLecturingTeacherAuthorizationFilter;
@@ -28,7 +28,7 @@ import pt.ist.fenixframework.Atomic;
 
 public class DeleteLessonPlanning {
 
-    protected void run(String executionCourseID, LessonPlanning lessonPlanning, ExecutionCourse executionCourse,
+    protected void run(String executionCourseID, LessonPlanning lessonPlanning, Course executionCourse,
             ShiftType shiftType) {
         if (lessonPlanning != null) {
             lessonPlanning.delete();
@@ -43,7 +43,7 @@ public class DeleteLessonPlanning {
 
     @Atomic
     public static void runDeleteLessonPlanning(String executionCourseID, LessonPlanning lessonPlanning,
-            ExecutionCourse executionCourse, ShiftType shiftType) throws NotAuthorizedException {
+            Course executionCourse, ShiftType shiftType) throws NotAuthorizedException {
         ExecutionCourseLecturingTeacherAuthorizationFilter.instance.execute(executionCourseID);
         serviceInstance.run(executionCourseID, lessonPlanning, executionCourse, shiftType);
     }

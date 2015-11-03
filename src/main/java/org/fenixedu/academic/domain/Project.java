@@ -55,8 +55,8 @@ public class Project extends Project_Base {
                 if (project != null && grouping != null) {
                     if (grouping.getAutomaticEnrolment() && grouping.getStudentGroupsSet().isEmpty()) {
                         int groupCount = 0;
-                        for (final ExecutionCourse executionCourse : project.getAssociatedExecutionCoursesSet()) {
-                            for (Attends attend : executionCourse.getAttendsSet()) {
+                        for (final Course executionCourse : project.getAssociatedExecutionCoursesSet()) {
+                            for (Attendance attend : executionCourse.getAttendsSet()) {
                                 try {
                                     GroupEnrolment.run(grouping.getExternalId(), null, ++groupCount, new ArrayList<String>(),
                                             attend.getRegistration().getStudent().getPerson().getUsername());
@@ -79,7 +79,7 @@ public class Project extends Project_Base {
     }
 
     public Project(String name, Date begin, Date end, String description, Boolean onlineSubmissionsAllowed,
-            Integer maxSubmissionsToKeep, Grouping grouping, ExecutionCourse executionCourse) {
+            Integer maxSubmissionsToKeep, Grouping grouping, Course executionCourse) {
         this();
         if (name == null || begin == null || end == null || executionCourse == null) {
             throw new NullPointerException();
@@ -99,7 +99,7 @@ public class Project extends Project_Base {
     }
 
     public Project(String name, Date begin, Date end, String description, Boolean onlineSubmissionsAllowed,
-            Integer maxSubmissionsToKeep, Grouping grouping, ExecutionCourse executionCourse, GradeScale gradeScale) {
+            Integer maxSubmissionsToKeep, Grouping grouping, Course executionCourse, GradeScale gradeScale) {
 
         this(name, begin, end, description, onlineSubmissionsAllowed, maxSubmissionsToKeep, grouping, executionCourse);
 
@@ -223,8 +223,8 @@ public class Project extends Project_Base {
     }
 
     public boolean isCanComment() {
-        for (ExecutionCourse executionCourse : getAssociatedExecutionCoursesSet()) {
-            final Professorship professorship = executionCourse.getProfessorshipForCurrentUser();
+        for (Course executionCourse : getAssociatedExecutionCoursesSet()) {
+            final CourseTeacher professorship = executionCourse.getProfessorshipForCurrentUser();
             if (professorship != null) {
                 return true;
             }
@@ -338,7 +338,7 @@ public class Project extends Project_Base {
         return result;
     }
 
-    public List<EvaluationEventBean> getAllEvents(ExecutionCourse executionCourse) {
+    public List<EvaluationEventBean> getAllEvents(Course executionCourse) {
         List<EvaluationEventBean> result = new ArrayList<EvaluationEventBean>();
         result.add(new EvaluationEventBean("Inicio " + this.getName() + " : " + executionCourse.getNome(), this
                 .getProjectBeginDateTime(), this.getProjectBeginDateTime().plusHours(1), false, null, null,

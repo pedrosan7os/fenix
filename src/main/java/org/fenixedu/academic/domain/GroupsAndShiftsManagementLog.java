@@ -24,7 +24,7 @@ public class GroupsAndShiftsManagementLog extends GroupsAndShiftsManagementLog_B
         super();
     }
 
-    public GroupsAndShiftsManagementLog(ExecutionCourse executionCourse, String description) {
+    public GroupsAndShiftsManagementLog(Course executionCourse, String description) {
         super();
         if (getExecutionCourse() == null) {
             setExecutionCourse(executionCourse);
@@ -32,13 +32,11 @@ public class GroupsAndShiftsManagementLog extends GroupsAndShiftsManagementLog_B
         setDescription(description);
     }
 
-    private static GroupsAndShiftsManagementLog createGroupsAndShiftsManagementLog(ExecutionCourse executionCourse,
-            String description) {
+    private static GroupsAndShiftsManagementLog createGroupsAndShiftsManagementLog(Course executionCourse, String description) {
         return new GroupsAndShiftsManagementLog(executionCourse, description);
     }
 
-    public static GroupsAndShiftsManagementLog createLog(ExecutionCourse executionCourse, String bundle, String key,
-            String... args) {
+    public static GroupsAndShiftsManagementLog createLog(Course executionCourse, String bundle, String key, String... args) {
         final String label = generateLabelDescription(bundle, key, args);
         return createGroupsAndShiftsManagementLog(executionCourse, label);
     }

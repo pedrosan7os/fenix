@@ -23,7 +23,7 @@ import static org.fenixedu.academic.predicate.AccessControl.check;
 import java.util.List;
 
 import org.fenixedu.academic.domain.BibliographicReference;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.predicate.RolePredicates;
 
 import pt.ist.fenixframework.Atomic;
@@ -37,7 +37,7 @@ import pt.ist.fenixframework.Atomic;
 public class OrderBibliographicReferences {
 
     @Atomic
-    public static void run(ExecutionCourse executionCourse, List<BibliographicReference> references) {
+    public static void run(Course executionCourse, List<BibliographicReference> references) {
         check(RolePredicates.TEACHER_PREDICATE);
         executionCourse.setBibliographicReferencesOrder(references);
     }

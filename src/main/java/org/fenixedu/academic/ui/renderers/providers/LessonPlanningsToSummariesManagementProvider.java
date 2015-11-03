@@ -20,7 +20,7 @@ package org.fenixedu.academic.ui.renderers.providers;
 
 import java.util.ArrayList;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.LessonPlanning;
 import org.fenixedu.academic.domain.ShiftType;
 import org.fenixedu.academic.dto.SummariesManagementBean;
@@ -36,7 +36,7 @@ public class LessonPlanningsToSummariesManagementProvider implements DataProvide
         SummariesManagementBean bean = (SummariesManagementBean) source;
         ShiftType lessonType = bean.getLessonType();
         if (lessonType != null) {
-            ExecutionCourse executionCourse = bean.getExecutionCourse();
+            Course executionCourse = bean.getExecutionCourse();
             return executionCourse.getLessonPlanningsOrderedByOrder(lessonType);
         }
         return new ArrayList<LessonPlanning>();

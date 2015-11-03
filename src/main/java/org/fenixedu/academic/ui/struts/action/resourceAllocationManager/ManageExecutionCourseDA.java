@@ -29,7 +29,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.fenixedu.academic.domain.CourseLoad;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.ShiftType;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.dto.InfoClass;
@@ -61,7 +61,7 @@ public class ManageExecutionCourseDA extends FenixExecutionCourseAndExecutionDeg
 
         InfoExecutionCourse infoExecutionCourse =
                 (InfoExecutionCourse) request.getAttribute(PresentationConstants.EXECUTION_COURSE);
-        ExecutionCourse executionCourse = infoExecutionCourse.getExecutionCourse();
+        Course executionCourse = infoExecutionCourse.getExecutionCourse();
         readAndSetExecutionCourseClasses(request, executionCourse);
         request.setAttribute("courseLoadBean", new CourseLoadBean(executionCourse));
         return mapping.findForward("ManageExecutionCourse");
@@ -125,7 +125,7 @@ public class ManageExecutionCourseDA extends FenixExecutionCourseAndExecutionDeg
             HttpServletResponse response) throws Exception {
 
         CourseLoad courseLoad = getCourseLoadFromParameter(request);
-        ExecutionCourse executionCourse = courseLoad.getExecutionCourse();
+        Course executionCourse = courseLoad.getExecutionCourse();
         try {
             DeleteCourseLoad.run(courseLoad);
         } catch (DomainException e) {
@@ -137,7 +137,7 @@ public class ManageExecutionCourseDA extends FenixExecutionCourseAndExecutionDeg
         return mapping.findForward("ManageExecutionCourse");
     }
 
-    private void readAndSetExecutionCourseClasses(HttpServletRequest request, ExecutionCourse executionCourse)
+    private void readAndSetExecutionCourseClasses(HttpServletRequest request, Course executionCourse)
             throws FenixServiceException {
 
         List<InfoClass> infoClasses = ReadClassesByExecutionCourse.runReadClassesByExecutionCourse(executionCourse);

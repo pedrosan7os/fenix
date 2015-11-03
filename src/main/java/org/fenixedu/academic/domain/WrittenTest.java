@@ -56,7 +56,7 @@ import org.joda.time.YearMonthDay;
  */
 public class WrittenTest extends WrittenTest_Base {
 
-    public WrittenTest(Date testDate, Date testStartTime, Date testEndTime, List<ExecutionCourse> executionCoursesToAssociate,
+    public WrittenTest(Date testDate, Date testStartTime, Date testEndTime, List<Course> executionCoursesToAssociate,
             List<DegreeModuleScope> curricularCourseScopesToAssociate, List<Space> rooms, GradeScale gradeScale,
             String description) {
 
@@ -75,7 +75,7 @@ public class WrittenTest extends WrittenTest_Base {
         logCreate();
     }
 
-    public void edit(Date testDate, Date testStartTime, Date testEndTime, List<ExecutionCourse> executionCoursesToAssociate,
+    public void edit(Date testDate, Date testStartTime, Date testEndTime, List<Course> executionCoursesToAssociate,
             List<DegreeModuleScope> curricularCourseScopesToAssociate, List<Space> rooms, GradeScale gradeScale,
             String description) {
 
@@ -109,9 +109,9 @@ public class WrittenTest extends WrittenTest_Base {
         }
     }
 
-    private void checkEvaluationDate(final Date writtenEvaluationDate, final List<ExecutionCourse> executionCoursesToAssociate) {
+    private void checkEvaluationDate(final Date writtenEvaluationDate, final List<Course> executionCoursesToAssociate) {
 
-        for (final ExecutionCourse executionCourse : executionCoursesToAssociate) {
+        for (final Course executionCourse : executionCoursesToAssociate) {
             final long beginDate = executionCourse.getExecutionPeriod().getBeginDate().getTime();
             final long endDate = executionCourse.getExecutionPeriod().getEndDate().getTime();
             final DateTime endDateTime = new DateTime(endDate);
@@ -127,7 +127,7 @@ public class WrittenTest extends WrittenTest_Base {
             Person person = requestor.getPerson();
             Teacher teacher = person.getTeacher();
             if (teacher != null) {
-                for (ExecutionCourse executionCourse : getAssociatedExecutionCoursesSet()) {
+                for (Course executionCourse : getAssociatedExecutionCoursesSet()) {
                     if (teacher.hasProfessorshipForExecutionCourse(executionCourse)) {
                         return true;
                     }
@@ -139,7 +139,7 @@ public class WrittenTest extends WrittenTest_Base {
 
     private boolean allowedPeriod(final Date date) {
         final YearMonthDay yearMonthDay = new YearMonthDay(date.getTime());
-        for (final ExecutionCourse executionCourse : getAssociatedExecutionCoursesSet()) {
+        for (final Course executionCourse : getAssociatedExecutionCoursesSet()) {
             final ExecutionSemester executionSemester = executionCourse.getExecutionPeriod();
             final ExecutionYear executionYear = executionCourse.getExecutionPeriod().getExecutionYear();
             for (final CurricularCourse curricularCourse : executionCourse.getAssociatedCurricularCoursesSet()) {
@@ -167,7 +167,7 @@ public class WrittenTest extends WrittenTest_Base {
             if (person != null) {
                 for (final Coordinator coordinator : person.getCoordinatorsSet()) {
                     final ExecutionDegree executionDegree = coordinator.getExecutionDegree();
-                    for (final ExecutionCourse executionCourse : getAssociatedExecutionCoursesSet()) {
+                    for (final Course executionCourse : getAssociatedExecutionCoursesSet()) {
                         if (executionCourse.getExecutionPeriod().getExecutionYear() == executionDegree.getExecutionYear()) {
                             final DegreeCurricularPlan degreeCurricularPlan = executionDegree.getDegreeCurricularPlan();
                             for (final CurricularCourse curricularCourse : executionCourse.getAssociatedCurricularCoursesSet()) {
@@ -192,7 +192,7 @@ public class WrittenTest extends WrittenTest_Base {
         return EvaluationType.TEST_TYPE;
     }
 
-    public boolean canTeacherChooseRoom(ExecutionCourse executionCourse, Teacher teacher) {
+    public boolean canTeacherChooseRoom(Course executionCourse, Teacher teacher) {
         if (executionCourse.teacherLecturesExecutionCourse(teacher)) {
             for (Lesson lesson : executionCourse.getLessons()) {
                 if (lesson.isAllIntervalIn(new Interval(getBeginningDateTime(), getEndDateTime()))) {
@@ -205,7 +205,7 @@ public class WrittenTest extends WrittenTest_Base {
 
     public Collection<Space> getTeacherAvailableRooms(Teacher teacher) {
         Collection<Space> rooms = new ArrayList<Space>();
-        for (ExecutionCourse executionCourse : getAssociatedExecutionCoursesSet()) {
+        for (Course executionCourse : getAssociatedExecutionCoursesSet()) {
             if (executionCourse.teacherLecturesExecutionCourse(teacher)) {
                 for (Lesson lesson : executionCourse.getLessons()) {
                     if (lesson.getRoomOccupation() != null
@@ -220,7 +220,7 @@ public class WrittenTest extends WrittenTest_Base {
 
     public Collection<Space> getAvailableRooms() {
         Collection<Space> rooms = new ArrayList<Space>();
-        for (ExecutionCourse executionCourse : getAssociatedExecutionCoursesSet()) {
+        for (Course executionCourse : getAssociatedExecutionCoursesSet()) {
             for (Lesson lesson : executionCourse.getLessons()) {
                 if (lesson.getRoomOccupation() != null
                         && lesson.isAllIntervalIn(new Interval(getBeginningDateTime(), getEndDateTime()))) {
@@ -250,7 +250,7 @@ public class WrittenTest extends WrittenTest_Base {
             }
         }
 
-        for (ExecutionCourse ec : getAssociatedExecutionCoursesSet()) {
+        for (Course ec : getAssociatedExecutionCoursesSet()) {
             EvaluationManagementLog.createLog(ec, Bundle.MESSAGING, "log.executionCourse.evaluation.generic.edited.rooms",
                     getPresentationName(), ec.getName(), ec.getDegreePresentationString());
         }

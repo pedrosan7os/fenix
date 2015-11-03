@@ -20,7 +20,7 @@ package org.fenixedu.academic.domain.util.icalendar;
 
 import java.util.Set;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.spaces.domain.Space;
 import org.joda.time.DateTime;
 
@@ -31,16 +31,16 @@ import com.google.common.collect.ImmutableSet;
 
 public class EvaluationEventBean extends EventBean {
 
-    Set<ExecutionCourse> course;
+    Set<Course> course;
     Space assignedRoom;
 
     public EvaluationEventBean(String title, DateTime begin, DateTime end, boolean allDay, Set<Space> rooms, String url,
-            String note, Set<ExecutionCourse> course) {
+            String note, Set<Course> course) {
         this(title, begin, end, allDay, null, rooms, url, note, course);
     }
 
     public EvaluationEventBean(String title, DateTime begin, DateTime end, boolean allDay, Space assignedRoom, Set<Space> rooms,
-            String url, String note, Set<ExecutionCourse> course) {
+            String url, String note, Set<Course> course) {
         super(title, begin, end, allDay, rooms, url, note);
         setCourses(course);
         this.assignedRoom = assignedRoom;
@@ -48,14 +48,13 @@ public class EvaluationEventBean extends EventBean {
 
     @Override
     public String getTitle() {
-        final ImmutableSet<String> acronyms =
-                FluentIterable.from(getCourses()).transform(new Function<ExecutionCourse, String>() {
+        final ImmutableSet<String> acronyms = FluentIterable.from(getCourses()).transform(new Function<Course, String>() {
 
-                    @Override
-                    public String apply(ExecutionCourse input) {
-                        return input.getSigla();
-                    }
-                }).toSet();
+            @Override
+            public String apply(Course input) {
+                return input.getSigla();
+            }
+        }).toSet();
         return super.getTitle() + " : " + Joiner.on("; ").join(acronyms);
     }
 
@@ -64,11 +63,11 @@ public class EvaluationEventBean extends EventBean {
         return super.getTitle();
     }
 
-    public Set<ExecutionCourse> getCourses() {
+    public Set<Course> getCourses() {
         return course;
     }
 
-    public void setCourses(Set<ExecutionCourse> course) {
+    public void setCourses(Set<Course> course) {
         this.course = course;
     }
 

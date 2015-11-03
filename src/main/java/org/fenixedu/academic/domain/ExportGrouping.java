@@ -34,7 +34,7 @@ public class ExportGrouping extends ExportGrouping_Base {
         setRootDomainObject(Bennu.getInstance());
     }
 
-    public ExportGrouping(Grouping groupProperties, ExecutionCourse executionCourse) {
+    public ExportGrouping(Grouping groupProperties, Course executionCourse) {
         this();
         super.setGrouping(groupProperties);
         super.setExecutionCourse(executionCourse);

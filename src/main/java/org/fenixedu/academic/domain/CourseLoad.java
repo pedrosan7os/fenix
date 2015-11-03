@@ -29,7 +29,7 @@ import org.fenixedu.bennu.core.i18n.BundleUtil;
 
 public class CourseLoad extends CourseLoad_Base {
 
-    public CourseLoad(ExecutionCourse executionCourse, ShiftType type, BigDecimal unitQuantity, BigDecimal totalQuantity) {
+    public CourseLoad(Course executionCourse, ShiftType type, BigDecimal unitQuantity, BigDecimal totalQuantity) {
 
         super();
 
@@ -61,7 +61,7 @@ public class CourseLoad extends CourseLoad_Base {
     }
 
     @Override
-    public void setExecutionCourse(ExecutionCourse executionCourse) {
+    public void setExecutionCourse(Course executionCourse) {
         if (executionCourse == null) {
             throw new DomainException("error.CourseLoad.empty.executionCourse");
         }

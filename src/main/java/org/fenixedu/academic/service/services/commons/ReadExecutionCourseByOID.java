@@ -18,7 +18,7 @@
  */
 package org.fenixedu.academic.service.services.commons;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.dto.InfoExecutionCourse;
 
 import pt.ist.fenixframework.Atomic;
@@ -28,7 +28,7 @@ public class ReadExecutionCourseByOID {
 
     @Atomic
     public static InfoExecutionCourse run(String oid) {
-        final ExecutionCourse executionCourse = FenixFramework.getDomainObject(oid);
+        final Course executionCourse = FenixFramework.getDomainObject(oid);
         return (executionCourse != null) ? InfoExecutionCourse.newInfoFromDomain(executionCourse) : null;
     }
 

@@ -21,7 +21,7 @@ package org.fenixedu.academic.ui.spring.controller.teacher;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Grouping;
 import org.joda.time.DateTime;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -53,7 +53,7 @@ public class ProjectGroupBean {
         this.externalId = null;
     }
 
-    public ProjectGroupBean(ExecutionCourse executionCourse) {
+    public ProjectGroupBean(Course executionCourse) {
         this();
         this.enrolmentBeginDay = new DateTime();
         this.externalId = null;
@@ -67,7 +67,7 @@ public class ProjectGroupBean {
         });
     }
 
-    public ProjectGroupBean(Grouping grouping, ExecutionCourse executionCourse) {
+    public ProjectGroupBean(Grouping grouping, Course executionCourse) {
         this(executionCourse);
         this.name = grouping.getName();
         this.projectDescription = grouping.getProjectDescription();

@@ -18,7 +18,7 @@
  */
 package org.fenixedu.academic.service.services.enrollment.shift;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.service.ServiceMonitoring;
@@ -43,11 +43,11 @@ public class WriteStudentAttendingCourse {
         registration.addAttendsTo(readExecutionCourse(executionCourseId));
     }
 
-    private ExecutionCourse readExecutionCourse(String executionCourseId) throws FenixServiceException {
+    private Course readExecutionCourse(String executionCourseId) throws FenixServiceException {
         if (Strings.isNullOrEmpty(executionCourseId)) {
             throw new FenixServiceException("errors.notSelected.executionCourse");
         }
-        final ExecutionCourse executionCourse = FenixFramework.getDomainObject(executionCourseId);
+        final Course executionCourse = FenixFramework.getDomainObject(executionCourseId);
         if (executionCourse == null) {
             throw new FenixServiceException("error.executionCourse.not.exist");
         }

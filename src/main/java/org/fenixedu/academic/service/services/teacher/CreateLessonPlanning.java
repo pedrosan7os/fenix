@@ -18,7 +18,7 @@
  */
 package org.fenixedu.academic.service.services.teacher;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.LessonPlanning;
 import org.fenixedu.academic.domain.ShiftType;
 import org.fenixedu.academic.service.filter.ExecutionCourseLecturingTeacherAuthorizationFilter;
@@ -30,7 +30,7 @@ import pt.ist.fenixframework.Atomic;
 public class CreateLessonPlanning {
 
     protected void run(String executionCourseId, MultiLanguageString title, MultiLanguageString planning, ShiftType lessonType,
-            ExecutionCourse executionCourse) {
+            Course executionCourse) {
 
         new LessonPlanning(title, planning, lessonType, executionCourse);
     }
@@ -41,7 +41,7 @@ public class CreateLessonPlanning {
 
     @Atomic
     public static void runCreateLessonPlanning(String executionCourseId, MultiLanguageString title, MultiLanguageString planning,
-            ShiftType lessonType, ExecutionCourse executionCourse) throws NotAuthorizedException {
+            ShiftType lessonType, Course executionCourse) throws NotAuthorizedException {
         ExecutionCourseLecturingTeacherAuthorizationFilter.instance.execute(executionCourseId);
         serviceInstance.run(executionCourseId, title, planning, lessonType, executionCourse);
     }

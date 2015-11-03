@@ -21,8 +21,8 @@ package org.fenixedu.academic.service.services.teacher;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.fenixedu.academic.domain.Attends;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Attendance;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.WrittenEvaluation;
 import org.fenixedu.academic.domain.WrittenEvaluationEnrolment;
 import org.fenixedu.academic.domain.student.Registration;
@@ -96,8 +96,8 @@ public class WrittenEvaluationRoomDistribution {
 
     private List<Registration> readAllStudentsAttendingExecutionCourses(WrittenEvaluation writtenEvaluation) {
         final List<Registration> result = new ArrayList<Registration>();
-        for (final ExecutionCourse executionCourse : writtenEvaluation.getAssociatedExecutionCoursesSet()) {
-            for (final Attends attend : executionCourse.getAttendsSet()) {
+        for (final Course executionCourse : writtenEvaluation.getAssociatedExecutionCoursesSet()) {
+            for (final Attendance attend : executionCourse.getAttendsSet()) {
                 if (!result.contains(attend.getRegistration())) {
                     result.add(attend.getRegistration());
                 }

@@ -27,12 +27,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.beanutils.BeanComparator;
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.Evaluation;
 import org.fenixedu.academic.domain.Exam;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.Grouping;
 import org.fenixedu.academic.domain.StudentGroup;
 import org.fenixedu.academic.domain.WrittenEvaluation;
@@ -109,7 +109,7 @@ public class StudentPortalBean implements Serializable {
 
             private boolean isStudentEnrolled(Grouping grouping) {
                 for (final StudentGroup studentGroup : grouping.getStudentGroupsSet()) {
-                    for (Attends attends : studentGroup.getAttendsSet()) {
+                    for (Attendance attends : studentGroup.getAttendsSet()) {
                         if (attends.getAluno().getStudent() == getStudent()) {
                             return true;
                         }
@@ -332,10 +332,10 @@ public class StudentPortalBean implements Serializable {
             }
         }
 
-        private ExecutionCourse executionCourse;
+        private Course executionCourse;
         private List<EvaluationAnnouncement> evaluationAnnouncements;
 
-        public ExecutionCoursesAnnouncements(ExecutionCourse executionCourse) {
+        public ExecutionCoursesAnnouncements(Course executionCourse) {
             setExecutionCourse(executionCourse);
             setEvaluationAnnouncements(new ArrayList<EvaluationAnnouncement>());
             for (Evaluation evaluation : executionCourse.getOrderedAssociatedEvaluations()) {
@@ -350,7 +350,7 @@ public class StudentPortalBean implements Serializable {
             }
         }
 
-        public ExecutionCourse getExecutionCourse() {
+        public Course getExecutionCourse() {
             return executionCourse;
         }
 
@@ -380,7 +380,7 @@ public class StudentPortalBean implements Serializable {
             getEvaluationAnnouncements().add(evaluationAnnouncement);
         }
 
-        public void setExecutionCourse(ExecutionCourse executionCourse) {
+        public void setExecutionCourse(Course executionCourse) {
             this.executionCourse = executionCourse;
         }
     }
@@ -389,13 +389,13 @@ public class StudentPortalBean implements Serializable {
     private Student student;
     private List<ExecutionCoursesAnnouncements> executionCoursesAnnouncements;
 
-    public StudentPortalBean(final Degree degree, final Student student, final Set<ExecutionCourse> executionCourses,
+    public StudentPortalBean(final Degree degree, final Student student, final Set<Course> executionCourses,
             final DegreeCurricularPlan activeDegreeCurricularPlan) {
         super();
         setDegree(degree);
         setStudent(student);
         setExecutionCoursesAnnouncements(new ArrayList<ExecutionCoursesAnnouncements>());
-        for (ExecutionCourse executionCourse : executionCourses) {
+        for (Course executionCourse : executionCourses) {
             addExecutionCoursesAnnouncement(new ExecutionCoursesAnnouncements(executionCourse));
         }
         Collections.sort(getExecutionCoursesAnnouncements(), new BeanComparator("executionCourse.name"));

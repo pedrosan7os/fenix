@@ -21,7 +21,7 @@ package org.fenixedu.academic.service.services.enrollment.shift;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.ShiftType;
@@ -40,7 +40,7 @@ public class ReadShiftsToEnroll {
         checkStudentRestrictionsForShiftsEnrolments(registration);
 
         final List<ShiftToEnrol> result = new ArrayList<ShiftToEnrol>();
-        for (final Attends attends : registration.readAttendsByExecutionPeriod(executionSemester)) {
+        for (final Attendance attends : registration.readAttendsByExecutionPeriod(executionSemester)) {
             result.add(buildShiftToEnrol(attends));
         }
         return result;
@@ -62,7 +62,7 @@ public class ReadShiftsToEnroll {
         }
     }
 
-    private ShiftToEnrol buildShiftToEnrol(Attends attends) {
+    private ShiftToEnrol buildShiftToEnrol(Attendance attends) {
 
         final ShiftToEnrol result = new ShiftToEnrol();
 
@@ -75,13 +75,13 @@ public class ReadShiftsToEnroll {
         return result;
     }
 
-    private void findShiftsForExecutionCourseShiftTypesFromStudentEnroledShifts(Attends attend, ShiftToEnrol result) {
+    private void findShiftsForExecutionCourseShiftTypesFromStudentEnroledShifts(Attendance attend, ShiftToEnrol result) {
         for (final Shift shift : attend.getShiftsSet()) {
             setShiftInformation(attend, result, shift);
         }
     }
 
-    private void findShiftTypesFromExecutionCourse(Attends attend, ShiftToEnrol result) {
+    private void findShiftTypesFromExecutionCourse(Attendance attend, ShiftToEnrol result) {
         for (final Shift shift : attend.getExecutionCourse().getAssociatedShifts()) {
             setShiftTypeInformation(result, shift);
         }
@@ -118,7 +118,7 @@ public class ReadShiftsToEnroll {
         }
     }
 
-    private void setShiftInformation(Attends attend, ShiftToEnrol result, final Shift shift) {
+    private void setShiftInformation(Attendance attend, ShiftToEnrol result, final Shift shift) {
 
         if (shift.getExecutionCourse() == attend.getExecutionCourse() && shift.containsType(ShiftType.TEORICA)) {
             result.setTheoricShift(shift);

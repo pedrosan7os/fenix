@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.ShiftType;
 import org.fenixedu.academic.domain.Summary;
 import org.fenixedu.academic.dto.SummariesManagementBean;
@@ -40,7 +40,7 @@ public class LastSummariesToSummariesManagementProvider implements DataProvider 
 
         if (lessonType != null) {
 
-            ExecutionCourse executionCourse = bean.getExecutionCourse();
+            Course executionCourse = bean.getExecutionCourse();
             List<Summary> summaries = new ArrayList<Summary>();
             summaries.addAll(executionCourse.getSummariesByShiftType(lessonType));
             Collections.sort(summaries, Summary.COMPARATOR_BY_DATE_AND_HOUR);

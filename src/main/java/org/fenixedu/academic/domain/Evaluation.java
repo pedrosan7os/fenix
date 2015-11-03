@@ -37,9 +37,9 @@ public abstract class Evaluation extends Evaluation_Base {
         setRootDomainObject(Bennu.getInstance());
     }
 
-    public List<ExecutionCourse> getAttendingExecutionCoursesFor(final Registration registration) {
-        final List<ExecutionCourse> result = new ArrayList<ExecutionCourse>();
-        for (final ExecutionCourse executionCourse : this.getAssociatedExecutionCoursesSet()) {
+    public List<Course> getAttendingExecutionCoursesFor(final Registration registration) {
+        final List<Course> result = new ArrayList<Course>();
+        for (final Course executionCourse : this.getAssociatedExecutionCoursesSet()) {
             if (registration.attends(executionCourse)) {
                 result.add(executionCourse);
             }
@@ -59,7 +59,7 @@ public abstract class Evaluation extends Evaluation_Base {
         super.deleteDomainObject();
     }
 
-    public Mark addNewMark(Attends attends, String markValue) {
+    public Mark addNewMark(Attendance attends, String markValue) {
         if (attends.getMarkByEvaluation(this) != null) {
             throw new DomainException("error.Evaluation.attend.already.has.mark.for.evaluation");
         }
@@ -68,7 +68,7 @@ public abstract class Evaluation extends Evaluation_Base {
 
     public abstract EvaluationType getEvaluationType();
 
-    public Mark getMarkByAttend(Attends attends) {
+    public Mark getMarkByAttend(Attendance attends) {
         for (Mark mark : getMarksSet()) {
             if (mark.getAttend().equals(attends)) {
                 return mark;
@@ -98,7 +98,7 @@ public abstract class Evaluation extends Evaluation_Base {
     }
 
     private void logAuxBasic(String key) {
-        for (ExecutionCourse ec : getAssociatedExecutionCoursesSet()) {
+        for (Course ec : getAssociatedExecutionCoursesSet()) {
             EvaluationManagementLog.createLog(ec, Bundle.MESSAGING, key, getPresentationName(), ec.getName(),
                     ec.getDegreePresentationString());
         }

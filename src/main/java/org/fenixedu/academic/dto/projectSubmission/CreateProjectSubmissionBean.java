@@ -21,7 +21,7 @@ package org.fenixedu.academic.dto.projectSubmission;
 import java.io.InputStream;
 import java.io.Serializable;
 
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.Project;
 import org.fenixedu.academic.domain.StudentGroup;
@@ -31,7 +31,7 @@ public class CreateProjectSubmissionBean implements Serializable {
 
     private StudentGroup studentGroupReference;
 
-    private Attends attendsReference;
+    private Attendance attendsReference;
 
     private Project projectReference;
 
@@ -50,12 +50,12 @@ public class CreateProjectSubmissionBean implements Serializable {
         this.studentGroupReference = studentGroup;
     }
 
-    public Attends getAttends() {
+    public Attendance getAttends() {
         return this.attendsReference;
 
     }
 
-    public void setAttends(Attends attends) {
+    public void setAttends(Attendance attends) {
         this.attendsReference = attends;
 
     }

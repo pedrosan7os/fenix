@@ -33,11 +33,11 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.struts.util.MessageResources;
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.Evaluation;
 import org.fenixedu.academic.domain.Exam;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExecutionYear;
@@ -59,10 +59,10 @@ public class StudentCalendarBackingBean extends FenixBackingBean {
 
     private static final MessageResources messages = MessageResources.getMessageResources(Bundle.STUDENT);
 
-    private static final Comparator<ExecutionCourse> executionCourseComparator = new Comparator<ExecutionCourse>() {
+    private static final Comparator<Course> executionCourseComparator = new Comparator<Course>() {
 
         @Override
-        public int compare(ExecutionCourse o1, ExecutionCourse o2) {
+        public int compare(Course o1, Course o2) {
             return o1.getNome().compareTo(o2.getNome());
         }
 
@@ -70,7 +70,7 @@ public class StudentCalendarBackingBean extends FenixBackingBean {
 
     private Collection<ExecutionSemester> executionSemesters;
 
-    private Collection<ExecutionCourse> executionCourses;
+    private Collection<Course> executionCourses;
 
     private ExecutionSemester executionSemester;
 
@@ -90,7 +90,7 @@ public class StudentCalendarBackingBean extends FenixBackingBean {
 
             executionSemesters = new TreeSet<ExecutionSemester>(ExecutionSemester.COMPARATOR_BY_SEMESTER_AND_YEAR);
             if (registration != null) {
-                for (final Attends attends : registration.getAssociatedAttendsSet()) {
+                for (final Attendance attends : registration.getAssociatedAttendsSet()) {
                     executionSemesters.add(attends.getExecutionCourse().getExecutionPeriod());
                 }
             }
@@ -98,17 +98,17 @@ public class StudentCalendarBackingBean extends FenixBackingBean {
         return executionSemesters;
     }
 
-    public Collection<ExecutionCourse> getExecutionCourses() {
+    public Collection<Course> getExecutionCourses() {
         final ExecutionSemester executionSemester = getExecutionPeriod();
 
         if (executionCourses == null
                 || (!executionCourses.isEmpty() && executionSemester != executionCourses.iterator().next().getExecutionPeriod())) {
             final Registration registration = getStudent();
 
-            executionCourses = new TreeSet<ExecutionCourse>(executionCourseComparator);
+            executionCourses = new TreeSet<Course>(executionCourseComparator);
             if (registration != null) {
-                for (final Attends attends : registration.getAssociatedAttendsSet()) {
-                    final ExecutionCourse executionCourse = attends.getExecutionCourse();
+                for (final Attendance attends : registration.getAssociatedAttendsSet()) {
+                    final Course executionCourse = attends.getExecutionCourse();
                     if (executionCourse.getExecutionPeriod() == executionSemester) {
                         executionCourses.add(executionCourse);
                     }
@@ -266,8 +266,8 @@ public class StudentCalendarBackingBean extends FenixBackingBean {
         final ExecutionSemester executionSemester = getExecutionPeriod();
         final Registration registration = getStudent();
 
-        for (final Attends attends : registration.getAssociatedAttendsSet()) {
-            final ExecutionCourse executionCourse = attends.getExecutionCourse();
+        for (final Attendance attends : registration.getAssociatedAttendsSet()) {
+            final Course executionCourse = attends.getExecutionCourse();
             if (executionCourse.getExecutionPeriod() == executionSemester
                     && (getExecutionCourseID() == null || getExecutionCourseID().equals(executionCourse.getExternalId()))) {
                 for (final Evaluation evaluation : executionCourse.getAssociatedEvaluationsSet()) {
@@ -331,14 +331,14 @@ public class StudentCalendarBackingBean extends FenixBackingBean {
     public List<SelectItem> getExecutionCourseSelectItems() {
         final List<SelectItem> executionPeriodSelectItems = new ArrayList<SelectItem>();
 
-        for (final ExecutionCourse executionCourse : getExecutionCourses()) {
+        for (final Course executionCourse : getExecutionCourses()) {
             executionPeriodSelectItems.add(new SelectItem(executionCourse.getExternalId(), executionCourse.getNome()));
         }
 
         return executionPeriodSelectItems;
     }
 
-    private Map<String, String> constructLinkParameters(final ExecutionCourse executionCourse) {
+    private Map<String, String> constructLinkParameters(final Course executionCourse) {
         final Map<String, String> linkParameters = new HashMap<String, String>();
         linkParameters.put("method", "evaluations");
         linkParameters.put("executionPeriodOID", executionCourse.getExecutionPeriod().getExternalId().toString());
@@ -346,7 +346,7 @@ public class StudentCalendarBackingBean extends FenixBackingBean {
         return linkParameters;
     }
 
-    private String constructCalendarPresentation(final ExecutionCourse executionCourse, final Project project, final Date time,
+    private String constructCalendarPresentation(final Course executionCourse, final Project project, final Date time,
             final String tail) {
         final StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(messages.getMessage("label.evaluation.shortname.project"));

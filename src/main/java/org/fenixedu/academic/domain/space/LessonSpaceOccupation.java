@@ -23,7 +23,7 @@ import static org.fenixedu.academic.predicate.AccessControl.check;
 import java.util.List;
 import java.util.SortedSet;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.FrequencyType;
 import org.fenixedu.academic.domain.Lesson;
 import org.fenixedu.academic.domain.OccupationPeriod;
@@ -160,7 +160,7 @@ public class LessonSpaceOccupation extends LessonSpaceOccupation_Base {
     }
 
     @Override
-    public boolean isOccupiedByExecutionCourse(final ExecutionCourse executionCourse, final DateTime start, final DateTime end) {
+    public boolean isOccupiedByExecutionCourse(final Course executionCourse, final DateTime start, final DateTime end) {
         final Lesson lesson = getLesson();
         if (lesson.getExecutionCourse() == executionCourse) {
             final List<Interval> intervals =

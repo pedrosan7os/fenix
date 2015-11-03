@@ -100,8 +100,8 @@ public class Grouping extends Grouping_Base {
         }
     }
 
-    public List<ExecutionCourse> getExecutionCourses() {
-        final List<ExecutionCourse> result = new ArrayList<ExecutionCourse>();
+    public List<Course> getExecutionCourses() {
+        final List<Course> result = new ArrayList<Course>();
         for (final ExportGrouping exportGrouping : this.getExportGroupingsSet()) {
             if (exportGrouping.getProposalState().getState() == ProposalState.ACEITE
                     || exportGrouping.getProposalState().getState() == ProposalState.CRIADOR) {
@@ -136,7 +136,7 @@ public class Grouping extends Grouping_Base {
         for (final ExportGrouping exportGrouping : this.getExportGroupingsSet()) {
             if (exportGrouping.getProposalState().getState() == ProposalState.ACEITE
                     || exportGrouping.getProposalState().getState() == ProposalState.CRIADOR) {
-                for (final Attends attend : exportGrouping.getExecutionCourse().getAttendsSet()) {
+                for (final Attendance attend : exportGrouping.getExecutionCourse().getAttendsSet()) {
                     if (!this.getAttendsSet().contains(attend)) {
                         numberOfStudents++;
                     }
@@ -163,8 +163,8 @@ public class Grouping extends Grouping_Base {
         return this.getAttendsSet().size();
     }
 
-    public Attends getStudentAttend(final Registration registration) {
-        for (final Attends attend : this.getAttendsSet()) {
+    public Attendance getStudentAttend(final Registration registration) {
+        for (final Attendance attend : this.getAttendsSet()) {
             if (attend.getRegistration().getStudent() == registration.getStudent()) {
                 return attend;
             }
@@ -172,8 +172,8 @@ public class Grouping extends Grouping_Base {
         return null;
     }
 
-    public Attends getStudentAttend(String studentUsername) {
-        for (final Attends attend : this.getAttendsSet()) {
+    public Attendance getStudentAttend(String studentUsername) {
+        for (final Attendance attend : this.getAttendsSet()) {
             if (attend.getRegistration().getPerson().getUsername().equals(studentUsername)) {
                 return attend;
             }
@@ -203,7 +203,7 @@ public class Grouping extends Grouping_Base {
     public static Grouping create(String goupingName, Date enrolmentBeginDay, Date enrolmentEndDay,
             EnrolmentGroupPolicyType enrolmentGroupPolicyType, Integer groupMaximumNumber, Integer idealCapacity,
             Integer maximumCapacity, Integer minimumCapacity, String projectDescription, ShiftType shiftType,
-            Boolean automaticEnrolment, Boolean differentiatedCapacity, ExecutionCourse executionCourse,
+            Boolean automaticEnrolment, Boolean differentiatedCapacity, Course executionCourse,
             Map<String, Integer> shiftCapacityMap) {
 
         if (goupingName == null || enrolmentBeginDay == null || enrolmentEndDay == null || enrolmentGroupPolicyType == null) {
@@ -241,14 +241,13 @@ public class Grouping extends Grouping_Base {
 
     }
 
-    private static void addGroupingToAttends(final Grouping grouping, final Collection<Attends> attends) {
-        for (final Attends attend : attends) {
+    private static void addGroupingToAttends(final Grouping grouping, final Collection<Attendance> attends) {
+        for (final Attendance attend : attends) {
             attend.addGroupings(grouping);
         }
     }
 
-    private static void checkIfGroupingAlreadyExistInExecutionCourse(final String goupingName,
-            final ExecutionCourse executionCourse) {
+    private static void checkIfGroupingAlreadyExistInExecutionCourse(final String goupingName, final Course executionCourse) {
         if (executionCourse.getGroupingByName(goupingName) != null) {
             throw new DomainException("error.exception.existing.groupProperties");
         }
@@ -324,8 +323,8 @@ public class Grouping extends Grouping_Base {
             unEnrollStudentGroups(this.getStudentGroupsSet());
         }
 
-        List<ExecutionCourse> ecs = getExecutionCourses();
-        for (ExecutionCourse ec : ecs) {
+        List<Course> ecs = getExecutionCourses();
+        for (Course ec : ecs) {
             GroupsAndShiftsManagementLog.createLog(ec, Bundle.MESSAGING, "log.executionCourse.groupAndShifts.grouping.edited",
                     getName(), ec.getNome(), ec.getDegreePresentationString());
         }
@@ -379,7 +378,7 @@ public class Grouping extends Grouping_Base {
 
     private void checkIfGroupingAlreadyExists(String groupingName) {
         if (!this.getName().equals(groupingName)) {
-            for (final ExecutionCourse executionCourse : this.getExecutionCourses()) {
+            for (final Course executionCourse : this.getExecutionCourses()) {
                 if (executionCourse.getGroupingByName(groupingName) != null) {
                     throw new DomainException(this.getClass().getName(), "error.exception.existing.groupProperties");
                 }
@@ -415,7 +414,7 @@ public class Grouping extends Grouping_Base {
         StringBuilder sbStudentNumbers = new StringBuilder("");
         sbStudentNumbers.setLength(0);
         for (Registration registration : students) {
-            Attends attend = getStudentAttend(registration);
+            Attendance attend = getStudentAttend(registration);
             newStudentGroup.addAttends(attend);
             if (sbStudentNumbers.length() != 0) {
                 sbStudentNumbers.append(", " + registration.getNumber().toString());
@@ -431,8 +430,8 @@ public class Grouping extends Grouping_Base {
             labelKey = "log.executionCourse.groupAndShifts.grouping.group.added";
         }
 
-        List<ExecutionCourse> ecs = getExecutionCourses();
-        for (ExecutionCourse ec : ecs) {
+        List<Course> ecs = getExecutionCourses();
+        for (Course ec : ecs) {
             GroupsAndShiftsManagementLog.createLog(ec, Bundle.MESSAGING, labelKey, groupNumber.toString(), getName(),
                     Integer.toString(students.size()), sbStudentNumbers.toString(), ec.getNome(),
                     ec.getDegreePresentationString());
@@ -441,7 +440,7 @@ public class Grouping extends Grouping_Base {
 
     private void checkForStudentsInStudentGroupsAndGrouping(List<Registration> students) {
         for (Registration registration : students) {
-            Attends attend = getStudentAttend(registration);
+            Attendance attend = getStudentAttend(registration);
             for (final StudentGroup studentGroup : this.getStudentGroupsSet()) {
                 if (studentGroup.getAttendsSet().contains(attend)) {
                     throw new DomainException(this.getClass().getName(), "errors.existing.studentEnrolment");
@@ -462,16 +461,16 @@ public class Grouping extends Grouping_Base {
             throw new DomainException("error.grouping.cannotDeleteGroupingUsedInAccessControl");
         }
 
-        List<ExecutionCourse> ecs = getExecutionCourses();
-        for (ExecutionCourse ec : ecs) {
+        List<Course> ecs = getExecutionCourses();
+        for (Course ec : ecs) {
             GroupsAndShiftsManagementLog.createLog(ec, Bundle.MESSAGING, "log.executionCourse.groupAndShifts.grouping.removed",
                     getName(), ec.getNome(), ec.getDegreePresentationString());
         }
 
-        Collection<Attends> attends = this.getAttendsSet();
-        List<Attends> attendsAux = new ArrayList<Attends>();
+        Collection<Attendance> attends = this.getAttendsSet();
+        List<Attendance> attendsAux = new ArrayList<Attendance>();
         attendsAux.addAll(attends);
-        for (Attends attend : attendsAux) {
+        for (Attendance attend : attendsAux) {
             attend.removeGroupings(this);
         }
 
@@ -479,7 +478,7 @@ public class Grouping extends Grouping_Base {
         List<ExportGrouping> exportGroupingsAux = new ArrayList<ExportGrouping>();
         exportGroupingsAux.addAll(exportGroupings);
         for (ExportGrouping exportGrouping : exportGroupingsAux) {
-            ExecutionCourse executionCourse = exportGrouping.getExecutionCourse();
+            Course executionCourse = exportGrouping.getExecutionCourse();
             executionCourse.removeExportGroupings(exportGrouping);
             exportGrouping.delete();
         }
@@ -504,7 +503,7 @@ public class Grouping extends Grouping_Base {
         return max;
     }
 
-    public ExportGrouping getExportGrouping(final ExecutionCourse executionCourse) {
+    public ExportGrouping getExportGrouping(final Course executionCourse) {
         for (final ExportGrouping exportGrouping : this.getExportGroupingsSet()) {
             if (exportGrouping.getExecutionCourse() == executionCourse) {
                 return exportGrouping;
@@ -513,11 +512,11 @@ public class Grouping extends Grouping_Base {
         return null;
     }
 
-    public boolean hasExportGrouping(final ExecutionCourse executionCourse) {
+    public boolean hasExportGrouping(final Course executionCourse) {
         return getExportGrouping(executionCourse) != null;
     }
 
-    public StudentGroup getStudentGroupByAttends(Attends attends) {
+    public StudentGroup getStudentGroupByAttends(Attendance attends) {
         for (StudentGroup studentGroup : getStudentGroupsSet()) {
             if (studentGroup.getAttendsSet().contains(attends)) {
                 return studentGroup;
@@ -553,8 +552,8 @@ public class Grouping extends Grouping_Base {
     }
 
     public boolean isPersonTeacher(Person person) {
-        for (ExecutionCourse ec : getExecutionCourses()) {
-            for (Professorship professorship : ec.getProfessorshipsSet()) {
+        for (Course ec : getExecutionCourses()) {
+            for (CourseTeacher professorship : ec.getProfessorshipsSet()) {
                 if (professorship.getPerson() == person) {
                     return true;
                 }

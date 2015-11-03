@@ -32,7 +32,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-import org.fenixedu.academic.domain.Attends;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.Project;
 import org.fenixedu.academic.domain.ProjectSubmission;
 import org.fenixedu.academic.domain.StudentGroup;
@@ -66,7 +66,7 @@ import com.google.common.io.ByteStreams;
 @Forwards(value = {
         @Forward(name = "viewProjectSubmissions", path = "/student/projectSubmissions/viewProjectSubmissions.jsp"),
         @Forward(name = "viewProjectsWithOnlineSubmission",
-        path = "/student/projectSubmissions/viewProjectsWithOnlineSubmission.jsp"),
+                path = "/student/projectSubmissions/viewProjectsWithOnlineSubmission.jsp"),
         @Forward(name = "submitProject", path = "/student/projectSubmissions/submitProject.jsp") })
 public class ProjectSubmissionDispatchAction extends FenixDispatchAction {
 
@@ -90,7 +90,7 @@ public class ProjectSubmissionDispatchAction extends FenixDispatchAction {
     public ActionForward viewProjectSubmissions(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws FenixActionException, FenixServiceException {
 
-        final Attends attends = getAttends(request);
+        final Attendance attends = getAttends(request);
         final Project project = getProject(request);
         final StudentGroup studentGroup = project.getGrouping().getStudentGroupByAttends(attends);
 
@@ -116,7 +116,7 @@ public class ProjectSubmissionDispatchAction extends FenixDispatchAction {
         ProjectSubmission submission = getProjectSubmission(request);
 
         if (submission != null && submission.getStudentGroup().isPersonInStudentGroup(getLoggedPerson(request))) {
-            Attends attends = getAttends(request);
+            Attendance attends = getAttends(request);
             Project project = getProject(request);
             StudentGroup studentGroup = project.getGrouping().getStudentGroupByAttends(attends);
             String rowClasses = "";
@@ -146,7 +146,7 @@ public class ProjectSubmissionDispatchAction extends FenixDispatchAction {
     public ActionForward prepareProjectSubmission(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws FenixActionException, FenixServiceException {
 
-        Attends attends = getAttends(request);
+        Attendance attends = getAttends(request);
         Project project = getProject(request);
         StudentGroup studentGroup = project.getGrouping().getStudentGroupByAttends(attends);
 
@@ -204,7 +204,7 @@ public class ProjectSubmissionDispatchAction extends FenixDispatchAction {
         return getDomainObject(request, "projectId");
     }
 
-    private Attends getAttends(HttpServletRequest request) {
+    private Attendance getAttends(HttpServletRequest request) {
         return getDomainObject(request, "attendsId");
     }
 

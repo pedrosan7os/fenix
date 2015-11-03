@@ -38,8 +38,7 @@ public class LessonPlanning extends LessonPlanning_Base {
 
     };
 
-    public LessonPlanning(MultiLanguageString title, MultiLanguageString planning, ShiftType lessonType,
-            ExecutionCourse executionCourse) {
+    public LessonPlanning(MultiLanguageString title, MultiLanguageString planning, ShiftType lessonType, Course executionCourse) {
         super();
         setRootDomainObject(Bennu.getInstance());
         setLastOrder(executionCourse, lessonType);
@@ -83,7 +82,7 @@ public class LessonPlanning extends LessonPlanning_Base {
     }
 
     @Override
-    public void setExecutionCourse(ExecutionCourse executionCourse) {
+    public void setExecutionCourse(Course executionCourse) {
         if (executionCourse == null) {
             throw new DomainException("error.LessonPlanning.no.executionCourse");
         }
@@ -134,7 +133,7 @@ public class LessonPlanning extends LessonPlanning_Base {
         }
     }
 
-    private void setLastOrder(ExecutionCourse executionCourse, ShiftType lessonType) {
+    private void setLastOrder(Course executionCourse, ShiftType lessonType) {
         List<LessonPlanning> lessonPlannings = executionCourse.getLessonPlanningsOrderedByOrder(lessonType);
         Integer order =
                 (!lessonPlannings.isEmpty()) ? (lessonPlannings.get(lessonPlannings.size() - 1).getOrderOfPlanning() + 1) : 1;

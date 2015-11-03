@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 
-import org.fenixedu.academic.domain.Attends;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Attendance;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Grouping;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.ShiftType;
@@ -51,7 +51,7 @@ public class StudentGroupService {
     }
 
     @Atomic
-    public Grouping createOrEditGrouping(ProjectGroupBean bean, ExecutionCourse executionCourse) {
+    public Grouping createOrEditGrouping(ProjectGroupBean bean, Course executionCourse) {
         EnrolmentGroupPolicyType enrolmentPolicyType =
                 bean.getAtomicEnrolmentPolicy() != null && bean.getAtomicEnrolmentPolicy() ? new EnrolmentGroupPolicyType(1) : new EnrolmentGroupPolicyType(
                         2);
@@ -82,7 +82,7 @@ public class StudentGroupService {
     public void updateGroupingAttends(Grouping grouping, Map<String, Boolean> studentsToRemove, Map<String, Boolean> studentsToAdd) {
         for (Map.Entry<String, Boolean> entry : studentsToRemove.entrySet()) {
             if (entry.getValue()) {
-                Attends attends = (Attends) FenixFramework.getDomainObject(entry.getKey());
+                Attendance attends = (Attendance) FenixFramework.getDomainObject(entry.getKey());
                 if (attends != null) {
                     grouping.getStudentGroupsSet().forEach(studentGroup -> studentGroup.removeAttends(attends));
                     grouping.removeAttends(attends);
@@ -95,7 +95,7 @@ public class StudentGroupService {
                 Registration registration = (Registration) FenixFramework.getDomainObject(entry.getKey());
 
                 if (grouping.getAttendsSet().stream().noneMatch(attends -> attends.getRegistration().equals(registration))) {
-                    Optional<Attends> opt =
+                    Optional<Attendance> opt =
                             registration.getAssociatedAttendsSet().stream()
                                     .filter(attends -> grouping.getExecutionCourses().stream().anyMatch(ec -> attends.isFor(ec)))
                                     .findAny();
@@ -122,7 +122,7 @@ public class StudentGroupService {
 
         for (Map.Entry<String, Boolean> entry : studentsToRemove.entrySet()) {
             if (entry.getValue()) {
-                Attends attends = (Attends) FenixFramework.getDomainObject(entry.getKey());
+                Attendance attends = (Attendance) FenixFramework.getDomainObject(entry.getKey());
                 if (attends != null) {
                     studentGroup.removeAttends(attends);
                 }
@@ -131,7 +131,7 @@ public class StudentGroupService {
 
         for (Map.Entry<String, Boolean> entry : studentsToAdd.entrySet()) {
             if (entry.getValue()) {
-                Attends attends = (Attends) FenixFramework.getDomainObject(entry.getKey());
+                Attendance attends = (Attendance) FenixFramework.getDomainObject(entry.getKey());
                 if (attends != null) {
                     studentGroup.addAttends(attends);
                 }

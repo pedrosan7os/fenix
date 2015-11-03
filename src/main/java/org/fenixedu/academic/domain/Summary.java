@@ -78,7 +78,7 @@ public class Summary extends Summary_Base {
     };
 
     public Summary(MultiLanguageString title, MultiLanguageString summaryText, Integer studentsNumber, Boolean isExtraLesson,
-            Professorship professorship, String teacherName, Shift shift, Lesson lesson, YearMonthDay date, Space room,
+            CourseTeacher professorship, String teacherName, Shift shift, Lesson lesson, YearMonthDay date, Space room,
             Partial hour, ShiftType type, Boolean taught) {
 
         super();
@@ -92,7 +92,7 @@ public class Summary extends Summary_Base {
     }
 
     public void edit(MultiLanguageString title, MultiLanguageString summaryText, Integer studentsNumber, Boolean isExtraLesson,
-            Professorship professorship, String teacherName, Shift shift, Lesson lesson, YearMonthDay date, Space room,
+            CourseTeacher professorship, String teacherName, Shift shift, Lesson lesson, YearMonthDay date, Space room,
             Partial hour, ShiftType type, Boolean taught) {
 
         fillSummaryWithInfo(title, summaryText, studentsNumber, isExtraLesson, professorship, teacherName, shift, lesson, date,
@@ -106,7 +106,7 @@ public class Summary extends Summary_Base {
     }
 
     private void fillSummaryWithInfo(MultiLanguageString title, MultiLanguageString summaryText, Integer studentsNumber,
-            Boolean isExtraLesson, Professorship professorship, String teacherName, Shift shift, Lesson lesson, YearMonthDay day,
+            Boolean isExtraLesson, CourseTeacher professorship, String teacherName, Shift shift, Lesson lesson, YearMonthDay day,
             Space room, Partial hour, ShiftType type, Boolean taught) {
 
         setShift(shift);
@@ -199,7 +199,7 @@ public class Summary extends Summary_Base {
     }
 
     @Override
-    public void setExecutionCourse(ExecutionCourse executionCourse) {
+    public void setExecutionCourse(Course executionCourse) {
         if (executionCourse == null) {
             throw new DomainException("error.summary.no.executionCourse");
         }
@@ -264,13 +264,13 @@ public class Summary extends Summary_Base {
         }
     }
 
-    private void checkIfInternalTeacherHasProfessorhipInExecutionCourse(Teacher teacher, ExecutionCourse executionCourse) {
+    private void checkIfInternalTeacherHasProfessorhipInExecutionCourse(Teacher teacher, Course executionCourse) {
         if (teacher != null && teacher.getProfessorshipByExecutionCourse(executionCourse) != null) {
             throw new DomainException("error.summary.teacher.is.executionCourse.professorship");
         }
     }
 
-    private void checkSpecialParameters(Boolean isExtraLesson, Professorship professorship, String teacherName, Lesson lesson,
+    private void checkSpecialParameters(Boolean isExtraLesson, CourseTeacher professorship, String teacherName, Lesson lesson,
             Partial hour, ShiftType type) {
 
         if (professorship == null && StringUtils.isEmpty(teacherName)) {

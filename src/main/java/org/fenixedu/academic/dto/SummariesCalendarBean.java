@@ -18,13 +18,13 @@
  */
 package org.fenixedu.academic.dto;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 
 public class SummariesCalendarBean extends ShowSummariesBean {
 
     private LessonCalendarViewType calendarViewType;
 
-    public SummariesCalendarBean(ExecutionCourse executionCourse) {
+    public SummariesCalendarBean(Course executionCourse) {
         setExecutionCourse(executionCourse);
         setCalendarViewType(LessonCalendarViewType.ALL_LESSONS);
     }

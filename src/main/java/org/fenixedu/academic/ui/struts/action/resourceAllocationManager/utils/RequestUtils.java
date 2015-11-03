@@ -28,7 +28,7 @@ package org.fenixedu.academic.ui.struts.action.resourceAllocationManager.utils;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.time.calendarStructure.AcademicInterval;
 import org.fenixedu.academic.dto.InfoExecutionCourse;
 import org.fenixedu.academic.dto.InfoExecutionDegree;
@@ -55,8 +55,8 @@ public abstract class RequestUtils {
                 AcademicInterval.getAcademicIntervalFromResumedString((String) request
                         .getAttribute(PresentationConstants.ACADEMIC_INTERVAL));
 
-        final ExecutionCourse executionCourse =
-                ExecutionCourse.getExecutionCourseByInitials(academicInterval, infoExecutionCourseInitials);
+        final Course executionCourse =
+                Course.getExecutionCourseByInitials(academicInterval, infoExecutionCourseInitials);
         if (executionCourse != null) {
             return InfoExecutionCourse.newInfoFromDomain(executionCourse);
         }

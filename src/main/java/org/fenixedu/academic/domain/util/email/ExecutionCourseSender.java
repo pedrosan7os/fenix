@@ -20,7 +20,7 @@ package org.fenixedu.academic.domain.util.email;
 
 import java.util.Comparator;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.accessControl.StudentGroup;
 import org.fenixedu.academic.domain.accessControl.TeacherGroup;
@@ -39,8 +39,8 @@ public class ExecutionCourseSender extends ExecutionCourseSender_Base {
                 @Override
                 public int compare(final ExecutionCourseSender executionCourseSender1,
                         final ExecutionCourseSender executionCourseSender2) {
-                    final ExecutionCourse executionCourse1 = executionCourseSender1.getCourse();
-                    final ExecutionCourse executionCourse2 = executionCourseSender2.getCourse();
+                    final Course executionCourse1 = executionCourseSender1.getCourse();
+                    final Course executionCourse2 = executionCourseSender2.getCourse();
                     final ExecutionSemester executionSemester1 = executionCourse1.getExecutionPeriod();
                     final ExecutionSemester executionSemester2 = executionCourse2.getExecutionPeriod();
                     final int p = executionSemester1.compareTo(executionSemester2);
@@ -52,7 +52,7 @@ public class ExecutionCourseSender extends ExecutionCourseSender_Base {
                 }
             };
 
-    public ExecutionCourseSender(ExecutionCourse executionCourse) {
+    public ExecutionCourseSender(Course executionCourse) {
         super();
         setCourse(executionCourse);
         setFromAddress(Sender.getNoreplyMail());
@@ -98,7 +98,7 @@ public class ExecutionCourseSender extends ExecutionCourseSender_Base {
     }
 
     @Atomic
-    public static ExecutionCourseSender newInstance(ExecutionCourse ec) {
+    public static ExecutionCourseSender newInstance(Course ec) {
         ExecutionCourseSender sender = ec.getSender();
         return sender == null ? new ExecutionCourseSender(ec) : sender;
     }

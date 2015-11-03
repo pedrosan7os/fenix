@@ -44,7 +44,7 @@ public class ExecutionCourseLog extends ExecutionCourseLog_Base {
         super();
     }
 
-    public ExecutionCourseLog(ExecutionCourse executionCourse, String description) {
+    public ExecutionCourseLog(Course executionCourse, String description) {
         super();
         if (getExecutionCourse() == null) {
             setExecutionCourse(executionCourse);

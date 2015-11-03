@@ -29,8 +29,8 @@ import static org.fenixedu.academic.predicate.AccessControl.check;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.fenixedu.academic.domain.Attends;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Attendance;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.dto.InfoStudent;
 import org.fenixedu.academic.dto.ShiftKey;
@@ -45,10 +45,10 @@ public class LerAlunosDeTurno {
     public static List<InfoStudent> run(ShiftKey keyTurno) {
         check(RolePredicates.RESOURCE_ALLOCATION_MANAGER_PREDICATE);
 
-        final ExecutionCourse executionCourse = FenixFramework.getDomainObject(keyTurno.getInfoExecutionCourse().getExternalId());
+        final Course executionCourse = FenixFramework.getDomainObject(keyTurno.getInfoExecutionCourse().getExternalId());
         final Shift shift = executionCourse.findShiftByName(keyTurno.getShiftName());
 
-        return shift.getAttendsSet().stream().map(Attends::getRegistration).map(InfoStudent::new).collect(Collectors.toList());
+        return shift.getAttendsSet().stream().map(Attendance::getRegistration).map(InfoStudent::new).collect(Collectors.toList());
     }
 
 }

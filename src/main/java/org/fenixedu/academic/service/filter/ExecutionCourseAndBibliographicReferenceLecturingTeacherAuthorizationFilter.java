@@ -26,8 +26,8 @@ package org.fenixedu.academic.service.filter;
 import java.util.Iterator;
 
 import org.fenixedu.academic.domain.BibliographicReference;
-import org.fenixedu.academic.domain.ExecutionCourse;
-import org.fenixedu.academic.domain.Professorship;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.Teacher;
 import org.fenixedu.academic.domain.person.RoleType;
 import org.fenixedu.academic.service.services.exceptions.NotAuthorizedException;
@@ -72,12 +72,12 @@ public class ExecutionCourseAndBibliographicReferenceLecturingTeacherAuthorizati
         final Teacher teacher = Teacher.readTeacherByUsername(id.getUsername());
 
         if (bibliographicReference != null && teacher != null) {
-            final ExecutionCourse executionCourse = bibliographicReference.getExecutionCourse();
+            final Course executionCourse = bibliographicReference.getExecutionCourse();
             final Iterator associatedProfessorships = teacher.getProfessorshipsIterator();
-            // Check if Teacher has a professorship to ExecutionCourse
+            // Check if Teacher has a professorship to Course
             // BibliographicReference
             while (associatedProfessorships.hasNext()) {
-                Professorship professorship = (Professorship) associatedProfessorships.next();
+                CourseTeacher professorship = (CourseTeacher) associatedProfessorships.next();
                 if (professorship.getExecutionCourse().equals(executionCourse)) {
                     result = true;
                     break;

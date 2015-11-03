@@ -22,10 +22,10 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.Lesson;
 import org.fenixedu.academic.domain.LessonPlanning;
-import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.ShiftType;
 import org.fenixedu.academic.domain.Summary;
@@ -38,7 +38,7 @@ import org.joda.time.YearMonthDay;
 
 public class SummariesManagementBean implements Serializable {
 
-    private ExecutionCourse executionCourseReference;
+    private Course executionCourseReference;
 
     private SummaryType summaryType;
 
@@ -52,7 +52,7 @@ public class SummariesManagementBean implements Serializable {
 
     private Partial summaryTime;
 
-    private Professorship professorshipReference;
+    private CourseTeacher professorshipReference;
 
     private Teacher teacherReference;
 
@@ -72,7 +72,7 @@ public class SummariesManagementBean implements Serializable {
 
     private Summary summaryReference;
 
-    private Professorship professorshipLoggedReference;
+    private CourseTeacher professorshipLoggedReference;
 
     private Boolean taught;
 
@@ -81,7 +81,7 @@ public class SummariesManagementBean implements Serializable {
     protected SummariesManagementBean() {
     }
 
-    public SummariesManagementBean(SummaryType summaryType, ExecutionCourse executionCourse, Professorship professorship,
+    public SummariesManagementBean(SummaryType summaryType, Course executionCourse, CourseTeacher professorship,
             List<NextPossibleSummaryLessonsAndDatesBean> nextPossibleSummaryLessonsAndDatesBean) {
         setSummaryType(summaryType);
         setExecutionCourse(executionCourse);
@@ -92,8 +92,8 @@ public class SummariesManagementBean implements Serializable {
     }
 
     public SummariesManagementBean(MultiLanguageString title, MultiLanguageString summaryText, Integer studentsNumber,
-            SummaryType summaryType, Professorship professorship, String teacherName, Shift shift, Lesson lesson,
-            YearMonthDay summaryDate, Space summaryRoom, Partial summaryTime, Summary summary, Professorship professorshipLogged,
+            SummaryType summaryType, CourseTeacher professorship, String teacherName, Shift shift, Lesson lesson,
+            YearMonthDay summaryDate, Space summaryRoom, Partial summaryTime, Summary summary, CourseTeacher professorshipLogged,
             ShiftType lessonType, Boolean taught) {
 
         setTitle(title);
@@ -139,11 +139,11 @@ public class SummariesManagementBean implements Serializable {
         this.summaryReference = summary;
     }
 
-    public ExecutionCourse getExecutionCourse() {
+    public Course getExecutionCourse() {
         return this.executionCourseReference;
     }
 
-    public void setExecutionCourse(ExecutionCourse executionCourse) {
+    public void setExecutionCourse(Course executionCourse) {
         this.executionCourseReference = executionCourse;
     }
 
@@ -155,11 +155,11 @@ public class SummariesManagementBean implements Serializable {
         this.teacherReference = teacher;
     }
 
-    public Professorship getProfessorshipLogged() {
+    public CourseTeacher getProfessorshipLogged() {
         return this.professorshipLoggedReference;
     }
 
-    public void setProfessorshipLogged(Professorship professorship) {
+    public void setProfessorshipLogged(CourseTeacher professorship) {
         this.professorshipLoggedReference = professorship;
     }
 
@@ -179,11 +179,11 @@ public class SummariesManagementBean implements Serializable {
         this.lessonPlannigReference = lessonPlanning;
     }
 
-    public Professorship getProfessorship() {
+    public CourseTeacher getProfessorship() {
         return this.professorshipReference;
     }
 
-    public void setProfessorship(Professorship professorship) {
+    public void setProfessorship(CourseTeacher professorship) {
         this.professorshipReference = professorship;
     }
 

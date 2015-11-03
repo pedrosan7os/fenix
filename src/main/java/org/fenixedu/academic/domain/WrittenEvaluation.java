@@ -87,10 +87,10 @@ abstract public class WrittenEvaluation extends WrittenEvaluation_Base {
     }
 
     public String getName() {
-        Collection<ExecutionCourse> courses = this.getAssociatedExecutionCoursesSet();
+        Collection<Course> courses = this.getAssociatedExecutionCoursesSet();
         String name = "";
         int i = 0;
-        for (ExecutionCourse course : courses) {
+        for (Course course : courses) {
             if (i > 0) {
                 name = name + ", ";
             }
@@ -101,10 +101,10 @@ abstract public class WrittenEvaluation extends WrittenEvaluation_Base {
     }
 
     public String getFullName() {
-        Collection<ExecutionCourse> courses = this.getAssociatedExecutionCoursesSet();
+        Collection<Course> courses = this.getAssociatedExecutionCoursesSet();
         String fullName = "";
         int i = 0;
-        for (ExecutionCourse course : courses) {
+        for (Course course : courses) {
             if (i > 0) {
                 fullName = fullName + ", ";
             }
@@ -128,7 +128,7 @@ abstract public class WrittenEvaluation extends WrittenEvaluation_Base {
     }
 
     public ExecutionDegree getExecutionDegree() {
-        for (ExecutionCourse cource : getAssociatedExecutionCoursesSet()) {
+        for (Course cource : getAssociatedExecutionCoursesSet()) {
             for (CurricularCourse curricularCource : cource.getAssociatedCurricularCoursesSet()) {
                 return curricularCource.getExecutionDegreeFor(getExecutionYear().getAcademicInterval());
             }
@@ -213,7 +213,7 @@ abstract public class WrittenEvaluation extends WrittenEvaluation_Base {
 
     public void checkIntervalBetweenEvaluationsCondition() {
         if (getDayDateYearMonthDay() != null && getBeginningDateHourMinuteSecond() != null) {
-            for (final ExecutionCourse executionCourse : getAssociatedExecutionCoursesSet()) {
+            for (final Course executionCourse : getAssociatedExecutionCoursesSet()) {
                 for (final Evaluation evaluation : executionCourse.getAssociatedEvaluationsSet()) {
                     if (evaluation != this && evaluation instanceof WrittenEvaluation) {
                         final WrittenEvaluation writtenEvaluation = (WrittenEvaluation) evaluation;
@@ -335,9 +335,8 @@ abstract public class WrittenEvaluation extends WrittenEvaluation_Base {
         }
     }
 
-    protected void setAttributesAndAssociateRooms(Date day, Date beginning, Date end,
-            List<ExecutionCourse> executionCoursesToAssociate, List<DegreeModuleScope> curricularCourseScopesToAssociate,
-            List<Space> rooms) {
+    protected void setAttributesAndAssociateRooms(Date day, Date beginning, Date end, List<Course> executionCoursesToAssociate,
+            List<DegreeModuleScope> curricularCourseScopesToAssociate, List<Space> rooms) {
 
         if (rooms == null) {
             rooms = new ArrayList<Space>(0);
@@ -443,7 +442,7 @@ abstract public class WrittenEvaluation extends WrittenEvaluation_Base {
         return false;
     }
 
-    protected void edit(Date day, Date beginning, Date end, List<ExecutionCourse> executionCoursesToAssociate,
+    protected void edit(Date day, Date beginning, Date end, List<Course> executionCoursesToAssociate,
             List<DegreeModuleScope> curricularCourseScopesToAssociate, List<Space> rooms, GradeScale gradeScale) {
 
         setAttributesAndAssociateRooms(day, beginning, end, executionCoursesToAssociate, curricularCourseScopesToAssociate, rooms);
@@ -480,7 +479,7 @@ abstract public class WrittenEvaluation extends WrittenEvaluation_Base {
         this.setEnrollmentEndDayDate(enrolmentEndDay);
         this.setEnrollmentBeginTimeDate(enrolmentBeginTime);
         this.setEnrollmentEndTimeDate(enrolmentEndTime);
-        for (ExecutionCourse ec : getAssociatedExecutionCoursesSet()) {
+        for (Course ec : getAssociatedExecutionCoursesSet()) {
             EvaluationManagementLog.createLog(ec, Bundle.MESSAGING, "log.executionCourse.evaluation.generic.edited.enrolment",
                     getPresentationName(), ec.getName(), ec.getDegreePresentationString());
         }
@@ -567,7 +566,7 @@ abstract public class WrittenEvaluation extends WrittenEvaluation_Base {
             }
         }
 
-        for (ExecutionCourse ec : getAssociatedExecutionCoursesSet()) {
+        for (Course ec : getAssociatedExecutionCoursesSet()) {
             EvaluationManagementLog.createLog(ec, Bundle.MESSAGING,
                     "log.executionCourse.evaluation.generic.edited.rooms.distributed", getPresentationName(), ec.getName(),
                     ec.getDegreePresentationString());
@@ -657,8 +656,8 @@ abstract public class WrittenEvaluation extends WrittenEvaluation_Base {
 
     public Integer getCountStudentsEnroledAttendingExecutionCourses() {
         int i = 0;
-        for (final ExecutionCourse executionCourse : getAssociatedExecutionCoursesSet()) {
-            for (final Attends attends : executionCourse.getAttendsSet()) {
+        for (final Course executionCourse : getAssociatedExecutionCoursesSet()) {
+            for (final Attendance attends : executionCourse.getAttendsSet()) {
                 if (attends.getEnrolment() != null) {
                     i++;
                 }
@@ -684,7 +683,7 @@ abstract public class WrittenEvaluation extends WrittenEvaluation_Base {
 
     public String getDegreesAsString() {
         Set<Degree> degrees = new HashSet<Degree>();
-        for (ExecutionCourse course : this.getAssociatedExecutionCoursesSet()) {
+        for (Course course : this.getAssociatedExecutionCoursesSet()) {
             degrees.addAll(course.getDegreesSortedByDegreeName());
         }
         String degreesAsString = "";
@@ -777,7 +776,7 @@ abstract public class WrittenEvaluation extends WrittenEvaluation_Base {
         List<EvaluationEventBean> result = new ArrayList<EvaluationEventBean>();
         String url = CoreConfiguration.getConfiguration().applicationUrl();
 
-        Set<ExecutionCourse> executionCourses = new HashSet<ExecutionCourse>();
+        Set<Course> executionCourses = new HashSet<Course>();
         executionCourses.addAll(this.getAttendingExecutionCoursesFor(registration));
 
         if (this.getEnrollmentBeginDayDateYearMonthDay() != null) {
@@ -818,8 +817,8 @@ abstract public class WrittenEvaluation extends WrittenEvaluation_Base {
 
     public Set<Person> getTeachers() {
         Set<Person> persons = new HashSet<Person>();
-        for (ExecutionCourse course : getAssociatedExecutionCoursesSet()) {
-            for (Professorship professorship : course.getProfessorshipsSet()) {
+        for (Course course : getAssociatedExecutionCoursesSet()) {
+            for (CourseTeacher professorship : course.getProfessorshipsSet()) {
                 persons.add(professorship.getPerson());
             }
         }

@@ -18,18 +18,18 @@
  */
 package org.fenixedu.academic.dto;
 
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.Professorship;
 
 public class InfoProfessorship extends InfoObject {
 
-    private final Professorship professorship;
+    private final CourseTeacher professorship;
 
-    private InfoProfessorship(final Professorship professorship) {
+    private InfoProfessorship(final CourseTeacher professorship) {
         this.professorship = professorship;
     }
 
-    public static InfoProfessorship newInfoFromDomain(Professorship professorship) {
+    public static InfoProfessorship newInfoFromDomain(CourseTeacher professorship) {
         return (professorship != null) ? new InfoProfessorship(professorship) : null;
     }
 
@@ -55,7 +55,7 @@ public class InfoProfessorship extends InfoObject {
         throw new Error("Method should not be called!");
     }
 
-    private Professorship getProfessorship() {
+    private CourseTeacher getProfessorship() {
         return professorship;
     }
 

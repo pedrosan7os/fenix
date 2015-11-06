@@ -26,13 +26,12 @@ package org.fenixedu.academic.service.services.resourceAllocationManager;
 
 import static org.fenixedu.academic.predicate.AccessControl.check;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.fenixedu.academic.domain.Attends;
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.Shift;
-import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.dto.InfoStudent;
 import org.fenixedu.academic.dto.ShiftKey;
 import org.fenixedu.academic.predicate.RolePredicates;
@@ -49,14 +48,7 @@ public class LerAlunosDeTurno {
         final ExecutionCourse executionCourse = FenixFramework.getDomainObject(keyTurno.getInfoExecutionCourse().getExternalId());
         final Shift shift = executionCourse.findShiftByName(keyTurno.getShiftName());
 
-        Collection<Registration> alunos = shift.getStudentsSet();
-
-        List<InfoStudent> infoAlunos = new ArrayList<InfoStudent>(alunos.size());
-        for (Registration elem : alunos) {
-            infoAlunos.add(new InfoStudent(elem));
-        }
-
-        return infoAlunos;
+        return shift.getAttendsSet().stream().map(Attends::getRegistration).map(InfoStudent::new).collect(Collectors.toList());
     }
 
 }

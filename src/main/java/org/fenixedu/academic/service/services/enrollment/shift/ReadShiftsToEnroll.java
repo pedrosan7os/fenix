@@ -76,7 +76,7 @@ public class ReadShiftsToEnroll {
     }
 
     private void findShiftsForExecutionCourseShiftTypesFromStudentEnroledShifts(Attends attend, ShiftToEnrol result) {
-        for (final Shift shift : attend.getRegistration().getShiftsSet()) {
+        for (final Shift shift : attend.getShiftsSet()) {
             setShiftInformation(attend, result, shift);
         }
     }

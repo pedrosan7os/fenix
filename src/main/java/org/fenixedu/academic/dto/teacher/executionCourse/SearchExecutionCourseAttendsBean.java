@@ -196,7 +196,7 @@ public class SearchExecutionCourseAttendsBean implements Serializable {
                 @Override
                 public boolean test(Attends attends) {
                     for (Shift shift : getValue()) {
-                        if (shift.getStudentsSet().contains(attends.getRegistration())) {
+                        if (shift.getAttendsSet().contains(attends)) {
                             return true;
                         }
                     }

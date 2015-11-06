@@ -172,6 +172,7 @@ public class Attends extends Attends_Base {
         setAluno(null);
         setDisciplinaExecucao(null);
         setEnrolment(null);
+        getShiftsSet().clear();
 
         setRootDomainObject(null);
         deleteDomainObject();
@@ -209,20 +210,9 @@ public class Attends extends Attends_Base {
         }
     }
 
-    public boolean isAbleToBeRemoved() {
-        try {
-            getRegistration().checkIfHasEnrolmentFor(this);
-            getRegistration().checkIfHasShiftsFor(this.getExecutionCourse());
-        } catch (DomainException e) {
-            return false;
-        }
-
-        return getDeletionBlockers().isEmpty();
-    }
-
     public boolean hasAnyShiftEnrolments() {
         for (Shift shift : this.getExecutionCourse().getAssociatedShifts()) {
-            if (shift.getStudentsSet().contains(this.getRegistration())) {
+            if (shift.getAttendsSet().contains(this)) {
                 return true;
             }
         }
@@ -436,9 +426,6 @@ public class Attends extends Attends_Base {
     }
 
     public void setRegistration(final Registration registration) {
-        if (hasRegistration() && registration != null && getRegistration() != registration) {
-            getRegistration().changeShifts(this, registration);
-        }
         super.setAluno(registration);
     }
 
@@ -458,14 +445,6 @@ public class Attends extends Attends_Base {
 
     public ExecutionYear getExecutionYear() {
         return getExecutionPeriod().getExecutionYear();
-    }
-
-    public void removeShifts() {
-        for (final Shift shift : getRegistration().getShiftsSet()) {
-            if (shift.getExecutionCourse() == getExecutionCourse()) {
-                getRegistration().removeShifts(shift);
-            }
-        }
     }
 
     public boolean hasAnyAssociatedMarkSheetOrFinalGrade() {
@@ -527,11 +506,21 @@ public class Attends extends Attends_Base {
 
     @Atomic
     public void deleteShiftEnrolments() {
-        final Registration registration = getRegistration();
         final ExecutionCourse executionCourse = getExecutionCourse();
         for (final Shift shift : executionCourse.getAssociatedShifts()) {
-            shift.removeStudents(registration);
+            shift.removeAttends(this);
         }
+    }
+
+    @Atomic
+    public void deleteIfNotBound() {
+        if (getEnrolment() != null) {
+            throw new DomainException("errors.student.already.enroled");
+        }
+        if (!getShiftsSet().isEmpty()) {
+            throw new DomainException("errors.student.already.enroled.in.shift");
+        }
+        delete();
     }
 
 }

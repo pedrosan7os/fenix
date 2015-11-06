@@ -64,8 +64,6 @@ import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.Project;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.SchoolLevelType;
-import org.fenixedu.academic.domain.Shift;
-import org.fenixedu.academic.domain.ShiftType;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.WrittenEvaluation;
 import org.fenixedu.academic.domain.WrittenEvaluationEnrolment;
@@ -368,7 +366,6 @@ public class Registration extends Registration_Base {
         setRootDomainObject(null);
 
         getDestinyRegistrationsSet().clear();
-        getShiftsSet().clear();
 
         super.deleteDomainObject();
     }
@@ -1321,80 +1318,6 @@ public class Registration extends Registration_Base {
         return result;
     }
 
-    final public List<Shift> getShiftsForCurrentExecutionPeriod() {
-        final List<Shift> result = new ArrayList<Shift>();
-        for (final Shift shift : getShiftsSet()) {
-            if (shift.getExecutionCourse().getExecutionPeriod().getState().equals(PeriodState.CURRENT)) {
-                result.add(shift);
-            }
-        }
-        return result;
-    }
-
-    final public List<Shift> getShiftsFor(final ExecutionSemester executionSemester) {
-        final List<Shift> result = new ArrayList<Shift>();
-        for (final Shift shift : getShiftsSet()) {
-            if (shift.getExecutionCourse().getExecutionPeriod() == executionSemester) {
-                result.add(shift);
-            }
-        }
-        return result;
-    }
-
-    final public List<Shift> getShiftsFor(final ExecutionCourse executionCourse) {
-        final List<Shift> result = new ArrayList<Shift>();
-        for (final Shift shift : getShiftsSet()) {
-            if (shift.getExecutionCourse() == executionCourse) {
-                result.add(shift);
-            }
-        }
-        return result;
-    }
-
-    final public Shift getShiftFor(final ExecutionCourse executionCourse, final ShiftType shiftType) {
-        for (final Shift shift : getShiftsSet()) {
-            if (shift.getExecutionCourse() == executionCourse && shift.hasShiftType(shiftType)) {
-                return shift;
-            }
-        }
-        return null;
-    }
-
-    private int countNumberOfDistinctExecutionCoursesOfShiftsFor(final ExecutionSemester executionSemester) {
-        final Set<ExecutionCourse> result = new HashSet<ExecutionCourse>();
-        for (final Shift shift : getShiftsSet()) {
-            if (shift.getExecutionCourse().getExecutionPeriod() == executionSemester) {
-                result.add(shift.getExecutionCourse());
-            }
-        }
-        return result.size();
-    }
-
-    final public Integer getNumberOfExecutionCoursesWithEnroledShiftsFor(final ExecutionSemester executionSemester) {
-        return getAttendingExecutionCoursesFor(executionSemester).size()
-                - countNumberOfDistinctExecutionCoursesOfShiftsFor(executionSemester);
-    }
-
-    final public Integer getNumberOfExecutionCoursesHavingNotEnroledShiftsFor(final ExecutionSemester executionSemester) {
-        int result = 0;
-        final List<Shift> enroledShifts = getShiftsFor(executionSemester);
-        for (final ExecutionCourse executionCourse : getAttendingExecutionCoursesFor(executionSemester)) {
-            for (final ShiftType shiftType : executionCourse.getOldShiftTypesToEnrol()) {
-                if (!enroledShiftsContainsShiftWithSameExecutionCourseAndShiftType(enroledShifts, executionCourse, shiftType)) {
-                    result++;
-                    break;
-                }
-            }
-        }
-        return Integer.valueOf(result);
-    }
-
-    private boolean enroledShiftsContainsShiftWithSameExecutionCourseAndShiftType(final List<Shift> enroledShifts,
-            final ExecutionCourse executionCourse, final ShiftType shiftType) {
-        return enroledShifts.stream().anyMatch(
-                enroledShift -> enroledShift.getExecutionCourse() == executionCourse && enroledShift.containsType(shiftType));
-    }
-
     final public Set<SchoolClass> getSchoolClassesToEnrol() {
         final Set<SchoolClass> result = new HashSet<SchoolClass>();
         for (final Attends attends : getAssociatedAttendsSet()) {
@@ -1469,28 +1392,6 @@ public class Registration extends Registration_Base {
                 throw new DomainException("error.student.reached.attends.limit",
                         String.valueOf(MAXIMUM_STUDENT_ATTENDS_PER_EXECUTION_PERIOD));
             }
-        }
-    }
-
-    @Atomic
-    final public void removeAttendFor(final ExecutionCourse executionCourse) {
-        final Attends attend = readRegistrationAttendByExecutionCourse(executionCourse);
-        if (attend != null) {
-            checkIfHasEnrolmentFor(attend);
-            checkIfHasShiftsFor(executionCourse);
-            attend.delete();
-        }
-    }
-
-    public void checkIfHasEnrolmentFor(final Attends attend) {
-        if (attend.getEnrolment() != null) {
-            throw new DomainException("errors.student.already.enroled");
-        }
-    }
-
-    public void checkIfHasShiftsFor(final ExecutionCourse executionCourse) {
-        if (!getShiftsFor(executionCourse).isEmpty()) {
-            throw new DomainException("errors.student.already.enroled.in.shift");
         }
     }
 
@@ -3036,10 +2937,6 @@ public class Registration extends Registration_Base {
         return DEGREE_TYPES_TO_ENROL_BY_STUDENT.test(type);
     }
 
-    public boolean isEnrolmentByStudentInShiftsAllowed() {
-        return isActive();
-    }
-
     public void editStartDates(final LocalDate startDate, final LocalDate homologationDate, final LocalDate studiesStartDate) {
         editStartDates(new YearMonthDay(startDate), new YearMonthDay(homologationDate), new YearMonthDay(studiesStartDate));
     }
@@ -3151,15 +3048,6 @@ public class Registration extends Registration_Base {
 
     public boolean isFullRegime(final ExecutionYear executionYear) {
         return getRegimeType(executionYear) == RegistrationRegimeType.FULL_TIME;
-    }
-
-    public void changeShifts(final Attends attend, final Registration newRegistration) {
-        for (final Shift shift : getShiftsSet()) {
-            if (attend.isFor(shift)) {
-                shift.removeStudents(this);
-                shift.addStudents(newRegistration);
-            }
-        }
     }
 
     public boolean hasMissingPersonalInformation(ExecutionYear executionYear) {

@@ -66,9 +66,11 @@ public class ChangeStudentsShift {
 
         final Set<Person> recievers = new HashSet<Person>();
 
-        oldShift.getStudentsSet().removeAll(registrations);
         if (newShift != null) {
-            newShift.getStudentsSet().addAll(registrations);
+            registrations.stream().map(r -> newShift.getExecutionCourse().getAttendsByStudent(r)).forEach(a -> {
+                oldShift.removeAttends(a);
+                newShift.addAttends(a);
+            });
         }
         for (final Registration registration : registrations) {
             recievers.add(registration.getPerson());

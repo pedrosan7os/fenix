@@ -39,7 +39,6 @@ import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.StudentGroup;
 import org.fenixedu.academic.domain.exceptions.DomainException;
-import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.service.services.manager.CreateExecutionCoursesForDegreeCurricularPlansAndExecutionPeriod;
 
 import pt.ist.fenixframework.Atomic;
@@ -149,16 +148,16 @@ public class SeperateExecutionCourse {
             final ExecutionCourse destinationExecutionCourse, final List<Shift> shiftsToTransfer,
             final List<CurricularCourse> curricularCoursesToTransfer) {
         for (final Shift shift : originExecutionCourse.getAssociatedShifts()) {
-            for (Registration registration : shift.getStudentsSet()) {
-                if (!registration.attends(originExecutionCourse)) {
-                    shift.removeStudents(registration);
+            for (Attends attends : shift.getAttendsSet()) {
+                if (attends.getExecutionCourse() != originExecutionCourse) {
+                    shift.removeAttends(attends);
                 }
             }
         }
         for (final Shift shift : destinationExecutionCourse.getAssociatedShifts()) {
-            for (Registration registration : shift.getStudentsSet()) {
-                if (!registration.attends(destinationExecutionCourse)) {
-                    shift.removeStudents(registration);
+            for (Attends attends : shift.getAttendsSet()) {
+                if (attends.getExecutionCourse() != destinationExecutionCourse) {
+                    shift.removeAttends(attends);
                 }
             }
         }

@@ -320,7 +320,9 @@ public class RegistrationDA extends StudentRegistrationDA {
         final Attends attends = FenixFramework.getDomainObject(attendsIdString);
 
         try {
-            registration.removeAttendFor(attends.getExecutionCourse());
+            if (attends != null) {
+                attends.deleteIfNotBound();
+            }
         } catch (final DomainException e) {
             addActionMessage(request, e.getMessage(), e.getArgs());
         }

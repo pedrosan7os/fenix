@@ -32,6 +32,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
+import org.fenixedu.academic.domain.Attends;
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.SchoolClass;
@@ -84,7 +85,7 @@ public class ShiftStudentEnrollmentManagerLookupDispatchAction extends FenixDisp
 
     private Registration getAndSetRegistration(final HttpServletRequest request) {
         final Registration registration = FenixFramework.getDomainObject(request.getParameter("registrationOID"));
-        if (!getUserView(request).getPerson().getStudent().getRegistrationsToEnrolInShiftByStudent().contains(registration)) {
+        if (!getUserView(request).getPerson().getStudent().getActiveRegistrations().contains(registration)) {
             return null;
         }
 
@@ -155,7 +156,11 @@ public class ShiftStudentEnrollmentManagerLookupDispatchAction extends FenixDisp
         }
 
         try {
-            registration.removeAttendFor(FenixFramework.<ExecutionCourse> getDomainObject(executionCourseId));
+            ExecutionCourse executionCourse = FenixFramework.<ExecutionCourse> getDomainObject(executionCourseId);
+            final Attends attend = executionCourse.getAttendsByStudent(registration);
+            if (attend != null) {
+                attend.deleteIfNotBound();
+            }
         } catch (DomainException e) {
             addActionMessage(request, e.getMessage());
             return mapping.getInputForward();

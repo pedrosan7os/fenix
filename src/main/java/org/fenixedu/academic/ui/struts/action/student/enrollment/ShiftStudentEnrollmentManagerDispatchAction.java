@@ -91,7 +91,7 @@ public class ShiftStudentEnrollmentManagerDispatchAction extends FenixDispatchAc
 
         final Student student = getUserView(request).getPerson().getStudent();
 
-        final List<Registration> toEnrol = student.getRegistrationsToEnrolInShiftByStudent();
+        final List<Registration> toEnrol = student.getActiveRegistrations();
         if (toEnrol.size() == 1) {
             request.setAttribute("registrationOID", toEnrol.iterator().next().getExternalId());
             return prepareStartViewWarning(mapping, form, request, response);
@@ -107,7 +107,7 @@ public class ShiftStudentEnrollmentManagerDispatchAction extends FenixDispatchAc
             registrationOID = request.getParameter("registrationOID");
         }
         final Registration registration = FenixFramework.getDomainObject(registrationOID);
-        if (!getUserView(request).getPerson().getStudent().getRegistrationsToEnrolInShiftByStudent().contains(registration)) {
+        if (!getUserView(request).getPerson().getStudent().getActiveRegistrations().contains(registration)) {
             return null;
         }
 
@@ -223,12 +223,14 @@ public class ShiftStudentEnrollmentManagerDispatchAction extends FenixDispatchAc
         }
 
         request.setAttribute("numberOfExecutionCoursesHavingNotEnroledShifts",
-                registration.getNumberOfExecutionCoursesHavingNotEnroledShiftsFor(executionSemester));
+                Shift.getNumberOfExecutionCoursesHavingNotEnroledShiftsFor(registration, executionSemester));
 
         request.setAttribute("shiftsToEnrolFromEnroledExecutionCourses", getShiftsToEnrolByEnroledState(shiftsToEnrol, true));
         request.setAttribute("shiftsToEnrolFromUnenroledExecutionCourses", getShiftsToEnrolByEnroledState(shiftsToEnrol, false));
 
-        final List<Shift> studentShifts = registration.getShiftsFor(executionSemester);
+        final List<Shift> studentShifts =
+                registration.getAssociatedAttendsSet().stream().filter(a -> a.isFor(executionSemester))
+                        .flatMap(a -> a.getShiftsSet().stream()).collect(Collectors.toList());
         request.setAttribute("studentShifts", studentShifts);
         sortStudentShifts(studentShifts);
 
@@ -322,10 +324,6 @@ public class ShiftStudentEnrollmentManagerDispatchAction extends FenixDispatchAc
         }
 
         final String shiftId = request.getParameter("shiftId");
-        final String executionCourseID = request.getParameter("executionCourseID");
-        if (!StringUtils.isEmpty(executionCourseID)) {
-            request.setAttribute("executionCourseID", executionCourseID);
-        }
 
         try {
             UnEnrollStudentFromShift.runUnEnrollStudentFromShift(registration, shiftId,

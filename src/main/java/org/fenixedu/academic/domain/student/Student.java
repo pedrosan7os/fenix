@@ -655,17 +655,6 @@ public class Student extends Student_Base {
 
     }
 
-    public List<Registration> getRegistrationsToEnrolInShiftByStudent() {
-        final List<Registration> result = new ArrayList<Registration>();
-        for (final Registration registration : getRegistrationsSet()) {
-            if (registration.isEnrolmentByStudentInShiftsAllowed()) {
-                result.add(registration);
-            }
-        }
-
-        return result;
-    }
-
     public boolean isCurrentlyEnroled(DegreeCurricularPlan degreeCurricularPlan) {
         for (Registration registration : getRegistrationsSet()) {
             final RegistrationState registrationState = registration.getActiveState();

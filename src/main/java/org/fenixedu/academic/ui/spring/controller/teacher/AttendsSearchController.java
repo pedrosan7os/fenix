@@ -21,7 +21,6 @@ package org.fenixedu.academic.ui.spring.controller.teacher;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -148,11 +147,9 @@ public class AttendsSearchController extends ExecutionCourseController {
                                         .stream().filter(sg -> sg.getGrouping().equals(gr)).map(StudentGroup::getGroupNumber)
                                         .map(gn -> gn.toString()).findAny().orElse("")));
                         executionCourse.getShiftTypes().forEach(
-                                shiftType -> addCell(
-                                        getLabel("label.shift") + " " + shiftType.getFullNameTipoAula(),
-                                        Optional.ofNullable(
-                                                attends.getRegistration().getShiftFor(attends.getExecutionCourse(), shiftType))
-                                                .map(Shift::getNome).orElse("")));
+                                shiftType -> addCell(getLabel("label.shift") + " " + shiftType.getFullNameTipoAula(), attends
+                                        .getShiftsSet().stream().filter(s -> s.hasShiftType(shiftType)).map(Shift::getNome)
+                                        .findAny().orElse("")));
                         if (attends.getEnrolment() != null) {
                             addCell(getLabel("label.numberOfEnrollments"), attends.getEnrolment()
                                     .getNumberOfTotalEnrolmentsInThisCourse(attends.getEnrolment().getExecutionPeriod()));

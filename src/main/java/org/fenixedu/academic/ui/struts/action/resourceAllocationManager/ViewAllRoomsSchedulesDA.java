@@ -488,7 +488,7 @@ public class ViewAllRoomsSchedulesDA extends FenixDispatchAction {
                     row.setCell(executionDegreeBuilder.toString());
                     row.setCell(scheduleBuilder.toString().replace(';', '\n'));
                     row.setCell(roomBuilder.toString().replace(';', '\n'));
-                    row.setCell(shift.getStudentsSet().size());
+                    row.setCell(shift.getAttendsSet().size());
                 }
             }
         }

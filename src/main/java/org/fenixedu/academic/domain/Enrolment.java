@@ -264,8 +264,6 @@ public class Enrolment extends Enrolment_Base implements IEnrolment {
             thesis.delete();
         }
 
-        final Registration registration = getRegistration();
-
         getStudentCurricularPlan().setIsFirstTimeToNull();
         setExecutionPeriod(null);
         setStudentCurricularPlan(null);
@@ -283,7 +281,7 @@ public class Enrolment extends Enrolment_Base implements IEnrolment {
             if (attends.getAssociatedMarksSet().isEmpty() && attends.getStudentGroupsSet().isEmpty()) {
                 boolean hasShiftEnrolment = false;
                 for (Shift shift : attends.getExecutionCourse().getAssociatedShifts()) {
-                    if (shift.getStudentsSet().contains(registration)) {
+                    if (shift.getAttendsSet().contains(attends)) {
                         hasShiftEnrolment = true;
                         break;
                     }
@@ -1293,7 +1291,7 @@ public class Enrolment extends Enrolment_Base implements IEnrolment {
         enrolment.getEnrolmentWrappersSet().addAll(optionalEnrolment.getEnrolmentWrappersSet());
         enrolment.getThesesSet().addAll(optionalEnrolment.getThesesSet());
         enrolment.getExamDateCertificateRequestsSet().addAll(optionalEnrolment.getExamDateCertificateRequestsSet());
-        changeAttends(optionalEnrolment, enrolment);
+        enrolment.getAttendsSet().addAll(optionalEnrolment.getAttendsSet());
         enrolment.createCurriculumLineLog(EnrolmentAction.ENROL);
 
         return enrolment;
@@ -1307,19 +1305,6 @@ public class Enrolment extends Enrolment_Base implements IEnrolment {
         if (curriculumGroup != null) {
             curriculumGroup.getStudentCurricularPlan().setIsFirstTimeToNull();
         }
-    }
-
-    static protected void changeAttends(final Enrolment from, final Enrolment to) {
-        final Registration oldRegistration = from.getRegistration();
-        final Registration newRegistration = to.getRegistration();
-
-        if (oldRegistration != newRegistration) {
-            for (final Attends attend : from.getAttendsSet()) {
-                oldRegistration.changeShifts(attend, newRegistration);
-                attend.setRegistration(newRegistration);
-            }
-        }
-        to.getAttendsSet().addAll(from.getAttendsSet());
     }
 
     static private void checkParameters(final OptionalEnrolment optionalEnrolment, final CurriculumGroup curriculumGroup) {

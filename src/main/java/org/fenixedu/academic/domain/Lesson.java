@@ -191,7 +191,7 @@ public class Lesson extends Lesson_Base {
             throw new DomainException("error.deleteLesson.with.Shift.with.studentGroups", prettyPrint());
         }
 
-        if (isLastLesson && !shift.getStudentsSet().isEmpty()) {
+        if (isLastLesson && !shift.getAttendsSet().isEmpty()) {
             throw new DomainException("error.deleteLesson.with.Shift.with.students", prettyPrint());
         }
 

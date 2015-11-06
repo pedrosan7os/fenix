@@ -18,11 +18,10 @@
  */
 package org.fenixedu.academic.service.services.student;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.fenixedu.academic.domain.ExecutionSemester;
-import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.dto.InfoLessonInstanceAggregation;
 import org.fenixedu.academic.dto.InfoShowOccupation;
@@ -43,12 +42,12 @@ public class ReadStudentTimeTable {
             executionSemester = ExecutionSemester.readActualExecutionSemester();
         }
 
-        final List<InfoShowOccupation> result = new ArrayList<InfoShowOccupation>();
-        for (final Shift shift : registration.getShiftsFor(executionSemester)) {
-            result.addAll(InfoLessonInstanceAggregation.getAggregations(shift));
+        return compute(registration, executionSemester);
+    }
 
-        }
-
-        return result;
+    private static List<InfoShowOccupation> compute(Registration registration, ExecutionSemester executionSemester) {
+        return registration.getAssociatedAttendsSet().stream().filter(a -> a.isFor(executionSemester))
+                .flatMap(a -> a.getShiftsSet().stream()).flatMap(s -> InfoLessonInstanceAggregation.getAggregations(s).stream())
+                .collect(Collectors.toList());
     }
 }

@@ -114,7 +114,7 @@ public class InfoShift extends InfoObject {
     }
 
     public Integer getOcupation() {
-        return getShift().getStudentsSet().size();
+        return getShift().getAttendsSet().size();
     }
 
     public Integer getGroupCapacity() {

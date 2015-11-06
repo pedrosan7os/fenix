@@ -32,26 +32,22 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.person.RoleType;
 import org.fenixedu.academic.domain.student.Registration;
-import org.fenixedu.academic.domain.util.email.ExecutionCourseSender;
-import org.fenixedu.academic.domain.util.email.Message;
-import org.fenixedu.academic.domain.util.email.Recipient;
 import org.fenixedu.academic.predicate.AccessControl;
 import org.fenixedu.academic.predicate.ResourceAllocationRolePredicates;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academic.util.DiaSemana;
 import org.fenixedu.academic.util.WeekDay;
 import org.fenixedu.bennu.core.domain.Bennu;
-import org.fenixedu.bennu.core.groups.UserGroup;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.joda.time.Duration;
 
-import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.dml.runtime.RelationAdapter;
 
 public class Shift extends Shift_Base {
@@ -84,7 +80,7 @@ public class Shift extends Shift_Base {
     };
 
     static {
-        Registration.getRelationShiftStudent().addListener(new ShiftStudentListener());
+        Shift.getRelationShiftAttends().addListener(new ShiftAttendsListener());
     }
 
     public Shift(final ExecutionCourse executionCourse, Collection<ShiftType> types, final Integer lotacao) {
@@ -111,7 +107,7 @@ public class Shift extends Shift_Base {
             throw new DomainException("error.Shift.with.this.name.already.exists");
         }
 
-        if (newCapacity != null && getStudentsSet().size() > newCapacity.intValue()) {
+        if (newCapacity != null && getAttendsSet().size() > newCapacity.intValue()) {
             throw new DomainException("errors.exception.invalid.finalAvailability");
         }
 
@@ -234,7 +230,7 @@ public class Shift extends Shift_Base {
         if (!getAssociatedStudentGroupsSet().isEmpty()) {
             blockers.add(BundleUtil.getString(Bundle.RESOURCE_ALLOCATION, "error.deleteShift.with.studentGroups", getNome()));
         }
-        if (!getStudentsSet().isEmpty()) {
+        if (!getAttendsSet().isEmpty()) {
             blockers.add(BundleUtil.getString(Bundle.RESOURCE_ALLOCATION, "error.deleteShift.with.students", getNome()));
         }
         if (!getAssociatedSummariesSet().isEmpty()) {
@@ -353,13 +349,13 @@ public class Shift extends Shift_Base {
         return Integer.valueOf(stringBuilder.toString());
     }
 
-    public boolean reserveForStudent(final Registration registration) {
-        final boolean result = getLotacao().intValue() > getStudentsSet().size();
+    public boolean reserveForStudent(final Attends attends) {
+        final boolean result = getLotacao().intValue() > getAttendsSet().size();
         if (result || isResourceAllocationManager()) {
             GroupsAndShiftsManagementLog.createLog(getExecutionCourse(), Bundle.MESSAGING,
-                    "log.executionCourse.groupAndShifts.shifts.attends.added", registration.getNumber().toString(), getNome(),
-                    getExecutionCourse().getNome(), getExecutionCourse().getDegreePresentationString());
-            addStudents(registration);
+                    "log.executionCourse.groupAndShifts.shifts.attends.added", attends.getRegistration().getNumber().toString(),
+                    getNome(), getExecutionCourse().getNome(), getExecutionCourse().getDegreePresentationString());
+            addAttends(attends);
         }
         return result;
     }
@@ -441,44 +437,19 @@ public class Shift extends Shift_Base {
         return result;
     }
 
-    private static class ShiftStudentListener extends RelationAdapter<Registration, Shift> {
+    private static class ShiftAttendsListener extends RelationAdapter<Shift, Attends> {
 
         @Override
-        public void afterAdd(Registration registration, Shift shift) {
-            if (!shift.hasShiftEnrolment(registration)) {
-                new ShiftEnrolment(shift, registration);
+        public void afterAdd(Shift shift, Attends attends) {
+            if (!shift.getShiftEnrolmentsSet().stream().anyMatch(e -> e.getAttends() == attends)) {
+                new ShiftEnrolment(shift, attends);
             }
         }
 
         @Override
-        public void afterRemove(Registration registration, Shift shift) {
-            shift.unEnrolStudent(registration);
+        public void afterRemove(Shift shift, Attends attends) {
+            shift.getShiftEnrolmentsSet().stream().filter(e -> e.getAttends() == attends).forEach(ShiftEnrolment::delete);
         }
-    }
-
-    private boolean hasShiftEnrolment(final Registration registration) {
-        for (final ShiftEnrolment shiftEnrolment : getShiftEnrolmentsSet()) {
-            if (shiftEnrolment.hasRegistration(registration)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void unEnrolStudent(final Registration registration) {
-        final ShiftEnrolment shiftEnrolment = findShiftEnrolment(registration);
-        if (shiftEnrolment != null) {
-            shiftEnrolment.delete();
-        }
-    }
-
-    private ShiftEnrolment findShiftEnrolment(final Registration registration) {
-        for (final ShiftEnrolment shiftEnrolment : getShiftEnrolmentsSet()) {
-            if (shiftEnrolment.getRegistration() == registration) {
-                return shiftEnrolment;
-            }
-        }
-        return null;
     }
 
     public int getCapacityBasedOnSmallestRoom() {
@@ -504,23 +475,6 @@ public class Shift extends Shift_Base {
             }
         }
         return false;
-    }
-
-    @Atomic
-    public void removeAttendFromShift(Registration registration, ExecutionCourse executionCourse) {
-
-        GroupsAndShiftsManagementLog.createLog(getExecutionCourse(), Bundle.MESSAGING,
-                "log.executionCourse.groupAndShifts.shifts.attends.removed", registration.getNumber().toString(), getNome(),
-                getExecutionCourse().getNome(), getExecutionCourse().getDegreePresentationString());
-        registration.removeShifts(this);
-
-        ExecutionCourseSender sender = ExecutionCourseSender.newInstance(executionCourse);
-        Collection<Recipient> recipients =
-                Collections.singletonList(new Recipient(UserGroup.of(registration.getPerson().getUser())));
-        final String subject = BundleUtil.getString(Bundle.APPLICATION, "label.shift.remove.subject");
-        final String body = BundleUtil.getString(Bundle.APPLICATION, "label.shift.remove.body", getNome());
-
-        new Message(sender, sender.getConcreteReplyTos(), recipients, subject, body, "");
     }
 
     public boolean hasAnyStudentsInAssociatedStudentGroups() {
@@ -598,6 +552,25 @@ public class Shift extends Shift_Base {
             }
         }
         return false;
+    }
+
+    public static Integer getNumberOfExecutionCoursesHavingNotEnroledShiftsFor(Registration registration,
+            ExecutionSemester executionSemester) {
+        int result = 0;
+        final List<Shift> enroledShifts =
+                registration.getAssociatedAttendsSet().stream().filter(a -> a.isFor(executionSemester))
+                        .flatMap(a -> a.getShiftsSet().stream()).collect(Collectors.toList());
+        for (final ExecutionCourse executionCourse : registration.getAttendingExecutionCoursesFor(executionSemester)) {
+            for (final ShiftType shiftType : executionCourse.getOldShiftTypesToEnrol()) {
+                if (!enroledShifts.stream().anyMatch(
+                        enroledShift -> enroledShift.getExecutionCourse() == executionCourse
+                                && enroledShift.containsType(shiftType))) {
+                    result++;
+                    break;
+                }
+            }
+        }
+        return Integer.valueOf(result);
     }
 
 }

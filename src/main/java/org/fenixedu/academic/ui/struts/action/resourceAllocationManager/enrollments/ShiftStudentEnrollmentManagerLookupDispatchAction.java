@@ -84,7 +84,7 @@ public class ShiftStudentEnrollmentManagerLookupDispatchAction extends FenixDisp
 
     private Registration getAndSetRegistration(final HttpServletRequest request) {
         final Registration registration = FenixFramework.getDomainObject(getStringFromRequest(request, "registrationOID"));
-        if (!registration.getPerson().getStudent().getRegistrationsToEnrolInShiftByStudent().contains(registration)) {
+        if (!registration.getPerson().getStudent().getActiveRegistrations().contains(registration)) {
             return null;
         }
 

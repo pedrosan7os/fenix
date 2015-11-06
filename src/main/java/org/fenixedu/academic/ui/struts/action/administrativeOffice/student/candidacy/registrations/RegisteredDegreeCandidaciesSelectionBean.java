@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.EntryPhase;
@@ -244,9 +245,9 @@ public class RegisteredDegreeCandidaciesSelectionBean implements Serializable {
         final Registration registration = candidacy.getRegistration();
         final StringBuilder builder = new StringBuilder();
 
-        for (final Shift shift : registration.getShiftsFor(candidacy.getExecutionYear().getFirstExecutionPeriod())) {
-            builder.append(shift.getNome()).append(",");
-        }
+        registration.getAssociatedAttendsSet().stream()
+                .filter(a -> a.isFor(candidacy.getExecutionYear().getFirstExecutionPeriod()))
+                .flatMap(a -> a.getShiftsSet().stream()).forEach(s -> builder.append(s.getNome()).append(","));
 
         if (builder.length() > 1) {
             builder.deleteCharAt(builder.length() - 1);

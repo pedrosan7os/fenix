@@ -9384,8 +9384,8 @@ relation ServiceAgreementTemplatePostingRule {
     }
 }
 
-relation ShiftEnrolmentRegistration {
-    student.Registration playsRole registration;
+relation ShiftEnrolmentAttends {
+    Attends playsRole attends;
     ShiftEnrolment playsRole shiftEnrolments {
         multiplicity *;
     }
@@ -9419,11 +9419,11 @@ relation ShiftSchoolClass {
     }
 }
 
-relation ShiftStudent {
+relation ShiftAttends {
     Shift playsRole shifts {
         multiplicity *;
     }
-    student.Registration playsRole students {
+    Attends playsRole attends {
         multiplicity *;
     }
 }

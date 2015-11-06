@@ -48,7 +48,7 @@ public class UnEnrollStudentFromShift {
             throw new ShiftNotFoundServiceException();
         }
 
-        shift.removeStudents(registration);
+        shift.getAttendsSet().stream().filter(a -> a.getRegistration() == registration).forEach(a -> shift.removeAttends(a));
     }
 
     public static class StudentNotFoundServiceException extends FenixServiceException {

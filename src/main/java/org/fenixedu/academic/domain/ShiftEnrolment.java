@@ -20,7 +20,6 @@ package org.fenixedu.academic.domain;
 
 import java.util.Comparator;
 
-import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.joda.time.DateTime;
 
@@ -34,23 +33,19 @@ public class ShiftEnrolment extends ShiftEnrolment_Base {
         }
     };
 
-    public ShiftEnrolment(final Shift shift, final Registration registration) {
+    public ShiftEnrolment(final Shift shift, final Attends attends) {
         super();
         setRootDomainObject(Bennu.getInstance());
-        setRegistration(registration);
+        setAttends(attends);
         setShift(shift);
         setCreatedOn(new DateTime());
     }
 
     public void delete() {
         setShift(null);
-        setRegistration(null);
+        setAttends(null);
         setRootDomainObject(null);
         deleteDomainObject();
-    }
-
-    public boolean hasRegistration(final Registration registration) {
-        return getRegistration() == registration;
     }
 
 }

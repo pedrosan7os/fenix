@@ -18,12 +18,13 @@
  */
 package org.fenixedu.academic.ui.struts.action.teacher;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,9 +34,11 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.fenixedu.academic.domain.Attends;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.Curriculum;
 import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.GroupsAndShiftsManagementLog;
 import org.fenixedu.academic.domain.LessonPlanning;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.Shift;
@@ -43,6 +46,9 @@ import org.fenixedu.academic.domain.ShiftType;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.Student;
+import org.fenixedu.academic.domain.util.email.ExecutionCourseSender;
+import org.fenixedu.academic.domain.util.email.Message;
+import org.fenixedu.academic.domain.util.email.Recipient;
 import org.fenixedu.academic.dto.enrollment.shift.ShiftEnrollmentErrorReport;
 import org.fenixedu.academic.dto.person.PersonBean;
 import org.fenixedu.academic.dto.teacher.CreateLessonPlanningBean;
@@ -60,7 +66,10 @@ import org.fenixedu.academic.service.services.teacher.MoveLessonPlanning;
 import org.fenixedu.academic.ui.struts.action.exceptions.FenixActionException;
 import org.fenixedu.academic.ui.struts.action.teacher.TeacherApplication.TeacherTeachingApp;
 import org.fenixedu.academic.ui.struts.action.teacher.executionCourse.ExecutionCourseBaseAction;
+import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.groups.UserGroup;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.bennu.struts.annotations.Mapping;
 import org.fenixedu.bennu.struts.portal.EntryPoint;
 import org.fenixedu.bennu.struts.portal.StrutsFunctionality;
@@ -404,15 +413,14 @@ public class ManageExecutionCourseDA extends ExecutionCourseBaseAction {
 
         if (registrationID != null) {
             Registration registration = FenixFramework.getDomainObject(registrationID);
-            shift.removeAttendFromShift(registration, executionCourse);
+            removeAttendFromShift(shift, executionCourse.getAttendsByStudent(registration));
             request.setAttribute("registration", registration);
         }
 
-        List<Registration> registrations = new ArrayList<Registration>();
-        registrations.addAll(shift.getStudentsSet());
-        Collections.sort(registrations, Registration.NUMBER_COMPARATOR);
-
-        request.setAttribute("registrations", registrations);
+        request.setAttribute(
+                "registrations",
+                shift.getAttendsSet().stream().map(Attends::getRegistration).sorted(Registration.NUMBER_COMPARATOR)
+                        .collect(Collectors.toList()));
         request.setAttribute("shift", shift);
         request.setAttribute("executionCourseID", executionCourseID);
 
@@ -493,17 +501,34 @@ public class ManageExecutionCourseDA extends ExecutionCourseBaseAction {
         String shiftID = request.getParameter("shiftID");
 
         Shift shift = FenixFramework.getDomainObject(shiftID);
-        ExecutionCourse executionCourse = FenixFramework.getDomainObject(executionCourseID);
 
-        for (Registration registration : shift.getStudentsSet()) {
-            shift.removeAttendFromShift(registration, executionCourse);
+        for (Attends attends : shift.getAttendsSet()) {
+            removeAttendFromShift(shift, attends);
         }
 
         request.setAttribute("shift", shift);
         request.setAttribute("executionCourseID", executionCourseID);
-        request.setAttribute("registrations", shift.getStudentsSet());
+        request.setAttribute("registrations",
+                shift.getAttendsSet().stream().map(Attends::getRegistration).collect(Collectors.toSet()));
         request.setAttribute("personBean", new PersonBean());
 
         return forward(request, "/teacher/executionCourse/editShift.jsp");
     }
+
+    @Atomic
+    public static void removeAttendFromShift(Shift shift, Attends attends) {
+        GroupsAndShiftsManagementLog.createLog(shift.getExecutionCourse(), Bundle.MESSAGING,
+                "log.executionCourse.groupAndShifts.shifts.attends.removed", attends.getRegistration().getNumber().toString(),
+                shift.getNome(), shift.getExecutionCourse().getNome(), shift.getExecutionCourse().getDegreePresentationString());
+        attends.removeShifts(shift);
+
+        ExecutionCourseSender sender = ExecutionCourseSender.newInstance(attends.getExecutionCourse());
+        Collection<Recipient> recipients =
+                Collections.singletonList(new Recipient(UserGroup.of(attends.getRegistration().getPerson().getUser())));
+        final String subject = BundleUtil.getString(Bundle.APPLICATION, "label.shift.remove.subject");
+        final String body = BundleUtil.getString(Bundle.APPLICATION, "label.shift.remove.body", shift.getNome());
+
+        new Message(sender, sender.getConcreteReplyTos(), recipients, subject, body, "");
+    }
+
 }

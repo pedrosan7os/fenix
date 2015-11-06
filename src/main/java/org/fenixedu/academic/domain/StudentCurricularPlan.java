@@ -2516,7 +2516,6 @@ public class StudentCurricularPlan extends StudentCurricularPlan_Base {
     private void correctInvalidAttends(final StudentCurricularPlan to) {
         for (final Attends attend : getRegistration().getAssociatedAttendsSet()) {
             if (!attend.hasExecutionCourseTo(this) && attend.canMove(this, to)) {
-                getRegistration().changeShifts(attend, to.getRegistration());
                 attend.setRegistration(to.getRegistration());
             }
         }

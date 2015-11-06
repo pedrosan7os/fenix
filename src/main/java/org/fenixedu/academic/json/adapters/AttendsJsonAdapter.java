@@ -19,7 +19,7 @@
 package org.fenixedu.academic.json.adapters;
 
 import org.fenixedu.academic.domain.Attends;
-import org.fenixedu.academic.domain.Shift;
+import org.fenixedu.academic.domain.ShiftType;
 import org.fenixedu.academic.domain.student.registrationStates.RegistrationState;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.bennu.core.annotation.DefaultJsonAdapter;
@@ -57,15 +57,10 @@ public class AttendsJsonAdapter implements JsonViewer<Attends> {
                 attends.getRegistration().getStudent().hasWorkingStudentStatuteInPeriod(attends.getExecutionPeriod()));
 
         JsonObject shiftsByType = new JsonObject();
-        attends.getExecutionCourse().getShiftTypes().forEach(shiftType -> {
-            Shift shift = attends.getRegistration().getShiftFor(attends.getExecutionCourse(), shiftType);
-            if (shift != null) {
-                shiftsByType.add(shiftType.getName(), ctx.view(shift, ShiftShortJsonAdapter.class));
-            } else {
-                shiftsByType.add(shiftType.getName(), new JsonObject());
-            }
-
-        });
+        for (ShiftType shiftType : attends.getExecutionCourse().getShiftTypes()) {
+            shiftsByType.add(shiftType.getName(), attends.getShiftsSet().stream().filter(shift -> shift.hasShiftType(shiftType))
+                    .findAny().map(shift -> ctx.view(shift, ShiftShortJsonAdapter.class)).orElseGet(JsonObject::new));
+        }
         object.add("shifts", shiftsByType);
 
         return object;

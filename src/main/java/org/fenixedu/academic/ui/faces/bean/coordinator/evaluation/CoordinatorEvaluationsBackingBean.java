@@ -271,7 +271,7 @@ public class CoordinatorEvaluationsBackingBean extends FenixBackingBean {
 
         for (final CurricularCourse curricularCourse : degreeCurricularPlan.getCurricularCoursesSet()) {
             if (isActiveInExecutionPeriodAndYear(curricularCourse, executionSemester, curricularYear)) {
-                for (final Course executionCourse : curricularCourse.getAssociatedExecutionCoursesSet()) {
+                for (final Course executionCourse : Course.coursesByCurricularCourse(curricularCourse)) {
                     if (executionCourse.getExecutionPeriod() == executionSemester) {
                         executionCourses.add(executionCourse);
                     }
@@ -290,7 +290,7 @@ public class CoordinatorEvaluationsBackingBean extends FenixBackingBean {
 
         for (final CurricularCourse curricularCourse : degreeCurricularPlan.getCurricularCoursesSet()) {
             if (isActiveInExecutionPeriodAndYear(curricularCourse, executionSemester, curricularYear)) {
-                for (final Course executionCourse : curricularCourse.getAssociatedExecutionCoursesSet()) {
+                for (final Course executionCourse : Course.coursesByCurricularCourse(curricularCourse)) {
                     if (executionCourse.getExecutionPeriod() == executionSemester) {
                         final Set<Evaluation> evaluations = new TreeSet<Evaluation>(evaluationComparator);
                         executionCourseEvaluationsMap.put(executionCourse, evaluations);

@@ -62,7 +62,7 @@ public class SummaryOccupancyReportFile extends SummaryOccupancyReportFile_Base 
         spreadsheet.setHeader("Sala");
         spreadsheet.setHeader("Numero Presencas");
         for (final ExecutionSemester executionSemester : getExecutionYear().getExecutionPeriodsSet()) {
-            for (final Course executionCourse : executionSemester.getAssociatedExecutionCoursesSet()) {
+            for (final Course executionCourse : Course.coursesBySemester(executionSemester)) {
                 for (final Summary summary : executionCourse.getAssociatedSummariesSet()) {
                     final Row row = spreadsheet.addRow();
                     row.setCell(getExecutionYear().getYear());

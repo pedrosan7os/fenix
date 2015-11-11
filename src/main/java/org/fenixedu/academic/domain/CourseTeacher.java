@@ -105,7 +105,7 @@ public class CourseTeacher extends CourseTeacher_Base {
 
         Set<CourseTeacher> professorships = new HashSet<CourseTeacher>();
         for (CurricularCourse curricularCourse : degreeCurricularPlan.getCurricularCoursesSet()) {
-            for (Course executionCourse : curricularCourse.getExecutionCoursesByExecutionYear(executionYear)) {
+            for (Course executionCourse : Course.coursesByCurricularCourseAndPeriod(curricularCourse, executionYear)) {
                 professorships.addAll(executionCourse.getProfessorshipsSet());
             }
         }
@@ -118,7 +118,7 @@ public class CourseTeacher extends CourseTeacher_Base {
         Set<CourseTeacher> professorships = new HashSet<CourseTeacher>();
         for (CurricularCourse curricularCourse : degreeCurricularPlan.getCurricularCoursesSet()) {
             if (curricularCourse.getBasic().equals(basic)) {
-                for (Course executionCourse : curricularCourse.getExecutionCoursesByExecutionYear(executionYear)) {
+                for (Course executionCourse : Course.coursesByCurricularCourseAndPeriod(curricularCourse, executionYear)) {
                     professorships.addAll(executionCourse.getProfessorshipsSet());
                 }
             }
@@ -131,7 +131,7 @@ public class CourseTeacher extends CourseTeacher_Base {
 
         Set<CourseTeacher> professorships = new HashSet<CourseTeacher>();
         for (CurricularCourse curricularCourse : degreeCurricularPlan.getCurricularCoursesSet()) {
-            for (Course executionCourse : curricularCourse.getExecutionCoursesByExecutionPeriod(executionSemester)) {
+            for (Course executionCourse : Course.coursesByCurricularCourseAndPeriod(curricularCourse, executionSemester)) {
                 professorships.addAll(executionCourse.getProfessorshipsSet());
             }
         }
@@ -146,11 +146,11 @@ public class CourseTeacher extends CourseTeacher_Base {
             for (CurricularCourse curricularCourse : degreeCurricularPlan.getCurricularCoursesSet()) {
                 if (curricularCourse.getBasic() == null || curricularCourse.getBasic().equals(basic)) {
                     if (executionYear != null) {
-                        for (Course executionCourse : curricularCourse.getExecutionCoursesByExecutionYear(executionYear)) {
+                        for (Course executionCourse : Course.coursesByCurricularCourseAndPeriod(curricularCourse, executionYear)) {
                             professorships.addAll(executionCourse.getProfessorshipsSet());
                         }
                     } else {
-                        for (Course executionCourse : curricularCourse.getAssociatedExecutionCoursesSet()) {
+                        for (Course executionCourse : Course.coursesByCurricularCourse(curricularCourse)) {
                             professorships.addAll(executionCourse.getProfessorshipsSet());
                         }
                     }
@@ -167,11 +167,11 @@ public class CourseTeacher extends CourseTeacher_Base {
         for (DegreeCurricularPlan degreeCurricularPlan : degreeCurricularPlans) {
             for (CurricularCourse curricularCourse : degreeCurricularPlan.getCurricularCoursesSet()) {
                 if (executionYear != null) {
-                    for (Course executionCourse : curricularCourse.getExecutionCoursesByExecutionYear(executionYear)) {
+                    for (Course executionCourse : Course.coursesByCurricularCourseAndPeriod(curricularCourse, executionYear)) {
                         professorships.addAll(executionCourse.getProfessorshipsSet());
                     }
                 } else {
-                    for (Course executionCourse : curricularCourse.getAssociatedExecutionCoursesSet()) {
+                    for (Course executionCourse : Course.coursesByCurricularCourse(curricularCourse)) {
                         professorships.addAll(executionCourse.getProfessorshipsSet());
                     }
                 }

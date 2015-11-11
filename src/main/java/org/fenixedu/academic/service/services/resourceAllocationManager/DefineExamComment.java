@@ -34,7 +34,7 @@ public class DefineExamComment {
     public static void run(String executionCourseInitials, String executionPeriodId, String comment) throws FenixServiceException {
         check(RolePredicates.RESOURCE_ALLOCATION_MANAGER_PREDICATE);
         final ExecutionSemester executionSemester = FenixFramework.getDomainObject(executionPeriodId);
-        final Course executionCourse = executionSemester.getExecutionCourseByInitials(executionCourseInitials);
+        final Course executionCourse = Course.readBySiglaAndExecutionPeriod(executionCourseInitials, executionSemester);
 
         if (executionCourse == null) {
             throw new FenixServiceException("error.noExecutionCourse");

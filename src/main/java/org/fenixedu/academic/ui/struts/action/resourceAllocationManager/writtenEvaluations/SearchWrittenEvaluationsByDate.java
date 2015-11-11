@@ -30,8 +30,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
-import org.fenixedu.academic.domain.Evaluation;
 import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.Evaluation;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.WrittenEvaluation;
@@ -158,7 +158,7 @@ public class SearchWrittenEvaluationsByDate extends FenixDispatchAction {
         for (ExecutionInterval interval : Bennu.getInstance().getExecutionIntervalsSet()) {
             if (interval instanceof ExecutionSemester && interval.getAcademicInterval().contains(date)) {
                 ExecutionSemester semester = (ExecutionSemester) interval;
-                courses.addAll(semester.getAssociatedExecutionCoursesSet());
+                courses.addAll(Course.coursesBySemester(semester));
             }
         }
         return courses;

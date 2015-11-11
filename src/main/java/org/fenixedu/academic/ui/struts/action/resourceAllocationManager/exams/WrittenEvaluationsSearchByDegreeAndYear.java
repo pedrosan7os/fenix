@@ -36,10 +36,10 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.util.LabelValueBean;
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeModuleScope;
-import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.time.calendarStructure.AcademicInterval;
 import org.fenixedu.academic.domain.time.calendarStructure.AcademicPeriod;
@@ -159,8 +159,7 @@ public class WrittenEvaluationsSearchByDegreeAndYear extends FenixContextDispatc
                                 if (!executionCoursesByCurricularYear.containsKey(curricularYear)) {
                                     executionCourses = new TreeSet<Course>(new Comparator<Course>() {
                                         @Override
-                                        public int compare(final Course executionCourse1,
-                                                final Course executionCourse2) {
+                                        public int compare(final Course executionCourse1, final Course executionCourse2) {
                                             return executionCourse1.getNome().compareTo(executionCourse2.getNome());
                                         }
                                     });
@@ -168,7 +167,7 @@ public class WrittenEvaluationsSearchByDegreeAndYear extends FenixContextDispatc
                                 } else {
                                     executionCourses = executionCoursesByCurricularYear.get(curricularYear);
                                 }
-                                for (final Course executionCourse : curricularCourse.getAssociatedExecutionCoursesSet()) {
+                                for (final Course executionCourse : Course.coursesByCurricularCourse(curricularCourse)) {
                                     if (academicInterval.equals(executionCourse.getAcademicInterval())) {
                                         executionCourses.add(executionCourse);
                                     }

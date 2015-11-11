@@ -34,8 +34,8 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
-import org.fenixedu.academic.domain.CurricularYear;
 import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CurricularYear;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.Shift;
@@ -56,16 +56,15 @@ public class SearchExecutionCourses {
 
     public List<InfoExecutionCourse> run(AcademicInterval academicInterval, ExecutionDegree executionDegree, String courseName) {
         List<Course> executionCourses =
-                Course.searchByAcademicIntervalAndExecutionDegreeYearAndName(academicInterval, executionDegree, null,
-                        courseName);
+                Course.searchByAcademicIntervalAndExecutionDegreeYearAndName(academicInterval, executionDegree, null, courseName);
         return fillInfoExecutionCourses(academicInterval, executionCourses);
     }
 
     public List<InfoExecutionCourse> run(AcademicInterval academicInterval, ExecutionDegree executionDegree,
             CurricularYear curricularYear, String courseName) {
         List<Course> executionCourses =
-                Course.searchByAcademicIntervalAndExecutionDegreeYearAndName(academicInterval, executionDegree,
-                        curricularYear, courseName);
+                Course.searchByAcademicIntervalAndExecutionDegreeYearAndName(academicInterval, executionDegree, curricularYear,
+                        courseName);
         return fillInfoExecutionCourses(academicInterval, executionCourses);
     }
 
@@ -89,8 +88,9 @@ public class SearchExecutionCourses {
         List<Course> executionCourses = new ArrayList<Course>();
         if (executionSemester != null) {
             executionCourses =
-                    executionSemester.getExecutionCoursesByDegreeCurricularPlanAndSemesterAndCurricularYearAndName(
-                            executionDegree.getDegreeCurricularPlan(), curricularYear, executionCourseName);
+                    Course.filterByAcademicIntervalAndDegreeCurricularPlanAndCurricularYearAndName(
+                            executionSemester.getAcademicInterval(), executionDegree.getDegreeCurricularPlan(), curricularYear,
+                            executionCourseName);
         }
 
         return fillInfoExecutionCourses(executionSemester.getAcademicInterval(), executionCourses);

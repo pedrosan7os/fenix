@@ -235,7 +235,7 @@ public class ShiftStudentEnrollmentManagerLookupDispatchAction extends FenixDisp
         final List<SchoolClass> schoolClassesToEnrol = new ArrayList<SchoolClass>();
         if (executionCourse != null) {
             request.setAttribute("executionCourse", executionCourse);
-            schoolClassesToEnrol.addAll(registration.getSchoolClassesToEnrolBy(executionCourse));
+            schoolClassesToEnrol.addAll(executionCourse.getSchoolClassesBy(registration.getActiveDegreeCurricularPlan()));
 
         } else {
             schoolClassesToEnrol.addAll(Attendance.getSchoolClassesToEnrol(registration));

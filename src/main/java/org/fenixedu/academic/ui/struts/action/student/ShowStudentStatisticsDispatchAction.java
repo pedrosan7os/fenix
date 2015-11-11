@@ -117,7 +117,7 @@ public class ShowStudentStatisticsDispatchAction extends FenixDispatchAction {
             curricularCourseJsonObject.addProperty("name", curricularCourse.getNameI18N().getContent());
             JsonArray entriesArray = new JsonArray();
             Map<Integer, CurricularCourseYearStatistics> entries = new HashMap<Integer, CurricularCourseYearStatistics>();
-            for (Course executionCourse : curricularCourse.getAssociatedExecutionCoursesSet()) {
+            for (Course executionCourse : Course.coursesByCurricularCourse(curricularCourse)) {
                 AcademicInterval academicInterval = executionCourse.getAcademicInterval();
                 int startYear = academicInterval.getStart().getYear();
                 CurricularCourseYearStatistics curricularCourseYearStatistics =
@@ -301,7 +301,7 @@ public class ShowStudentStatisticsDispatchAction extends FenixDispatchAction {
     private JsonElement computeCurricularCourseOvertimeStatistics(CurricularCourse curricularCourse) {
         JsonObject jsonObject = new JsonObject();
         JsonArray entries = new JsonArray();
-        for (Course executionCourse : curricularCourse.getAssociatedExecutionCoursesSet()) {
+        for (Course executionCourse : Course.coursesByCurricularCourse(curricularCourse)) {
             if (executionCourse.getExecutionPeriod().isBefore(ExecutionSemester.readActualExecutionSemester())
                     && executionCourse.getEnrolmentCount() > 0) {
                 JsonElement executionCourseStatistics = computeExecutionCourseStatistics(executionCourse);

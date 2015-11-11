@@ -37,15 +37,15 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.fenixedu.academic.domain.CourseLoad;
 import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseLoad;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Lesson;
 import org.fenixedu.academic.domain.LessonInstance;
-import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.space.LessonSpaceOccupation;
@@ -258,7 +258,7 @@ public class ViewAllRoomsSchedulesDA extends FenixDispatchAction {
 
         Space.getSpaces().forEach(s -> occupationMap.register(s));
 
-        for (final Course executionCourse : executionSemester.getAssociatedExecutionCoursesSet()) {
+        for (final Course executionCourse : Course.coursesBySemester(executionSemester)) {
             for (final CourseLoad courseLoad : executionCourse.getCourseLoadsSet()) {
                 for (final Shift shift : courseLoad.getShiftsSet()) {
                     for (final Lesson lesson : shift.getAssociatedLessonsSet()) {
@@ -375,7 +375,7 @@ public class ViewAllRoomsSchedulesDA extends FenixDispatchAction {
         spreadsheet.setHeader(BundleUtil.getString(Bundle.APPLICATION, "label.teacher.emails"));
         spreadsheet.setHeader(BundleUtil.getString(Bundle.APPLICATION, "label.comments"));
 
-        for (final Course executionCourse : executionSemester.getAssociatedExecutionCoursesSet()) {
+        for (final Course executionCourse : Course.coursesBySemester(executionSemester)) {
             final StringBuilder executionDegreeBuilder = new StringBuilder();
             for (final ExecutionDegree executionDegree : executionCourse.getExecutionDegrees()) {
                 if (executionDegreeBuilder.length() > 0) {
@@ -444,7 +444,7 @@ public class ViewAllRoomsSchedulesDA extends FenixDispatchAction {
         spreadsheet.setHeader(BundleUtil.getString(Bundle.APPLICATION, "label.lesson.room"));
         spreadsheet.setHeader(BundleUtil.getString(Bundle.APPLICATION, "label.number.students.enrolled"));
 
-        for (final Course executionCourse : executionSemester.getAssociatedExecutionCoursesSet()) {
+        for (final Course executionCourse : Course.coursesBySemester(executionSemester)) {
             final StringBuilder executionDegreeBuilder = new StringBuilder();
             for (final ExecutionDegree executionDegree : executionCourse.getExecutionDegrees()) {
                 if (executionDegreeBuilder.length() > 0) {

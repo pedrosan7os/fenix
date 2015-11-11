@@ -403,8 +403,8 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
                     curricularYears.add(curricularYear);
 
                     if (curricularYearID == null || curricularYear.getExternalId().equals(curricularYearID)) {
-                        for (final Course executionCourse : curricularCourse
-                                .getExecutionCoursesByExecutionPeriod(selectedExecutionPeriod)) {
+                        for (final Course executionCourse : Course.coursesByCurricularCourseAndPeriod(curricularCourse,
+                                selectedExecutionPeriod)) {
                             executionCourses.add(executionCourse);
                         }
                     }

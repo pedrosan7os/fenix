@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.CurricularYear;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
-import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.time.calendarStructure.AcademicInterval;
 import org.fenixedu.academic.dto.InfoExecutionCourse;
@@ -52,8 +52,8 @@ public class LerDisciplinasExecucaoDeLicenciaturaExecucaoEAnoCurricular {
 
         if (executionSemester != null) {
             List<Course> listDCDE =
-                    executionSemester.getExecutionCoursesByDegreeCurricularPlanAndSemesterAndCurricularYearAndName(
-                            degreeCurricularPlan, curricularYear, "%");
+                    Course.filterByAcademicIntervalAndDegreeCurricularPlanAndCurricularYearAndName(
+                            executionSemester.getAcademicInterval(), degreeCurricularPlan, curricularYear, "%");
 
             Iterator iterator = listDCDE.iterator();
             listInfoDE = new ArrayList();

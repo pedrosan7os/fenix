@@ -1311,6 +1311,10 @@ public class Course extends Course_Base {
         getSourceExecutionCourse().setLessonPlanningAvailable(lessonPlanningAvailable);
     }
 
+    public static Set<Course> coursesBySemester(ExecutionSemester semester) {
+        return semester.getAssociatedExecutionCoursesSet().stream().map(ExecutionCourse::getCourse).collect(Collectors.toSet());
+    }
+
     @Deprecated
     public void addAssociatedCurricularCourses(CurricularCourse associatedCurricularCourses) {
         getSourceExecutionCourse().addAssociatedCurricularCourses(associatedCurricularCourses);
@@ -1334,5 +1338,21 @@ public class Course extends Course_Base {
     @Deprecated
     public void setExecutionPeriod(ExecutionSemester executionPeriod) {
         getSourceExecutionCourse().setExecutionPeriod(executionPeriod);
+    }
+
+    public static Set<Course> coursesByCurricularCourseAndPeriod(CurricularCourse curricularCourse, ExecutionYear executionYear) {
+        return curricularCourse.getAssociatedExecutionCoursesSet().stream().map(ExecutionCourse::getCourse)
+                .filter(c -> c.getExecutionPeriod().getExecutionYear().equals(executionYear)).collect(Collectors.toSet());
+    }
+
+    public static Set<Course> coursesByCurricularCourseAndPeriod(CurricularCourse curricularCourse,
+            ExecutionSemester executionSemester) {
+        return curricularCourse.getAssociatedExecutionCoursesSet().stream().map(ExecutionCourse::getCourse)
+                .filter(c -> c.getExecutionPeriod().equals(executionSemester)).collect(Collectors.toSet());
+    }
+
+    public static Set<Course> coursesByCurricularCourse(CurricularCourse curricularCourse) {
+        return curricularCourse.getAssociatedExecutionCoursesSet().stream().map(ExecutionCourse::getCourse)
+                .collect(Collectors.toSet());
     }
 }

@@ -58,7 +58,7 @@ public class ExecutionCourseSender extends ExecutionCourseSender_Base {
         setFromAddress(Sender.getNoreplyMail());
         addReplyTos(new ExecutionCourseReplyTo());
         addReplyTos(new CurrentUserReplyTo());
-        setMembers(TeacherGroup.get(executionCourse));
+        setMembers(TeacherGroup.get(executionCourse.getSourceExecutionCourse()));
         final String labelECTeachers =
                 BundleUtil.getString(Bundle.SITE,
                         "label.org.fenixedu.academic.domain.accessControl.ExecutionCourseTeachersGroupWithName",
@@ -72,9 +72,10 @@ public class ExecutionCourseSender extends ExecutionCourseSender_Base {
                         "label.org.fenixedu.academic.domain.accessControl.ExecutionCourseResponsibleTeachersGroupWithName",
                         new String[] { executionCourse.getNome() });
         // fixed recipients
-        addRecipients(new Recipient(labelECTeachers, TeacherGroup.get(executionCourse)));
-        addRecipients(new Recipient(labelECStudents, StudentGroup.get(executionCourse)));
-        addRecipients(new Recipient(labelECResponsibleTeachers, TeacherResponsibleOfExecutionCourseGroup.get(executionCourse)));
+        addRecipients(new Recipient(labelECTeachers, TeacherGroup.get(executionCourse.getSourceExecutionCourse())));
+        addRecipients(new Recipient(labelECStudents, StudentGroup.get(executionCourse.getSourceExecutionCourse())));
+        addRecipients(new Recipient(labelECResponsibleTeachers, TeacherResponsibleOfExecutionCourseGroup.get(executionCourse
+                .getSourceExecutionCourse())));
         setFromName(createFromName());
     }
 

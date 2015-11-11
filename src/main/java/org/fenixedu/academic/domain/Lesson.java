@@ -127,7 +127,9 @@ public class Lesson extends Lesson_Base {
             if (endDate == null || endDate.isAfter(maxLessonsPeriod.getRight())) {
                 throw new DomainException("error.invalid.new.date");
             }
-            period = OccupationPeriod.createOccupationPeriodForLesson(executionCourse, beginDate, endDate);
+            period =
+                    OccupationPeriod.createOccupationPeriodForLesson(executionCourse.getSourceExecutionCourse(), beginDate,
+                            endDate);
         }
 
         setRootDomainObject(Bennu.getInstance());

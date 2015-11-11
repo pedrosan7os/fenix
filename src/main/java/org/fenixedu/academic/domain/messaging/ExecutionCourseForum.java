@@ -56,11 +56,12 @@ public class ExecutionCourseForum extends ExecutionCourseForum_Base {
 
     @Override
     public Group getAdminGroup() {
-        return TeacherGroup.get(getExecutionCourse());
+        return TeacherGroup.get(getExecutionCourse().getSourceExecutionCourse());
     }
 
     private Group getExecutionCourseMembersGroup() {
         Course executionCourse = getExecutionCourse();
-        return TeacherGroup.get(executionCourse).or(StudentGroup.get(executionCourse));
+        return TeacherGroup.get(executionCourse.getSourceExecutionCourse()).or(
+                StudentGroup.get(executionCourse.getSourceExecutionCourse()));
     }
 }

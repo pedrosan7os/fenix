@@ -8,8 +8,11 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.fenixedu.academic.domain.Attends.StudentAttendsStateType;
 import org.fenixedu.academic.domain.exceptions.DomainException;
@@ -20,6 +23,7 @@ import org.fenixedu.academic.domain.student.WeeklyWorkLoad;
 import org.fenixedu.academic.service.services.exceptions.FenixServiceException;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.bennu.core.domain.Bennu;
+import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeFieldType;
@@ -125,6 +129,7 @@ public class Attendance extends Attendance_Base {
         setAluno(null);
         setDisciplinaExecucao(null);
         setEnrolment(null);
+        getShiftsSet().clear();
 
         setRootDomainObject(null);
         deleteDomainObject();
@@ -390,6 +395,14 @@ public class Attendance extends Attendance_Base {
         }
     }
 
+    @Atomic
+    public void deleteIfNotBound() {
+        if (!getShiftsSet().isEmpty()) {
+            throw new DomainException("errors.student.already.enroled.in.shift");
+        }
+        delete();
+    }
+
     public Enrolment getEnrolment() {
         return getSourceAttends().getEnrolment();
     }
@@ -397,4 +410,76 @@ public class Attendance extends Attendance_Base {
     public void setEnrolment(Enrolment enrolment) {
         getSourceAttends().setEnrolment(enrolment);
     }
+
+    public static Set<Attendance> registrationAttends(Registration registration) {
+        return registrationAttendsStream(registration).collect(Collectors.toSet());
+    }
+
+    public static Stream<Attendance> registrationAttendsStream(Registration registration) {
+        return registration.getAssociatedAttendsSet().stream().map(Attends::getAttendance);
+    }
+
+    public static Set<Attendance> userAttends(User user) {
+        return userAttendsStream(user).collect(Collectors.toSet());
+    }
+
+    public static Stream<Attendance> userAttendsStream(User user) {
+        return user.getPerson().getStudent().getRegistrationsSet().stream()
+                .flatMap(registration -> registration.getAssociatedAttendsSet().stream()).map(Attends::getAttendance);
+    }
+
+    public static Set<Course> getAttendingCoursesFor(Registration registration, ExecutionSemester executionSemester) {
+        return registrationAttendsStream(registration).filter(a -> a.isFor(executionSemester))
+                .map(Attendance::getExecutionCourse).collect(Collectors.toSet());
+    }
+
+    public static Set<Attendance> getAttendancesFor(Registration registration, ExecutionSemester executionSemester) {
+        return getAttendancesForStream(registration, executionSemester).collect(Collectors.toSet());
+    }
+
+    public static Stream<Attendance> getAttendancesForStream(Registration registration, ExecutionSemester executionSemester) {
+        return registrationAttendsStream(registration).filter(a -> a.isFor(executionSemester));
+    }
+
+    public static boolean isRegistrationAttendingCourse(Registration registration, Course executionCourse) {
+        return registrationAttendsStream(registration).anyMatch(a -> a.isFor(executionCourse));
+    }
+
+    public static Optional<Attendance> getAttendingCoursesFor(Student student, Course executionCourse) {
+        return student.getRegistrationsSet().stream().flatMap(r -> r.getAssociatedAttendsSet().stream())
+                .map(Attends::getAttendance).filter(a -> a.isFor(executionCourse)).findAny();
+    }
+
+    public static Stream<Attendance> getAttendancesFor(Student student, ExecutionSemester executionPeriod) {
+        return student.getRegistrationsSet().stream().flatMap(r -> r.getAssociatedAttendsSet().stream())
+                .map(Attends::getAttendance).filter(a -> a.isFor(executionPeriod));
+    }
+
+    public static Set<SchoolClass> getSchoolClassesToEnrol(Registration registration) {
+        return getAttendancesForStream(registration, ExecutionSemester.readActualExecutionSemester())
+                .map(Attendance::getExecutionCourse)
+                .flatMap(c -> c.getSchoolClassesBy(registration.getActiveDegreeCurricularPlan()).stream())
+                .collect(Collectors.toSet());
+    }
+
+    public static List<Exam> getUnenroledExams(Registration registration, final ExecutionSemester executionSemester) {
+        return getAttendancesForStream(registration, executionSemester).map(Attendance::getExecutionCourse)
+                .flatMap(c -> c.getAssociatedEvaluationsSet().stream())
+                .filter(e -> e instanceof Exam && !registration.isEnroledIn(e)).map(e -> (Exam) e).collect(Collectors.toList());
+    }
+
+    public static List<WrittenTest> getUnenroledWrittenTests(Registration registration, final ExecutionSemester executionSemester) {
+        return getAttendancesForStream(registration, executionSemester).map(Attendance::getExecutionCourse)
+                .flatMap(c -> c.getAssociatedEvaluationsSet().stream())
+                .filter(e -> e instanceof WrittenTest && !registration.isEnroledIn(e)).map(e -> (WrittenTest) e)
+                .collect(Collectors.toList());
+    }
+
+    public static List<WrittenEvaluation> getWrittenEvaluations(Registration registration,
+            final ExecutionSemester executionSemester) {
+        return getAttendancesForStream(registration, executionSemester).map(Attendance::getExecutionCourse)
+                .flatMap(c -> c.getAssociatedEvaluationsSet().stream()).filter(e -> e instanceof WrittenEvaluation)
+                .map(e -> (WrittenEvaluation) e).distinct().collect(Collectors.toList());
+    }
+
 }

@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -81,7 +82,10 @@ public class ProjectSubmissionDispatchAction extends FenixDispatchAction {
         }
 
         request.setAttribute("studentBean", bean);
-        request.setAttribute("attends", student.getAttendsForExecutionPeriod(bean.getExecutionPeriod()));
+        request.setAttribute(
+                "attends",
+                Attendance.getAttendancesFor(student, bean.getExecutionPeriod())
+                        .sorted(Attendance.ATTENDS_COMPARATOR_BY_EXECUTION_COURSE_NAME).collect(Collectors.toList()));
 
         return mapping.findForward("viewProjectsWithOnlineSubmission");
 

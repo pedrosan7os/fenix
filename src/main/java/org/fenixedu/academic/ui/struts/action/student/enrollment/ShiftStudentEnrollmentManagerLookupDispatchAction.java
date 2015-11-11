@@ -238,7 +238,7 @@ public class ShiftStudentEnrollmentManagerLookupDispatchAction extends FenixDisp
             schoolClassesToEnrol.addAll(registration.getSchoolClassesToEnrolBy(executionCourse));
 
         } else {
-            schoolClassesToEnrol.addAll(registration.getSchoolClassesToEnrol());
+            schoolClassesToEnrol.addAll(Attendance.getSchoolClassesToEnrol(registration));
         }
 
         Collections.sort(schoolClassesToEnrol, SchoolClass.COMPARATOR_BY_NAME);

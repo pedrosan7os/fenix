@@ -96,7 +96,7 @@ public class StudentGroupService {
 
                 if (grouping.getAttendsSet().stream().noneMatch(attends -> attends.getRegistration().equals(registration))) {
                     Optional<Attendance> opt =
-                            registration.getAssociatedAttendsSet().stream()
+                            Attendance.registrationAttendsStream(registration)
                                     .filter(attends -> grouping.getExecutionCourses().stream().anyMatch(ec -> attends.isFor(ec)))
                                     .findAny();
                     if (opt.isPresent()) {

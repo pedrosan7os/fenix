@@ -19,10 +19,10 @@
 package org.fenixedu.academic.service.services.enrollment.shift;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.SchoolClass;
@@ -62,13 +62,11 @@ public class ReadClassTimeTableByStudent {
             throw new FenixServiceException("error.readClassTimeTableByStudent.noSchoolClass");
         }
 
-        Set<Course> attendingExecutionCourses = null;
-        if (executionSemester != null) {
-            attendingExecutionCourses = new HashSet<Course>();
-            attendingExecutionCourses.addAll(registration.getAttendingExecutionCoursesFor(executionSemester));
-        } else {
-            attendingExecutionCourses = registration.getAttendingExecutionCoursesForCurrentExecutionPeriod();
+        if (executionSemester == null) {
+            executionSemester = ExecutionSemester.readActualExecutionSemester();
         }
+
+        Set<Course> attendingExecutionCourses = Attendance.getAttendingCoursesFor(registration, executionSemester);
 
         final List<InfoShowOccupation> result = new ArrayList<InfoShowOccupation>();
         for (final Shift shift : schoolClass.getAssociatedShiftsSet()) {

@@ -37,13 +37,13 @@ import org.apache.struts.action.DynaActionForm;
 import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.ExecutionSemester;
-import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.WeeklyWorkLoad;
 import org.fenixedu.academic.service.services.exceptions.FenixServiceException;
 import org.fenixedu.academic.service.services.student.CreateWeeklyWorkLoad;
 import org.fenixedu.academic.ui.struts.action.base.FenixDispatchAction;
 import org.fenixedu.academic.ui.struts.action.student.StudentApplication.StudentParticipateApp;
 import org.fenixedu.academic.util.PeriodState;
+import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.struts.annotations.Forward;
 import org.fenixedu.bennu.struts.annotations.Forwards;
 import org.fenixedu.bennu.struts.annotations.Mapping;
@@ -151,17 +151,12 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
             final Collection<Attendance> attends = new ArrayList<Attendance>();
             request.setAttribute("attends", attends);
 
-            for (final Registration registration : getUserView(request).getPerson().getStudents()) {
-                for (final Attendance attend : registration.getOrderedAttends()) {
-                    if (attend.getEnrolment() != null) {
-                        final Course executionCourse = attend.getExecutionCourse();
-                        if (executionCourse.getExecutionPeriod() == selectedExecutionPeriod) {
-                            weeklyWorkLoadView.add(attend);
-                            attends.add(attend);
-                        }
-                    }
-                }
-            }
+            Attendance.userAttendsStream(Authenticate.getUser())
+                    .filter(a -> a.getExecutionCourse().equals(selectedExecutionPeriod) && a.getEnrolment() != null)
+                    .forEach(a -> {
+                        weeklyWorkLoadView.add(a);
+                        attends.add(a);
+                    });
 
             request.setAttribute("weeklyWorkLoadBean", new WeeklyWorkLoadBean());
         }
@@ -201,15 +196,9 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
 
     private Attendance findFirstAttends(final HttpServletRequest request, final ExecutionSemester selectedExecutionPeriod)
             throws FenixServiceException {
-        for (final Registration registration : getUserView(request).getPerson().getStudents()) {
-            for (final Attendance attend : registration.getOrderedAttends()) {
-                final Course executionCourse = attend.getExecutionCourse();
-                if (executionCourse.getExecutionPeriod() == selectedExecutionPeriod && attend.getEnrolment() != null) {
-                    return attend;
-                }
-            }
-        }
-        return null;
+        return Attendance.userAttendsStream(Authenticate.getUser())
+                .filter(a -> a.getExecutionCourse().equals(selectedExecutionPeriod) && a.getEnrolment() != null).findAny()
+                .orElse(null);
     }
 
     public ActionForward create(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)

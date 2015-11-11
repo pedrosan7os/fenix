@@ -34,6 +34,7 @@ import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.predicate.AccessControl;
 import org.fenixedu.bennu.core.rest.JsonAwareResource;
+import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.SpringApplication;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,12 +69,8 @@ public class StudentGroupingController extends JsonAwareResource {
 
     @RequestMapping(value = "/groupings", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<String> getOpenEnrollmentGroupings() {
-        return new ResponseEntity<String>(view(AccessControl
-                .getPerson()
-                .getStudent()
-                .getRegistrationsSet()
-                .stream()
-                .flatMap(registration -> registration.getAssociatedAttendsSet().stream())
+        return new ResponseEntity<String>(view(Attendance
+                .userAttendsStream(Authenticate.getUser())
                 .map(Attendance::getExecutionCourse)
                 .filter(executionCourse -> executionCourse.getExecutionPeriod() == ExecutionSemester
                         .readActualExecutionSemester())

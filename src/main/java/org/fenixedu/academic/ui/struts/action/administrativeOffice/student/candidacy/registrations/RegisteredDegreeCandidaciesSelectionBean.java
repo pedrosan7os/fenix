@@ -24,14 +24,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.EntryPhase;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.candidacy.CandidacySituationType;
 import org.fenixedu.academic.domain.candidacy.StudentCandidacy;
 import org.fenixedu.academic.domain.contacts.EmailAddress;
@@ -245,7 +244,7 @@ public class RegisteredDegreeCandidaciesSelectionBean implements Serializable {
         final Registration registration = candidacy.getRegistration();
         final StringBuilder builder = new StringBuilder();
 
-        registration.getAssociatedAttendsSet().stream()
+        Attendance.registrationAttendsStream(registration)
                 .filter(a -> a.isFor(candidacy.getExecutionYear().getFirstExecutionPeriod()))
                 .flatMap(a -> a.getShiftsSet().stream()).forEach(s -> builder.append(s.getNome()).append(","));
 

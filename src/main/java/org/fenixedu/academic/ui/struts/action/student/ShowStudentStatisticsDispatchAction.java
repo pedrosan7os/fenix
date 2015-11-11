@@ -88,8 +88,10 @@ public class ShowStudentStatisticsDispatchAction extends FenixDispatchAction {
         if (student != null && executionCourse != null) {
             request.setAttribute("executionCourse", executionCourse);
             request.setAttribute("executionCourseStatistics", computeStudentExecutionCourseStatistics(student, executionCourse));
-            request.setAttribute("curricularCourseOvertimeStatistics", computeCurricularCourseOvertimeStatistics(student
-                    .getAttends(executionCourse).getEnrolment().getCurricularCourse()));
+            request.setAttribute(
+                    "curricularCourseOvertimeStatistics",
+                    computeCurricularCourseOvertimeStatistics(Attendance.getAttendingCoursesFor(student, executionCourse)
+                            .map(Attendance::getEnrolment).map(Enrolment::getCurricularCourse).orElse(null)));
         }
         return mapping.findForward("showExecutionCourseStatistics");
     }

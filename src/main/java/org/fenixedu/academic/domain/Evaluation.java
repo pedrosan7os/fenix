@@ -40,7 +40,7 @@ public abstract class Evaluation extends Evaluation_Base {
     public List<Course> getAttendingExecutionCoursesFor(final Registration registration) {
         final List<Course> result = new ArrayList<Course>();
         for (final Course executionCourse : this.getAssociatedExecutionCoursesSet()) {
-            if (registration.attends(executionCourse)) {
+            if (Attendance.isRegistrationAttendingCourse(registration, executionCourse)) {
                 result.add(executionCourse);
             }
         }

@@ -78,7 +78,7 @@ public class ICalendarSyncPoint extends FenixDispatchAction {
         ExecutionSemester currentExecutionSemester = ExecutionSemester.readActualExecutionSemester();
 
         for (Registration registration : user.getPerson().getStudent().getRegistrationsSet()) {
-            for (Attendance attends : registration.getAttendsForExecutionPeriod(currentExecutionSemester)) {
+            for (Attendance attends : Attendance.getAttendancesFor(registration, currentExecutionSemester)) {
                 for (Shift shift : attends.getShiftsSet()) {
                     for (Lesson lesson : shift.getAssociatedLessonsSet()) {
                         allEvents.addAll(lesson.getAllLessonsEvents());
@@ -86,8 +86,8 @@ public class ICalendarSyncPoint extends FenixDispatchAction {
                 }
             }
 
-            for (Attendance attends : registration.getAttendsForExecutionPeriod(currentExecutionSemester
-                    .getPreviousExecutionPeriod())) {
+            for (Attendance attends : Attendance.getAttendancesFor(registration,
+                    currentExecutionSemester.getPreviousExecutionPeriod())) {
                 for (Shift shift : attends.getShiftsSet()) {
                     for (Lesson lesson : shift.getAssociatedLessonsSet()) {
                         allEvents.addAll(lesson.getAllLessonsEvents());
@@ -131,23 +131,23 @@ public class ICalendarSyncPoint extends FenixDispatchAction {
         ExecutionSemester currentExecutionSemester = ExecutionSemester.readActualExecutionSemester();
 
         for (Registration registration : user.getPerson().getStudent().getRegistrationsSet()) {
-            for (WrittenEvaluation writtenEvaluation : registration.getWrittenEvaluations(currentExecutionSemester)) {
+            for (WrittenEvaluation writtenEvaluation : Attendance.getWrittenEvaluations(registration, currentExecutionSemester)) {
                 allEvents.addAll(writtenEvaluation.getAllEvents(registration));
             }
 
-            for (Attendance attends : registration.getAttendsForExecutionPeriod(currentExecutionSemester)) {
+            for (Attendance attends : Attendance.getAttendancesFor(registration, currentExecutionSemester)) {
                 for (Project project : attends.getExecutionCourse().getAssociatedProjects()) {
                     allEvents.addAll(project.getAllEvents(attends.getExecutionCourse()));
                 }
             }
 
-            for (WrittenEvaluation writtenEvaluation : registration.getWrittenEvaluations(currentExecutionSemester
-                    .getPreviousExecutionPeriod())) {
+            for (WrittenEvaluation writtenEvaluation : Attendance.getWrittenEvaluations(registration,
+                    currentExecutionSemester.getPreviousExecutionPeriod())) {
                 allEvents.addAll(writtenEvaluation.getAllEvents(registration));
             }
 
-            for (Attendance attends : registration.getAttendsForExecutionPeriod(currentExecutionSemester
-                    .getPreviousExecutionPeriod())) {
+            for (Attendance attends : Attendance.getAttendancesFor(registration,
+                    currentExecutionSemester.getPreviousExecutionPeriod())) {
                 for (Project project : attends.getExecutionCourse().getAssociatedProjects()) {
                     allEvents.addAll(project.getAllEvents(attends.getExecutionCourse()));
                 }

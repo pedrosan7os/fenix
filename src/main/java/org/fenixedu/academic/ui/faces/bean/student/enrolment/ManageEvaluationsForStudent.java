@@ -31,6 +31,7 @@ import java.util.Map;
 import javax.faces.component.html.HtmlInputHidden;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.Evaluation;
 import org.fenixedu.academic.domain.Exam;
 import org.fenixedu.academic.domain.WrittenEvaluation;
@@ -84,7 +85,7 @@ public class ManageEvaluationsForStudent extends DisplayEvaluationsForStudentToE
                 continue;
             }
 
-            for (final WrittenEvaluation writtenEvaluation : registration.getWrittenEvaluations(getExecutionPeriod())) {
+            for (final WrittenEvaluation writtenEvaluation : Attendance.getWrittenEvaluations(registration, getExecutionPeriod())) {
                 if (writtenEvaluation instanceof Exam) {
                     final Exam exam = (Exam) writtenEvaluation;
                     if (!exam.isExamsMapPublished()) {

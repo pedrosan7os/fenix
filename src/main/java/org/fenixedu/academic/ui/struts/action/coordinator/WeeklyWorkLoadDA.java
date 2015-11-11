@@ -199,7 +199,7 @@ public class WeeklyWorkLoadDA extends FenixDispatchAction {
 
         private boolean consistentAnswers(final Attendance attends, final int weekIndex) {
             int weeklyTotal = 0;
-            for (final Attendance someAttends : attends.getRegistration().getAssociatedAttendsSet()) {
+            for (final Attendance someAttends : Attendance.registrationAttends(attends.getRegistration())) {
                 for (final WeeklyWorkLoad weeklyWorkLoad : someAttends.getWeeklyWorkLoadsSet()) {
                     if (weeklyWorkLoad.getWeekOffset().intValue() == weekIndex) {
                         weeklyTotal += weeklyWorkLoad.getTotal();

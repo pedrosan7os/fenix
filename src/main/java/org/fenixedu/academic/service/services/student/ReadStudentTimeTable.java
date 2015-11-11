@@ -21,6 +21,7 @@ package org.fenixedu.academic.service.services.student;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.dto.InfoLessonInstanceAggregation;
@@ -46,7 +47,7 @@ public class ReadStudentTimeTable {
     }
 
     private static List<InfoShowOccupation> compute(Registration registration, ExecutionSemester executionSemester) {
-        return registration.getAssociatedAttendsSet().stream().filter(a -> a.isFor(executionSemester))
+        return Attendance.registrationAttendsStream(registration).filter(a -> a.isFor(executionSemester))
                 .flatMap(a -> a.getShiftsSet().stream()).flatMap(s -> InfoLessonInstanceAggregation.getAggregations(s).stream())
                 .collect(Collectors.toList());
     }

@@ -40,7 +40,7 @@ public class ReadShiftsToEnroll {
         checkStudentRestrictionsForShiftsEnrolments(registration);
 
         final List<ShiftToEnrol> result = new ArrayList<ShiftToEnrol>();
-        for (final Attendance attends : registration.readAttendsByExecutionPeriod(executionSemester)) {
+        for (final Attendance attends : Attendance.getAttendancesFor(registration, executionSemester)) {
             result.add(buildShiftToEnrol(attends));
         }
         return result;

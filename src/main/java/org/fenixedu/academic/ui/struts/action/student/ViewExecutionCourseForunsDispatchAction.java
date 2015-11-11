@@ -32,6 +32,7 @@ import org.fenixedu.academic.service.services.exceptions.FenixServiceException;
 import org.fenixedu.academic.ui.struts.action.exceptions.FenixActionException;
 import org.fenixedu.academic.ui.struts.action.messaging.ForunsManagement;
 import org.fenixedu.academic.ui.struts.action.student.StudentApplication.StudentParticipateApp;
+import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.struts.annotations.Forward;
 import org.fenixedu.bennu.struts.annotations.Forwards;
 import org.fenixedu.bennu.struts.annotations.Mapping;
@@ -66,7 +67,7 @@ public class ViewExecutionCourseForunsDispatchAction extends ForunsManagement {
 
         SortedSet<Attendance> attendsForCurrentExecutionPeriod =
                 new TreeSet<Attendance>(Attendance.ATTENDS_COMPARATOR_BY_EXECUTION_COURSE_NAME);
-        attendsForCurrentExecutionPeriod.addAll(getLoggedPerson(request).getCurrentAttends());
+        attendsForCurrentExecutionPeriod.addAll(Attendance.userAttends(Authenticate.getUser()));
 
         request.setAttribute("attendsForExecutionPeriod", attendsForCurrentExecutionPeriod);
 

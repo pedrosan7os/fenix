@@ -31,6 +31,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.DegreeCurricularPlanEquivalencePlan;
 import org.fenixedu.academic.domain.ExecutionDegree;
@@ -194,7 +195,7 @@ public class ShiftStudentEnrollmentManagerDispatchAction extends FenixDispatchAc
         sortExecutionDegreesByDegreeName(executionDegrees);
         request.setAttribute("executionDegrees", ExecutionDegreesFormat.buildLabelValueBeansForExecutionDegree(executionDegrees));
 
-        request.setAttribute("attendingExecutionCourses", registration.getAttendingExecutionCoursesFor(executionSemester));
+        request.setAttribute("attendingExecutionCourses", Attendance.getAttendingCoursesFor(registration, executionSemester));
         request.setAttribute("executionCoursesFromExecutionDegree", selectedExecutionDegree.getDegreeCurricularPlan()
                 .getExecutionCoursesByExecutionPeriod(executionSemester));
 
@@ -229,7 +230,7 @@ public class ShiftStudentEnrollmentManagerDispatchAction extends FenixDispatchAc
         request.setAttribute("shiftsToEnrolFromUnenroledExecutionCourses", getShiftsToEnrolByEnroledState(shiftsToEnrol, false));
 
         final List<Shift> studentShifts =
-                registration.getAssociatedAttendsSet().stream().filter(a -> a.isFor(executionSemester))
+                Attendance.registrationAttendsStream(registration).filter(a -> a.isFor(executionSemester))
                         .flatMap(a -> a.getShiftsSet().stream()).collect(Collectors.toList());
         request.setAttribute("studentShifts", studentShifts);
         sortStudentShifts(studentShifts);

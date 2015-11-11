@@ -32,6 +32,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.exceptions.DomainException;
@@ -232,10 +233,10 @@ public class ShiftStudentEnrollmentManagerLookupDispatchAction extends FenixDisp
         final List<SchoolClass> schoolClassesToEnrol = new ArrayList<SchoolClass>();
         if (executionCourse != null) {
             request.setAttribute("executionCourse", executionCourse);
-            schoolClassesToEnrol.addAll(registration.getSchoolClassesToEnrolBy(executionCourse));
+            schoolClassesToEnrol.addAll(executionCourse.getSchoolClassesBy(registration.getActiveDegreeCurricularPlan()));
 
         } else {
-            schoolClassesToEnrol.addAll(registration.getSchoolClassesToEnrol());
+            schoolClassesToEnrol.addAll(Attendance.getSchoolClassesToEnrol(registration));
         }
 
         Collections.sort(schoolClassesToEnrol, SchoolClass.COMPARATOR_BY_NAME);

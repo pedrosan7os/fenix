@@ -31,6 +31,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.EnrolmentPeriod;
 import org.fenixedu.academic.domain.EnrolmentPeriodInClasses;
@@ -69,9 +70,10 @@ public class ShowStudentPortalDA extends Action {
         if (student != null) {
             for (Registration registration : student.getActiveRegistrationsIn(ExecutionSemester.readActualExecutionSemester())) {
                 DegreeCurricularPlan degreeCurricularPlan = registration.getActiveDegreeCurricularPlan();
-                if (registration.getAttendingExecutionCoursesForCurrentExecutionPeriod().isEmpty() == false) {
-                    studentPortalBeans.add(new StudentPortalBean(registration.getDegree(), student, registration
-                            .getAttendingExecutionCoursesForCurrentExecutionPeriod(), degreeCurricularPlan));
+                if (Attendance.getAttendingCoursesFor(registration, ExecutionSemester.readActualExecutionSemester()).isEmpty() == false) {
+                    studentPortalBeans.add(new StudentPortalBean(registration.getDegree(), student, Attendance
+                            .getAttendingCoursesFor(registration, ExecutionSemester.readActualExecutionSemester()),
+                            degreeCurricularPlan));
                 }
                 if (hasSpecialSeasonEnrolments(student)) {
                     genericDegreeWarnings.addAll(getEnrolmentPeriodCoursesAfterSpecialSeason(degreeCurricularPlan));

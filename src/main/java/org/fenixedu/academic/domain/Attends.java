@@ -130,7 +130,6 @@ public class Attends extends Attends_Base {
         setAluno(null);
         setDisciplinaExecucao(null);
         setEnrolment(null);
-        getShiftsSet().clear();
 
         setRootDomainObject(null);
         deleteDomainObject();
@@ -407,9 +406,7 @@ public class Attends extends Attends_Base {
         if (getEnrolment() != null) {
             throw new DomainException("errors.student.already.enroled");
         }
-        if (!getShiftsSet().isEmpty()) {
-            throw new DomainException("errors.student.already.enroled.in.shift");
-        }
+        getAttendance().deleteIfNotBound();
         delete();
     }
 

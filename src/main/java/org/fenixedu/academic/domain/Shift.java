@@ -557,9 +557,9 @@ public class Shift extends Shift_Base {
             ExecutionSemester executionSemester) {
         int result = 0;
         final List<Shift> enroledShifts =
-                registration.getAssociatedAttendsSet().stream().filter(a -> a.isFor(executionSemester))
-                        .flatMap(a -> a.getShiftsSet().stream()).collect(Collectors.toList());
-        for (final Course executionCourse : registration.getAttendingExecutionCoursesFor(executionSemester)) {
+                Attendance.getAttendancesForStream(registration, executionSemester).flatMap(a -> a.getShiftsSet().stream())
+                        .collect(Collectors.toList());
+        for (final Course executionCourse : Attendance.getAttendingCoursesFor(registration, executionSemester)) {
             for (final ShiftType shiftType : executionCourse.getOldShiftTypesToEnrol()) {
                 if (!enroledShifts.stream().anyMatch(
                         enroledShift -> enroledShift.getExecutionCourse() == executionCourse

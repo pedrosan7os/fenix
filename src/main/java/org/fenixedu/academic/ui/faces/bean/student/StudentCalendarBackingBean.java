@@ -90,7 +90,7 @@ public class StudentCalendarBackingBean extends FenixBackingBean {
 
             executionSemesters = new TreeSet<ExecutionSemester>(ExecutionSemester.COMPARATOR_BY_SEMESTER_AND_YEAR);
             if (registration != null) {
-                for (final Attendance attends : registration.getAssociatedAttendsSet()) {
+                for (final Attendance attends : Attendance.registrationAttends(registration)) {
                     executionSemesters.add(attends.getExecutionCourse().getExecutionPeriod());
                 }
             }
@@ -107,7 +107,7 @@ public class StudentCalendarBackingBean extends FenixBackingBean {
 
             executionCourses = new TreeSet<Course>(executionCourseComparator);
             if (registration != null) {
-                for (final Attendance attends : registration.getAssociatedAttendsSet()) {
+                for (final Attendance attends : Attendance.registrationAttends(registration)) {
                     final Course executionCourse = attends.getExecutionCourse();
                     if (executionCourse.getExecutionPeriod() == executionSemester) {
                         executionCourses.add(executionCourse);
@@ -266,7 +266,7 @@ public class StudentCalendarBackingBean extends FenixBackingBean {
         final ExecutionSemester executionSemester = getExecutionPeriod();
         final Registration registration = getStudent();
 
-        for (final Attendance attends : registration.getAssociatedAttendsSet()) {
+        for (final Attendance attends : Attendance.registrationAttends(registration)) {
             final Course executionCourse = attends.getExecutionCourse();
             if (executionCourse.getExecutionPeriod() == executionSemester
                     && (getExecutionCourseID() == null || getExecutionCourseID().equals(executionCourse.getExternalId()))) {

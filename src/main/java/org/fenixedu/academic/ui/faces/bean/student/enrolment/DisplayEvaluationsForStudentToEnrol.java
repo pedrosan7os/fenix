@@ -30,6 +30,7 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.ComparatorChain;
 import org.apache.commons.collections.comparators.ReverseComparator;
+import org.fenixedu.academic.domain.Attendance;
 import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.Evaluation;
 import org.fenixedu.academic.domain.Exam;
@@ -186,7 +187,7 @@ public class DisplayEvaluationsForStudentToEnrol extends FenixBackingBean {
     private void processAllEvaluations() {
         if (getEvaluationType().equals(ALL) || getEvaluationType().equals(EXAMS)) {
             for (final Registration registration : getStudent().getStudent().getRegistrationsSet()) {
-                for (final Exam exam : registration.getUnenroledExams(getExecutionPeriod())) {
+                for (final Exam exam : Attendance.getUnenroledExams(registration, getExecutionPeriod())) {
                     if (exam.isExamsMapPublished()) {
                         this.allNotEnroledEvaluations.add(exam);
                         getExecutionCourses().put(exam.getExternalId(), exam.getAttendingExecutionCoursesFor(registration));
@@ -196,7 +197,7 @@ public class DisplayEvaluationsForStudentToEnrol extends FenixBackingBean {
         }
         if (getEvaluationType().equals(ALL) || getEvaluationType().equals(WRITTENTESTS)) {
             for (final Registration registration : getStudent().getStudent().getRegistrationsSet()) {
-                for (final WrittenTest writtenTest : registration.getUnenroledWrittenTests(getExecutionPeriod())) {
+                for (final WrittenTest writtenTest : Attendance.getUnenroledWrittenTests(registration, getExecutionPeriod())) {
 
                     this.allNotEnroledEvaluations.add(writtenTest);
                     getExecutionCourses().put(writtenTest.getExternalId(),
@@ -211,7 +212,7 @@ public class DisplayEvaluationsForStudentToEnrol extends FenixBackingBean {
     private void processNotEnroledEvaluations() {
         if (getEvaluationType().equals(ALL) || getEvaluationType().equals(EXAMS)) {
             for (final Registration registration : getStudent().getStudent().getRegistrationsSet()) {
-                for (final Exam exam : registration.getUnenroledExams(getExecutionPeriod())) {
+                for (final Exam exam : Attendance.getUnenroledExams(registration, getExecutionPeriod())) {
                     if (exam.isExamsMapPublished()) {
                         try {
                             exam.isInEnrolmentPeriod();
@@ -227,7 +228,7 @@ public class DisplayEvaluationsForStudentToEnrol extends FenixBackingBean {
         }
         if (getEvaluationType().equals(ALL) || getEvaluationType().equals(WRITTENTESTS)) {
             for (final Registration registration : getStudent().getStudent().getRegistrationsSet()) {
-                for (final WrittenTest writtenTest : registration.getUnenroledWrittenTests(getExecutionPeriod())) {
+                for (final WrittenTest writtenTest : Attendance.getUnenroledWrittenTests(registration, getExecutionPeriod())) {
                     try {
                         writtenTest.isInEnrolmentPeriod();
                         this.notEnroledEvaluations.add(writtenTest);

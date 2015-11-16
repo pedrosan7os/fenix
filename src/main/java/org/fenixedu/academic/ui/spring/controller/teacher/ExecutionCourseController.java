@@ -18,8 +18,6 @@
  */
 package org.fenixedu.academic.ui.spring.controller.teacher;
 
-import java.util.Optional;
-
 import javax.ws.rs.core.Response.Status;
 
 import org.fenixedu.academic.domain.Course;
@@ -28,6 +26,7 @@ import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.predicate.AccessControl;
 import org.fenixedu.academic.ui.spring.StrutsFunctionalityController;
+import org.fenixedu.bennu.core.security.Authenticate;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -42,15 +41,13 @@ public abstract class ExecutionCourseController extends StrutsFunctionalityContr
     private CourseTeacher findProfessorship(final Course executionCourse) {
         final Person person = AccessControl.getPerson();
         if (person != null) {
-            Optional<CourseTeacher> professorshipOpt =
-                    person.getProfessorshipsSet().stream()
-                            .filter(professorship -> professorship.getExecutionCourse().equals(executionCourse)).findFirst();
-            if (professorshipOpt.isPresent()) {
-                CourseTeacher prof = professorshipOpt.get();
-                if (!this.getPermission(prof)) {
+            CourseTeacher professorshipOpt =
+                    CourseTeacher.courseTeachersForUserAndCourse(Authenticate.getUser(), executionCourse);
+            if (professorshipOpt != null) {
+                if (!this.getPermission(professorshipOpt)) {
                     throw new DomainException(Status.FORBIDDEN, "message.error.notAuthorized");
                 } else {
-                    return prof;
+                    return professorshipOpt;
                 }
             }
         }

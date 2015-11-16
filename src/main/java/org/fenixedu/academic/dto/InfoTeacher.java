@@ -23,11 +23,7 @@
  */
 package org.fenixedu.academic.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.domain.Teacher;
 
 import pt.ist.fenixframework.FenixFramework;
@@ -49,24 +45,6 @@ public class InfoTeacher extends InfoObject {
 
     public InfoTeacher(final Teacher teacher) {
         this.person = teacher.getPerson();
-    }
-
-    public List getProfessorShipsExecutionCourses() {
-        final List<InfoProfessorship> infoProfessorships = new ArrayList<InfoProfessorship>();
-        for (final Professorship professorship : getPerson().getProfessorshipsSet()) {
-            infoProfessorships.add(InfoProfessorship.newInfoFromDomain(professorship));
-        }
-        return infoProfessorships;
-    }
-
-    public List getResponsibleForExecutionCourses() {
-        final List<InfoProfessorship> infoProfessorships = new ArrayList<InfoProfessorship>();
-        for (final Professorship professorship : getPerson().getProfessorshipsSet()) {
-            if (professorship.isResponsibleFor()) {
-                infoProfessorships.add(InfoProfessorship.newInfoFromDomain(professorship));
-            }
-        }
-        return infoProfessorships;
     }
 
     public String getTeacherId() {

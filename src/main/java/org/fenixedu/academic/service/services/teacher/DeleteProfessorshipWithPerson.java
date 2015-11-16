@@ -35,7 +35,7 @@ public class DeleteProfessorshipWithPerson {
             final Person loggedPerson = AccessControl.getPerson();
 
             CourseTeacher selectedProfessorship = null;
-            selectedProfessorship = person.getProfessorswhipByExecutionCourse(executionCourse);
+            selectedProfessorship = CourseTeacher.courseTeachersForUserAndCourse(person.getUser(), executionCourse);
 
             if ((loggedPerson == null) || (selectedProfessorship == null) || loggedPerson == selectedProfessorship.getPerson()
                     || selectedProfessorship.getResponsibleFor()) {
@@ -45,7 +45,7 @@ public class DeleteProfessorshipWithPerson {
             throw new NotAuthorizedException();
         }
 
-        CourseTeacher professorshipToDelete = person.getProfessorshipByExecutionCourse(executionCourse);
+        CourseTeacher professorshipToDelete = CourseTeacher.courseTeachersForUserAndCourse(person.getUser(), executionCourse);
 
         professorshipToDelete.delete();
 

@@ -48,11 +48,7 @@ public class ProjectSubmissionFile extends ProjectSubmissionFile_Base {
             if (department != null && getProjectSubmission().getProject().getDeparmentsSet().contains(department)) {
                 return true;
             }
-            for (final CourseTeacher professorship : teacher.getProfessorshipsSet()) {
-                if (professorship.getExecutionCourse().equals(executionCourse)) {
-                    return true;
-                }
-            }
+            return CourseTeacher.userHasCourseTeacherForCourse(user, executionCourse);
         }
         if (user != null && user.getPerson().getStudent() != null) {
             for (final Attendance attends : getProjectSubmission().getStudentGroup().getAttendsSet()) {

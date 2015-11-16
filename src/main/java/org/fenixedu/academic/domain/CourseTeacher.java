@@ -8,12 +8,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.bennu.core.domain.Bennu;
+import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.bennu.core.security.Authenticate;
 
@@ -234,6 +236,29 @@ public class CourseTeacher extends CourseTeacher_Base {
 
     public void setCreator(Person creator) {
         getSourceProfessorship().setCreator(creator);
+    }
+
+    public static boolean userHasCourseTeacherForCourse(User user, Course executionCourse) {
+        return user.getCourseTeacherSet().stream().anyMatch(t -> t.getExecutionCourse().equals(executionCourse));
+    }
+
+    public static boolean userHasAnyCourseTeacher(User user) {
+        return !user.getCourseTeacherSet().isEmpty();
+    }
+
+    public static CourseTeacher courseTeachersForUserAndCourse(User user, Course executionCourse) {
+        return user.getCourseTeacherSet().stream().filter(t -> t.getExecutionCourse().equals(executionCourse)).findFirst()
+                .orElse(null);
+    }
+
+    public static Collection<CourseTeacher> courseTeachersByUserAndPeriod(User user, ExecutionSemester semester) {
+        return user.getCourseTeacherSet().stream().filter(t -> t.getExecutionCourse().getExecutionPeriod().equals(semester))
+                .collect(Collectors.toSet());
+    }
+
+    public static boolean isUserResponsibleFor(User user, Course executionCourse) {
+        return user.getCourseTeacherSet().stream()
+                .anyMatch(t -> t.getExecutionCourse().equals(executionCourse) && t.getResponsibleFor());
     }
 
 }

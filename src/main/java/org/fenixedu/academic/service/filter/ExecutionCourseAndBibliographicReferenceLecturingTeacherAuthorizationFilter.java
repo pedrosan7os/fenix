@@ -23,8 +23,6 @@
  */
 package org.fenixedu.academic.service.filter;
 
-import java.util.Iterator;
-
 import org.fenixedu.academic.domain.BibliographicReference;
 import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.CourseTeacher;
@@ -67,24 +65,14 @@ public class ExecutionCourseAndBibliographicReferenceLecturingTeacherAuthorizati
             return false;
         }
 
-        boolean result = false;
         final BibliographicReference bibliographicReference = FenixFramework.getDomainObject(bibliographicReferenceID);
         final Teacher teacher = Teacher.readTeacherByUsername(id.getUsername());
 
         if (bibliographicReference != null && teacher != null) {
             final Course executionCourse = bibliographicReference.getExecutionCourse();
-            final Iterator associatedProfessorships = teacher.getProfessorshipsIterator();
-            // Check if Teacher has a professorship to Course
-            // BibliographicReference
-            while (associatedProfessorships.hasNext()) {
-                CourseTeacher professorship = (CourseTeacher) associatedProfessorships.next();
-                if (professorship.getExecutionCourse().equals(executionCourse)) {
-                    result = true;
-                    break;
-                }
-            }
+            return CourseTeacher.userHasCourseTeacherForCourse(teacher.getPerson().getUser(), executionCourse);
         }
-        return result;
+        return false;
     }
 
 }

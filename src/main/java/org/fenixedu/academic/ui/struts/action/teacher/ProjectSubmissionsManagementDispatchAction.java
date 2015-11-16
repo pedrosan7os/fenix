@@ -45,6 +45,7 @@ import org.fenixedu.academic.service.services.exceptions.FenixServiceException;
 import org.fenixedu.academic.service.services.teacher.NotifyStudentGroup;
 import org.fenixedu.academic.ui.struts.action.exceptions.FenixActionException;
 import org.fenixedu.academic.ui.struts.action.teacher.executionCourse.ExecutionCourseBaseAction;
+import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.struts.annotations.Mapping;
 
 import pt.ist.fenixWebFramework.renderers.components.state.IViewState;
@@ -224,7 +225,7 @@ public class ProjectSubmissionsManagementDispatchAction extends ExecutionCourseB
         }
         final Person person = getUserView(request).getPerson();
         final String projectId = request.getParameter("projectID");
-        for (final CourseTeacher professorship : person.getProfessorshipsSet()) {
+        for (final CourseTeacher professorship : Authenticate.getUser().getCourseTeacherSet()) {
             for (final Project project : professorship.getExecutionCourse().getAssociatedProjects()) {
                 if (project.getExternalId().equals(projectId)) {
                     request.setAttribute("projectOID", project.getExternalId());

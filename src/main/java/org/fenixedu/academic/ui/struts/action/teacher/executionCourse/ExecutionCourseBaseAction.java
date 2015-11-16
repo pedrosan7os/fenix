@@ -25,11 +25,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.fenixedu.academic.domain.Course;
-import org.fenixedu.academic.domain.Course;
-import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.CourseTeacher;
-import org.fenixedu.academic.predicate.AccessControl;
 import org.fenixedu.academic.ui.struts.action.base.FenixDispatchAction;
+import org.fenixedu.bennu.core.security.Authenticate;
 
 import com.google.common.base.Strings;
 
@@ -73,9 +71,8 @@ public abstract class ExecutionCourseBaseAction extends FenixDispatchAction {
     }
 
     private static CourseTeacher findProfessorship(final HttpServletRequest request, final String executionCourseID) {
-        final Person person = AccessControl.getPerson();
-        if (person != null) {
-            for (final CourseTeacher professorship : person.getProfessorshipsSet()) {
+        if (Authenticate.getUser() != null) {
+            for (final CourseTeacher professorship : Authenticate.getUser().getCourseTeacherSet()) {
                 final Course executionCourse = professorship.getExecutionCourse();
                 if (executionCourse.getExternalId().equals(executionCourseID)) {
                     return professorship;

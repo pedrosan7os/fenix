@@ -19,12 +19,13 @@
 package org.fenixedu.academic.predicate;
 
 import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.Lesson;
 import org.fenixedu.academic.domain.LessonInstance;
-import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.SchoolClass;
 import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.person.RoleType;
+import org.fenixedu.bennu.core.security.Authenticate;
 
 public class ResourceAllocationRolePredicates {
 
@@ -70,12 +71,8 @@ public class ResourceAllocationRolePredicates {
             new AccessControlPredicate<LessonInstance>() {
                 @Override
                 public boolean evaluate(LessonInstance lessonInstance) {
-
-                    Person loggedPerson = AccessControl.getPerson();
-
                     Course executionCourse = lessonInstance.getLesson().getExecutionCourse();
-                    if (loggedPerson.getProfessorshipsSet().size() > 0
-                            && loggedPerson.hasProfessorshipForExecutionCourse(executionCourse)) {
+                    if (CourseTeacher.userHasCourseTeacherForCourse(Authenticate.getUser(), executionCourse)) {
                         return true;
                     }
 

@@ -102,7 +102,7 @@ public class ICalendarSyncPoint extends FenixDispatchAction {
 
         List<EventBean> allEvents = new ArrayList<EventBean>();
 
-        for (CourseTeacher professorShip : user.getPerson().getProfessorshipsSet()) {
+        for (CourseTeacher professorShip : user.getCourseTeacherSet()) {
             Course executionCourse = professorShip.getExecutionCourse();
             for (Lesson lesson : executionCourse.getLessons()) {
                 allEvents.addAll(lesson.getAllLessonsEvents());
@@ -160,7 +160,7 @@ public class ICalendarSyncPoint extends FenixDispatchAction {
 
         List<EventBean> allEvents = new ArrayList<EventBean>();
 
-        for (CourseTeacher professorShip : user.getPerson().getProfessorshipsSet()) {
+        for (CourseTeacher professorShip : user.getCourseTeacherSet()) {
             Course executionCourse = professorShip.getExecutionCourse();
 
             for (WrittenEvaluation writtenEvaluation : executionCourse.getWrittenEvaluations()) {

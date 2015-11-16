@@ -124,13 +124,9 @@ public class WrittenTest extends WrittenTest_Base {
 
     private boolean isTeacher(User requestor) {
         if (requestor != null) {
-            Person person = requestor.getPerson();
-            Teacher teacher = person.getTeacher();
-            if (teacher != null) {
-                for (Course executionCourse : getAssociatedExecutionCoursesSet()) {
-                    if (teacher.hasProfessorshipForExecutionCourse(executionCourse)) {
-                        return true;
-                    }
+            for (Course executionCourse : getAssociatedExecutionCoursesSet()) {
+                if (CourseTeacher.userHasCourseTeacherForCourse(requestor, executionCourse)) {
+                    return true;
                 }
             }
         }

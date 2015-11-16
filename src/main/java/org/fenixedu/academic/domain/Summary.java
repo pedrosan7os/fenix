@@ -265,7 +265,7 @@ public class Summary extends Summary_Base {
     }
 
     private void checkIfInternalTeacherHasProfessorhipInExecutionCourse(Teacher teacher, Course executionCourse) {
-        if (teacher != null && teacher.getProfessorshipByExecutionCourse(executionCourse) != null) {
+        if (teacher != null && CourseTeacher.userHasCourseTeacherForCourse(teacher.getPerson().getUser(), executionCourse)) {
             throw new DomainException("error.summary.teacher.is.executionCourse.professorship");
         }
     }

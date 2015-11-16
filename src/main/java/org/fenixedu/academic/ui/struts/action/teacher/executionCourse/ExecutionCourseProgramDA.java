@@ -28,11 +28,12 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.DynaActionForm;
 import org.fenixedu.academic.domain.Course;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.Curriculum;
-import org.fenixedu.academic.domain.Teacher;
 import org.fenixedu.academic.service.services.exceptions.FenixServiceException;
 import org.fenixedu.academic.ui.struts.action.exceptions.FenixActionException;
 import org.fenixedu.academic.ui.struts.action.teacher.ManageExecutionCourseDA;
+import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.struts.annotations.Input;
 import org.fenixedu.bennu.struts.annotations.Mapping;
 
@@ -61,8 +62,7 @@ public class ExecutionCourseProgramDA extends ManageExecutionCourseDA {
             HttpServletResponse response) throws Exception {
         final Course executionCourse = (Course) request.getAttribute("executionCourse");
 
-        final Teacher teacher = getUserView(request).getPerson().getTeacher();
-        if (teacher.isResponsibleFor(executionCourse) == null) {
+        if (!CourseTeacher.isUserResponsibleFor(Authenticate.getUser(), executionCourse)) {
             ActionMessages messages = new ActionMessages();
             messages.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("error.teacherNotResponsibleOrNotCoordinator"));
             saveErrors(request, messages);

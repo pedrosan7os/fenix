@@ -19,11 +19,12 @@
 package org.fenixedu.academic.predicate;
 
 import org.fenixedu.academic.domain.Course;
-import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.space.LessonInstanceSpaceOccupation;
 import org.fenixedu.academic.domain.space.LessonSpaceOccupation;
 import org.fenixedu.academic.domain.space.SpaceOccupation;
 import org.fenixedu.academic.domain.space.WrittenEvaluationSpaceOccupation;
+import org.fenixedu.bennu.core.security.Authenticate;
 
 public class SpacePredicates {
 
@@ -57,11 +58,9 @@ public class SpacePredicates {
             new AccessControlPredicate<LessonSpaceOccupation>() {
                 @Override
                 public boolean evaluate(LessonSpaceOccupation spaceOccupation) {
-
-                    Person loggedPerson = AccessControl.getPerson();
-
                     Course executionCourse = spaceOccupation.getLesson().getExecutionCourse();
-                    if (loggedPerson.hasProfessorshipForExecutionCourse(executionCourse)) {
+
+                    if (CourseTeacher.userHasCourseTeacherForCourse(Authenticate.getUser(), executionCourse)) {
                         return true;
                     }
 
@@ -82,10 +81,7 @@ public class SpacePredicates {
             new AccessControlPredicate<LessonInstanceSpaceOccupation>() {
                 @Override
                 public boolean evaluate(LessonInstanceSpaceOccupation lessonInstanceSpaceOccupation) {
-
-                    Person loggedPerson = AccessControl.getPerson();
-
-                    if (loggedPerson.getProfessorshipsSet().size() > 0) {
+                    if (CourseTeacher.userHasAnyCourseTeacher(Authenticate.getUser())) {
                         return true;
                     }
 

@@ -71,13 +71,11 @@ public class ExecutionCourseAndExamLecturingTeacherAuthorizationFilter extends A
         }
         try {
             Teacher teacher = Teacher.readTeacherByUsername(id.getUsername());
-            CourseTeacher professorship = null;
             if (teacher != null) {
                 Course executionCourse = FenixFramework.getDomainObject(executionCourseID);
-                professorship = teacher.getProfessorshipByExecutionCourse(executionCourse);
+                return CourseTeacher.userHasCourseTeacherForCourse(teacher.getPerson().getUser(), executionCourse);
             }
-            return professorship != null;
-
+            return false;
         } catch (Exception e) {
             return false;
         }

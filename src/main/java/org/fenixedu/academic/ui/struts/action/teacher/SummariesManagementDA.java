@@ -50,7 +50,6 @@ import org.fenixedu.academic.dto.SummariesManagementBean;
 import org.fenixedu.academic.dto.SummariesManagementBean.SummaryType;
 import org.fenixedu.academic.dto.teacher.executionCourse.NextPossibleSummaryLessonsAndDatesBean;
 import org.fenixedu.academic.dto.teacher.executionCourse.SummaryTeacherBean;
-import org.fenixedu.academic.predicate.AccessControl;
 import org.fenixedu.academic.service.services.exceptions.FenixServiceException;
 import org.fenixedu.academic.service.services.exceptions.NotAuthorizedException;
 import org.fenixedu.academic.service.services.teacher.CreateSummary;
@@ -60,6 +59,8 @@ import org.fenixedu.academic.ui.struts.action.exceptions.FenixActionException;
 import org.fenixedu.academic.ui.struts.action.teacher.executionCourse.ExecutionCourseBaseAction;
 import org.fenixedu.academic.util.HourMinuteSecond;
 import org.fenixedu.academic.util.MultiLanguageString;
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.struts.annotations.Forward;
 import org.fenixedu.bennu.struts.annotations.Forwards;
 import org.fenixedu.bennu.struts.annotations.Mapping;
@@ -70,6 +71,8 @@ import org.joda.time.YearMonthDay;
 import pt.ist.fenixWebFramework.renderers.components.state.IViewState;
 import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
 import pt.ist.fenixframework.FenixFramework;
+
+import com.google.common.base.Strings;
 
 /**
  * @author Manuel Pinto
@@ -106,14 +109,9 @@ public class SummariesManagementDA extends FenixDispatchAction {
 
         String teacherId = request.getParameter("teacherId_");
 
-        Teacher loggedTeacher;
-        CourseTeacher loggedProfessorship;
-        if (!StringUtils.isEmpty(teacherId)) {
-            loggedTeacher = Teacher.readByIstId(teacherId);
-            loggedProfessorship = loggedTeacher.getProfessorshipByExecutionCourse(executionCourse);
-        } else {
-            loggedProfessorship = AccessControl.getPerson().getProfessorshipByExecutionCourse(executionCourse);
-        }
+        User user =
+                !Strings.isNullOrEmpty(teacherId) ? Teacher.readByIstId(teacherId).getPerson().getUser() : Authenticate.getUser();
+        CourseTeacher loggedProfessorship = CourseTeacher.courseTeachersForUserAndCourse(user, executionCourse);
 
         if (loggedProfessorship == null) {
             throw new FenixActionException("error.summariesManagement.empty.loggedProfessorship");

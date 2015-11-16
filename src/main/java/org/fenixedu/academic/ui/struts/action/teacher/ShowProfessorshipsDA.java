@@ -32,10 +32,9 @@ import org.apache.struts.action.ActionMapping;
 import org.fenixedu.academic.domain.Course;
 import org.fenixedu.academic.domain.CourseTeacher;
 import org.fenixedu.academic.domain.ExecutionSemester;
-import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.predicate.AccessControl;
 import org.fenixedu.academic.ui.struts.action.base.FenixAction;
 import org.fenixedu.academic.ui.struts.action.teacher.TeacherApplication.TeacherTeachingApp;
+import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.struts.annotations.Forward;
 import org.fenixedu.bennu.struts.annotations.Forwards;
 import org.fenixedu.bennu.struts.annotations.Mapping;
@@ -69,11 +68,10 @@ public class ShowProfessorshipsDA extends FenixAction {
         final List<Course> executionCourses = new ArrayList<Course>();
         request.setAttribute("executionCourses", executionCourses);
 
-        final Person person = AccessControl.getPerson();
         final SortedSet<ExecutionSemester> executionSemesters =
                 new TreeSet<ExecutionSemester>(Ordering.from(ExecutionSemester.COMPARATOR_BY_SEMESTER_AND_YEAR).reverse());
-        if (person != null) {
-            for (final CourseTeacher professorship : person.getProfessorshipsSet()) {
+        if (Authenticate.getUser() != null) {
+            for (final CourseTeacher professorship : Authenticate.getUser().getCourseTeacherSet()) {
                 final Course executionCourse = professorship.getExecutionCourse();
                 final ExecutionSemester executionSemester = executionCourse.getExecutionPeriod();
 

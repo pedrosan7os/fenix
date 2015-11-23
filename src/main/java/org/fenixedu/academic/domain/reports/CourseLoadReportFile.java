@@ -73,7 +73,7 @@ public class CourseLoadReportFile extends CourseLoadReportFile_Base {
                         Row row = spreadsheet.addRow();
                         row.setCell(executionSemester.getSemester());
                         row.setCell(GepReportFile.getExecutionCourseCode(executionCourse));
-                        row.setCell(GepReportFile.getShiftCode(shift));
+                        row.setCell(getShiftCode(shift));
                         row.setCell(shift.getNome());
                         row.setCell(courseLoad.getType().name());
                         row.setCell(courseLoad.getTotalQuantity() != null ? courseLoad.getTotalQuantity().toPlainString()
@@ -84,5 +84,13 @@ public class CourseLoadReportFile extends CourseLoadReportFile_Base {
                 }
             }
         }
+    }
+
+    public static String getShiftCode(Shift shift) {
+        return shift.getNome() + CODE_SEPARATOR + getExecutionCourseCode(shift.getExecutionCourse());
+    }
+
+    public static String getExecutionCourseCode(ExecutionCourse executionCourse) {
+        return executionCourse.getSigla() + CODE_SEPARATOR + getExecutionSemesterCode(executionCourse.getExecutionPeriod());
     }
 }

@@ -19,7 +19,6 @@
 package org.fenixedu.academic.domain.reports;
 
 import java.io.ByteArrayOutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,8 +34,6 @@ import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Professorship;
 import org.fenixedu.academic.domain.QueueJobResult;
-import org.fenixedu.academic.domain.Shift;
-import org.fenixedu.academic.domain.WrittenEvaluation;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.curriculum.ConclusionProcess;
@@ -46,8 +43,6 @@ import org.fenixedu.commons.spreadsheet.Spreadsheet;
 import org.fenixedu.commons.spreadsheet.Spreadsheet.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.hash.Hashing;
 
 public abstract class GepReportFile extends GepReportFile_Base {
 
@@ -82,18 +77,6 @@ public abstract class GepReportFile extends GepReportFile_Base {
     public static String getProfessorshipCode(Professorship professorship) {
         return professorship.getPerson().getUsername() + CODE_SEPARATOR
                 + getExecutionCourseCode(professorship.getExecutionCourse());
-    }
-
-    public static String getShiftCode(Shift shift) {
-        return shift.getNome() + CODE_SEPARATOR + getExecutionCourseCode(shift.getExecutionCourse());
-    }
-
-    public static String getWrittenEvaluationCode(WrittenEvaluation writtenEvaluation) {
-        StringBuilder code =
-                new StringBuilder().append(writtenEvaluation.getInterval().toString()).append(writtenEvaluation.getFullName())
-                        .append(writtenEvaluation.getEvaluationType().toString());
-        writtenEvaluation.getAssociatedExecutionCoursesSet().stream().forEach(ec -> code.append(getExecutionCourseCode(ec)));
-        return Hashing.murmur3_128().hashBytes(code.toString().getBytes(StandardCharsets.UTF_8)).toString();
     }
 
     public static ExecutionYear getExecutionYearFourYearsBack(final ExecutionYear executionYear) {

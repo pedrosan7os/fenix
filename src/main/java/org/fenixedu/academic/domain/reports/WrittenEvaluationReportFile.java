@@ -18,6 +18,8 @@
  */
 package org.fenixedu.academic.domain.reports;
 
+import java.nio.charset.StandardCharsets;
+
 import org.fenixedu.academic.domain.Evaluation;
 import org.fenixedu.academic.domain.Exam;
 import org.fenixedu.academic.domain.ExecutionCourse;
@@ -27,6 +29,8 @@ import org.fenixedu.academic.domain.space.WrittenEvaluationSpaceOccupation;
 import org.fenixedu.commons.spreadsheet.Spreadsheet;
 import org.fenixedu.commons.spreadsheet.Spreadsheet.Row;
 import org.fenixedu.spaces.domain.Space;
+
+import com.google.common.hash.Hashing;
 
 public class WrittenEvaluationReportFile extends WrittenEvaluationReportFile_Base {
 
@@ -70,7 +74,7 @@ public class WrittenEvaluationReportFile extends WrittenEvaluationReportFile_Bas
                         row.setCell(executionSemester.getSemester());
                         row.setCell(GepReportFile.getExecutionCourseCode(executionCourse));
                         row.setCell(executionCourse.getName());
-                        row.setCell(GepReportFile.getWrittenEvaluationCode(writtenEvaluation));
+                        row.setCell(getWrittenEvaluationCode(writtenEvaluation));
                         row.setCell(writtenEvaluation instanceof Exam ? "Exame" : "Teste");
                         row.setCell(writtenEvaluation.getDayDateYearMonthDay().toString("yyyy-MM-dd"));
                         row.setCell(writtenEvaluation.getBeginningDateTime().toString("HH:mm"));
@@ -104,4 +108,15 @@ public class WrittenEvaluationReportFile extends WrittenEvaluationReportFile_Bas
         }
     }
 
+    public static String getWrittenEvaluationCode(WrittenEvaluation writtenEvaluation) {
+        StringBuilder code =
+                new StringBuilder().append(writtenEvaluation.getInterval().toString()).append(writtenEvaluation.getFullName())
+                        .append(writtenEvaluation.getEvaluationType().toString());
+        writtenEvaluation.getAssociatedExecutionCoursesSet().stream().forEach(ec -> code.append(getExecutionCourseCode(ec)));
+        return Hashing.murmur3_128().hashBytes(code.toString().getBytes(StandardCharsets.UTF_8)).toString();
+    }
+
+    public static String getExecutionCourseCode(ExecutionCourse executionCourse) {
+        return executionCourse.getSigla() + CODE_SEPARATOR + getExecutionSemesterCode(executionCourse.getExecutionPeriod());
+    }
 }

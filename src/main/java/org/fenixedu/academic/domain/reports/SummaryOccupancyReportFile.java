@@ -67,7 +67,7 @@ public class SummaryOccupancyReportFile extends SummaryOccupancyReportFile_Base 
                     final Row row = spreadsheet.addRow();
                     row.setCell(getExecutionYear().getYear());
                     row.setCell(executionSemester.getSemester());
-                    row.setCell(GepReportFile.getExecutionCourseCode(executionCourse));
+                    row.setCell(getExecutionCourseCode(executionCourse));
                     row.setCell(executionCourse.getName());
                     final LessonInstance lessonInstance = summary.getLessonInstance();
                     final CourseLoad courseLoad = lessonInstance == null ? null : lessonInstance.getCourseLoad();
@@ -121,4 +121,7 @@ public class SummaryOccupancyReportFile extends SummaryOccupancyReportFile_Base 
         return null;
     }
 
+    public static String getExecutionCourseCode(ExecutionCourse executionCourse) {
+        return executionCourse.getSigla() + CODE_SEPARATOR + getExecutionSemesterCode(executionCourse.getExecutionPeriod());
+    }
 }

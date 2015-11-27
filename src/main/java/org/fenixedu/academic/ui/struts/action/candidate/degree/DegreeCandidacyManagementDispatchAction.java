@@ -83,7 +83,6 @@ import pt.ist.fenixWebFramework.servlets.filters.contentRewrite.GenericChecksumR
         @Forward(name = "printRegistrationDeclaration", path = "/candidate/degree/printRegistrationDeclaration.jsp"),
         @Forward(name = "printSystemAccessData", path = "/candidate/degree/printSystemAccessData.jsp"),
         @Forward(name = "printUnder23TransportsDeclation", path = "/candidate/degree/printUnder23TransportsDeclaration.jsp"),
-        @Forward(name = "printMeasurementTestDate", path = "/candidate/degree/printMeasurementTestDate.jsp"),
         @Forward(name = "printAllDocuments", path = "/candidate/degree/printAllDocuments.jsp") })
 public class DegreeCandidacyManagementDispatchAction extends FenixDispatchAction {
 
@@ -203,10 +202,6 @@ public class DegreeCandidacyManagementDispatchAction extends FenixDispatchAction
             request.setAttribute("campus", getCandidacy(request).getRegistration().getCampus().getName());
             request.setAttribute("executionYear", getCandidacy(request).getExecutionDegree().getExecutionYear());
             return mapping.findForward("printUnder23TransportsDeclation");
-
-        } else if (candidacyOperation.getType() == CandidacyOperationType.PRINT_MEASUREMENT_TEST_DATE) {
-            request.setAttribute("registration", getCandidacy(request).getRegistration());
-            return mapping.findForward("printMeasurementTestDate");
 
         } else if (candidacyOperation.getType() == CandidacyOperationType.PRINT_ALL_DOCUMENTS) {
             StudentCandidacy candidacy = getCandidacy(request);

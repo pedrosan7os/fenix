@@ -32,8 +32,6 @@ public enum CandidacyOperationType {
 
     PRINT_UNDER_23_TRANSPORTS_DECLARATION,
 
-    PRINT_MEASUREMENT_TEST_DATE,
-
     PRINT_ALL_DOCUMENTS,
 
     CANCEL,

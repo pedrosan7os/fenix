@@ -4345,22 +4345,6 @@ class phd.log.PhdLogEntry  {
 
 /* End of Phd Module */
 
-class candidacy.MeasurementTest  {
-    EntryPhase entryPhase;
-    
-}
-
-class candidacy.MeasurementTestShift  {
-    String name;
-    DateTime date;
-}
-
-class candidacy.MeasurementTestRoom  {
-    String name;
-    Integer capacity;
-    Integer roomOrder;
-}
-
 class administrativeOffice.curriculumValidation.DocumentPrintRequest  {
 	String newConclusionDateValue;
 	String newGraduatedTitleValue;
@@ -4939,74 +4923,6 @@ relation PersonViewedPersonInformationLog {
 		multiplicity *;
 	}
 }
-
-relation RootDomainObjectMeasurementTest {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    candidacy.MeasurementTest playsRole measurementTests {
-        multiplicity *;
-    }
-}
-
-relation RootDomainObjectMeasurementTestShift {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    candidacy.MeasurementTestShift playsRole measurementTestShifts {
-        multiplicity *;
-    }
-}
-
-relation RootDomainObjectMeasurementTestRoom {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    candidacy.MeasurementTestRoom playsRole measurementTestRooms {
-        multiplicity *;
-    }
-}
-
-relation RegistrationMeasurementTestRoom {
-    candidacy.MeasurementTestRoom playsRole measurementTestRoom;
-    student.Registration playsRole registrations {
-        multiplicity *;
-    }
-}
-
-relation MeasurementTestShiftDegreeCurricularPlan {
-	candidacy.MeasurementTestShift playsRole shift;
-	DegreeCurricularPlan playsRole forDegreeCurricularPlan {
-		multiplicity *;
-	}
-}
-
-relation MeasurementTestShiftMeasurementTestRoom {
-    candidacy.MeasurementTestShift playsRole shift;
-    
-    candidacy.MeasurementTestRoom playsRole rooms {
-        multiplicity *;
-    }
-}
-
-relation MeasurementTestShiftMeasurementTest {
-    candidacy.MeasurementTest playsRole test;
-    
-    candidacy.MeasurementTestShift playsRole shifts {
-        multiplicity *;
-    }
-}
-
-relation MeasurementTestExecutionYear {
-    ExecutionYear playsRole executionYear;
-    
-    candidacy.MeasurementTest playsRole measurementTests {
-        multiplicity *;
-    }
-}
-
-relation MeasurementTestCampus {
-    .org.fenixedu.spaces.domain.Space playsRole campus;
-    
-    candidacy.MeasurementTest playsRole measurementTests {
-        multiplicity *;
-    }
-}
-
 
 relation RootDomainObjectDefaultCampus {
 	.org.fenixedu.spaces.domain.Space playsRole defaultCampus;

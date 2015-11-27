@@ -67,7 +67,6 @@ public class RegistrationOperation extends CandidacyOperation {
         final Registration registration = createRegistration();
         enrolStudentInCurricularCourses(executionDegree, registration);
         associateShiftsFor(registration);
-        //assignMeasurementTestShift(registration);
         Signal.emit("academic.candidacy.registration.created", new RegistrationCreatedByCandidacy(registration,
                 getStudentCandidacy()));
     }

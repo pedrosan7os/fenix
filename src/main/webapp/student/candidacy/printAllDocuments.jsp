@@ -26,7 +26,6 @@
 
 <%@page import="org.fenixedu.commons.i18n.I18N"%>
 <%@page import="org.joda.time.LocalDate"%>
-<%@page import="org.fenixedu.academic.domain.candidacy.MeasurementTestRoom"%>
 <%@page import="java.util.Locale"%>
 <%@page import="org.fenixedu.academic.domain.student.Registration"%><html xmlns="http://www.w3.org/1999/xhtml" lang="pt-PT" xml:lang="pt-PT">
 
@@ -43,12 +42,6 @@
 <div>
 	<jsp:include page="printRegistrationDeclaration.jsp" />
 </div>
-
-<logic:notEmpty name="candidacy" property="registration.measurementTestRoom">
-	<div style="page-break-before: always;">
-		<jsp:include page="printMeasurementTestDate.jsp" />
-	</div>
-</logic:notEmpty>
 
 <div style="page-break-before: always;">
 	<jsp:include page="/commons/student/timeTable/classTimeTable.jsp" />

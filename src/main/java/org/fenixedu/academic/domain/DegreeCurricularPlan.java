@@ -386,7 +386,6 @@ public class DegreeCurricularPlan extends DegreeCurricularPlan_Base {
                 setServiceAgreementTemplate(null);
                 template.delete();
             }
-            setShift(null);
             setMembersGroup(null);
             setRootDomainObject(null);
             deleteDomainObject();

@@ -25,7 +25,6 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
-import org.fenixedu.academic.domain.Attends;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.person.IDDocumentType;
 import org.fenixedu.academic.util.Bundle;
@@ -172,28 +171,6 @@ abstract public class CandidacyProcess extends CandidacyProcess_Base {
             public boolean evaluate(Object arg0) {
                 IndividualCandidacyProcess process = (IndividualCandidacyProcess) arg0;
                 return !process.isCandidacyCancelled() && process.isProcessMissingRequiredDocumentFiles();
-            }
-
-        }, childs);
-
-        return childs;
-    }
-
-    public List<IndividualCandidacyProcess> getChildsWithMissingShifts() {
-        List<IndividualCandidacyProcess> childs = new ArrayList<IndividualCandidacyProcess>();
-
-        CollectionUtils.select(getChildProcessesSet(), new Predicate() {
-
-            @Override
-            public boolean evaluate(Object arg0) {
-                boolean hasNotMissingShifts = true;
-                IndividualCandidacyProcess process = (IndividualCandidacyProcess) arg0;
-                for (Attends attends : process.getCandidacy().getPersonalDetails().getPerson().getCurrentAttends()) {
-                    if (!attends.hasAllShiftEnrolments()) {
-                        hasNotMissingShifts = false;
-                    }
-                }
-                return !process.isCandidacyCancelled() && !hasNotMissingShifts;
             }
 
         }, childs);

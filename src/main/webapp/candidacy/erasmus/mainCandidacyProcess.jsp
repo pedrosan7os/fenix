@@ -183,9 +183,6 @@
 			<li>
 				<html:link action="<%= "/caseHandlingMobilityApplicationProcess.do?method=manageEmailTemplates&processId=" + processId %>">Manage Email Templates</html:link>
 			</li>
-			<li>
-				<html:link action="<%= "/caseHandlingMobilityApplicationProcess.do?method=prepareExecuteViewChildProcessWithMissingShifts&processId=" + processId %>">View students with incomplete enrollment in shifts</html:link>
-			</li>
 		</logic:present>
 		</ul>
 	</logic:notEmpty>

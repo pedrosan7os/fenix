@@ -20,7 +20,6 @@ package org.fenixedu.academic.domain.candidacyProcess;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -28,8 +27,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
-import org.fenixedu.academic.domain.Attends;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.accounting.paymentCodes.IndividualCandidacyPaymentCode;
@@ -352,16 +349,6 @@ abstract public class IndividualCandidacyProcess extends IndividualCandidacyProc
     protected abstract void executeOperationsBeforeDocumentFileBinding(IndividualCandidacyDocumentFile documentFile);
 
     public abstract List<IndividualCandidacyDocumentFileType> getMissingRequiredDocumentFiles();
-
-    public List<ExecutionCourse> getMissingShifts() {
-        HashSet<ExecutionCourse> missingShifts = new HashSet<ExecutionCourse>();
-        for (Attends attends : this.getCandidacy().getPersonalDetails().getPerson().getCurrentAttends()) {
-            if (!attends.hasAllShiftEnrolments()) {
-                missingShifts.add(attends.getExecutionCourse());
-            }
-        }
-        return new ArrayList<ExecutionCourse>(missingShifts);
-    }
 
     public boolean isProcessMissingRequiredDocumentFiles() {
         return !getMissingRequiredDocumentFiles().isEmpty();

@@ -2075,14 +2075,6 @@ valueType org.fenixedu.academic.domain.accounting.EventTypes as EventTypes {
 		protected boolean isReIngression;
 	}
 	
-    class candidacy.degree.ShiftDistribution  {
-    }
-
-    class candidacy.degree.ShiftDistributionEntry  {
-        Integer abstractStudentNumber;
-        Boolean distributed;
-    }
-
     class contacts.ContactRoot {
     }
 
@@ -7126,13 +7118,6 @@ relation ExecutionDegreeScientificCommission {
     }
 }
 
-relation ExecutionDegreeShiftDistributionEntry {
-    ExecutionDegree playsRole executionDegree;
-    candidacy.degree.ShiftDistributionEntry playsRole shiftDistributionEntries {
-        multiplicity *;
-    }
-}
-
 relation ExecutionPeriodContextBegin {
     ExecutionSemester playsRole beginExecutionPeriod;
     degreeStructure.Context playsRole beginExecutionPeriodContexts {
@@ -7194,11 +7179,6 @@ relation ExecutionYearPaymentPlan {
     accounting.PaymentPlan playsRole paymentPlans {
         multiplicity *;
     }
-}
-
-relation ExecutionYearShiftDistribution {
-    ExecutionYear playsRole executionYear;
-    candidacy.degree.ShiftDistribution playsRole shiftDistribution;
 }
 
 relation ExemptionResponsible {
@@ -9213,20 +9193,6 @@ relation RootDomainObjectShiftGroupingProperties {
     }
 }
 
-relation RootDomainObjectShiftDistribution {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    candidacy.degree.ShiftDistribution playsRole shiftDistributions {
-        multiplicity *;
-    }
-}
-
-relation RootDomainObjectShiftDistributionEntry {
-    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
-    candidacy.degree.ShiftDistributionEntry playsRole shiftDistributionEntries {
-        multiplicity *;
-    }
-}
-
 relation RootDomainObjectShiftEnrolment {
     .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
     ShiftEnrolment playsRole shiftEnrolments {
@@ -9452,20 +9418,6 @@ relation ServiceAgreementServiceAgreementPaymentPlan {
 relation ServiceAgreementTemplatePostingRule {
     accounting.ServiceAgreementTemplate playsRole serviceAgreementTemplate;
     accounting.PostingRule playsRole postingRules {
-        multiplicity *;
-    }
-}
-
-relation ShiftDistributionEntryShift {
-    Shift playsRole shift;
-    candidacy.degree.ShiftDistributionEntry playsRole shiftDistributionEntries {
-        multiplicity *;
-    }
-}
-
-relation ShiftDistributionShiftDistributionEntry {
-    candidacy.degree.ShiftDistribution playsRole shiftDistribution;
-    candidacy.degree.ShiftDistributionEntry playsRole shiftDistributionEntries {
         multiplicity *;
     }
 }

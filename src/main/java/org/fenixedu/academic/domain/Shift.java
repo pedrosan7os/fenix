@@ -130,7 +130,7 @@ public class Shift extends Shift_Base {
 
         setComment(comment);
     }
-    
+
     public boolean isCustomName() {
         return StringUtils.isNotBlank(getNome()) && !getNome().matches(getExecutionCourse().getSigla() + "[a-zA-Z]+[0-9]+");
     }
@@ -155,9 +155,6 @@ public class Shift extends Shift_Base {
             ;
         }
         for (; !getAssociatedShiftProfessorshipSet().isEmpty(); getAssociatedShiftProfessorshipSet().iterator().next().delete()) {
-            ;
-        }
-        for (; !getShiftDistributionEntriesSet().isEmpty(); getShiftDistributionEntriesSet().iterator().next().delete()) {
             ;
         }
 

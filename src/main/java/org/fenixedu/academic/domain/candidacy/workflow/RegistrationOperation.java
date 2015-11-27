@@ -20,19 +20,13 @@ package org.fenixedu.academic.domain.candidacy.workflow;
 
 import java.util.Set;
 
-import org.fenixedu.academic.domain.Attends;
-import org.fenixedu.academic.domain.CurricularCourse;
-import org.fenixedu.academic.domain.Enrolment;
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExecutionYear;
-import org.fenixedu.academic.domain.Shift;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.candidacy.Candidacy;
 import org.fenixedu.academic.domain.candidacy.CandidacyOperationType;
 import org.fenixedu.academic.domain.candidacy.StudentCandidacy;
-import org.fenixedu.academic.domain.candidacy.degree.ShiftDistributionEntry;
 import org.fenixedu.academic.domain.person.RoleType;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.predicate.AccessControl;
@@ -66,38 +60,8 @@ public class RegistrationOperation extends CandidacyOperation {
         final ExecutionDegree executionDegree = getExecutionDegree();
         final Registration registration = createRegistration();
         enrolStudentInCurricularCourses(executionDegree, registration);
-        associateShiftsFor(registration);
         Signal.emit("academic.candidacy.registration.created", new RegistrationCreatedByCandidacy(registration,
                 getStudentCandidacy()));
-    }
-
-    protected void associateShiftsFor(final Registration registration) {
-
-        if (getExecutionYear().getShiftDistribution() != null) {
-            for (final ShiftDistributionEntry shiftEntry : getExecutionDegree().getNextFreeShiftDistributions()) {
-                shiftEntry.setDistributed(Boolean.TRUE);
-                shiftEntry.getShift().addStudents(registration);
-                correctExecutionCourseIfNecessary(registration, shiftEntry.getShift());
-            }
-        }
-    }
-
-    private void correctExecutionCourseIfNecessary(Registration registration, Shift shift) {
-
-        final StudentCurricularPlan studentCurricularPlan = registration.getActiveStudentCurricularPlan();
-        final ExecutionSemester semester = ExecutionSemester.readActualExecutionSemester();
-        final ExecutionCourse executionCourse = shift.getExecutionCourse();
-
-        for (final CurricularCourse curricularCourse : executionCourse.getAssociatedCurricularCoursesSet()) {
-            final Enrolment enrolment = studentCurricularPlan.findEnrolmentFor(curricularCourse, semester);
-            if (enrolment != null) {
-                final Attends attends = enrolment.getAttendsFor(semester);
-                if (attends != null && !attends.isFor(executionCourse)) {
-                    attends.setDisciplinaExecucao(executionCourse);
-                }
-                break;
-            }
-        }
     }
 
     private ExecutionDegree getExecutionDegree() {

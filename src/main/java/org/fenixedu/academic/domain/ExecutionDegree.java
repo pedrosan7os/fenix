@@ -41,7 +41,6 @@ import org.fenixedu.academic.domain.candidacy.DFACandidacy;
 import org.fenixedu.academic.domain.candidacy.DegreeCandidacy;
 import org.fenixedu.academic.domain.candidacy.IMDCandidacy;
 import org.fenixedu.academic.domain.candidacy.StudentCandidacy;
-import org.fenixedu.academic.domain.candidacy.degree.ShiftDistributionEntry;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.degreeStructure.CurricularStage;
 import org.fenixedu.academic.domain.exceptions.DomainException;
@@ -159,8 +158,7 @@ public class ExecutionDegree extends ExecutionDegree_Base implements Comparable<
     @Override
     protected void checkForDeletionBlockers(Collection<String> blockers) {
         super.checkForDeletionBlockers(blockers);
-        if (!(getSchoolClassesSet().isEmpty() && getGuidesSet().isEmpty() && getStudentCandidaciesSet().isEmpty() && getShiftDistributionEntriesSet()
-                .isEmpty())) {
+        if (!(getSchoolClassesSet().isEmpty() && getGuidesSet().isEmpty() && getStudentCandidaciesSet().isEmpty())) {
             blockers.add(BundleUtil.getString(Bundle.APPLICATION, "execution.degree.cannot.be.deleted"));
         }
     }
@@ -692,48 +690,6 @@ public class ExecutionDegree extends ExecutionDegree_Base implements Comparable<
             }
         }
 
-        return result;
-    }
-
-    public List<ShiftDistributionEntry> getNextFreeShiftDistributions() {
-
-        final ArrayList<ShiftDistributionEntry> entries = new ArrayList<ShiftDistributionEntry>(getShiftDistributionEntriesSet());
-        Collections.sort(entries, ShiftDistributionEntry.NUMBER_COMPARATOR);
-
-        for (final ShiftDistributionEntry shiftDistributionEntry : entries) {
-            if (!shiftDistributionEntry.getDistributed()) {
-                return ShiftDistributionEntry.readByAbstractNumber(shiftDistributionEntry.getAbstractStudentNumber(),
-                        getExecutionYear());
-            }
-        }
-
-        return Collections.emptyList();
-    }
-
-    public Integer getStudentNumberForShiftDistributionBasedOn(Integer studentNumberPosition) {
-        final List<Integer> abstractStudentNumbers = new ArrayList<Integer>();
-        for (final ShiftDistributionEntry shiftDistributionEntry : getShiftDistributionEntriesSet()) {
-            if (!abstractStudentNumbers.contains(shiftDistributionEntry.getAbstractStudentNumber())) {
-                abstractStudentNumbers.add(shiftDistributionEntry.getAbstractStudentNumber());
-            }
-        }
-        Collections.sort(abstractStudentNumbers);
-        return !abstractStudentNumbers.isEmpty() ? abstractStudentNumbers.get(studentNumberPosition) : null;
-    }
-
-    public List<ShiftDistributionEntry> getDistributedShiftsFor(Integer studentNumber) {
-        return getShiftsFor(studentNumber, true);
-    }
-
-    private List<ShiftDistributionEntry> getShiftsFor(Integer studentNumber, boolean alreadyDistributed) {
-        final List<ShiftDistributionEntry> result = new ArrayList<ShiftDistributionEntry>();
-        for (final ShiftDistributionEntry shiftDistributionEntry : getShiftDistributionEntriesSet()) {
-            if (shiftDistributionEntry.getDistributed().booleanValue() == alreadyDistributed
-                    && shiftDistributionEntry.getAbstractStudentNumber().equals(studentNumber)) {
-
-                result.add(shiftDistributionEntry);
-            }
-        }
         return result;
     }
 

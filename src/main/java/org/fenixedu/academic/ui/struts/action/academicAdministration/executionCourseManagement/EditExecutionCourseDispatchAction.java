@@ -37,13 +37,11 @@ import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.exceptions.DomainException;
-import org.fenixedu.academic.dto.InfoExecutionCourse;
 import org.fenixedu.academic.dto.InfoExecutionCourseEditor;
 import org.fenixedu.academic.dto.resourceAllocationManager.CourseLoadBean;
 import org.fenixedu.academic.service.services.exceptions.FenixServiceException;
 import org.fenixedu.academic.service.services.manager.DeleteExecutionCourses;
 import org.fenixedu.academic.service.services.manager.executionCourseManagement.EditExecutionCourseInfo;
-import org.fenixedu.academic.service.services.manager.executionCourseManagement.ReadInfoExecutionCourseByOID;
 import org.fenixedu.academic.ui.struts.action.base.FenixDispatchAction;
 import org.fenixedu.academic.ui.struts.action.exceptions.FenixActionException;
 import org.fenixedu.academic.ui.struts.action.resourceAllocationManager.utils.PresentationConstants;
@@ -76,13 +74,7 @@ public class EditExecutionCourseDispatchAction extends FenixDispatchAction {
 
         String executionCourseId = RequestUtils.getAndSetStringToRequest(request, "executionCourseId");
 
-        InfoExecutionCourse infoExecutionCourse;
-        try {
-            infoExecutionCourse = ReadInfoExecutionCourseByOID.run(executionCourseId);
-
-        } catch (FenixServiceException e) {
-            throw new FenixActionException(e);
-        }
+        ExecutionCourse infoExecutionCourse = FenixFramework.getDomainObject(executionCourseId);
 
         request.setAttribute(PresentationConstants.EXECUTION_COURSE, infoExecutionCourse);
         fillForm(form, infoExecutionCourse, request);
@@ -104,7 +96,7 @@ public class EditExecutionCourseDispatchAction extends FenixDispatchAction {
             HttpServletResponse response) throws Exception {
 
         final InfoExecutionCourseEditor infoExecutionCourseEditor = fillInfoExecutionCourseFromForm(actionForm, request);
-        InfoExecutionCourse infoExecutionCourse = null;
+        ExecutionCourse infoExecutionCourse = null;
 
         try {
             infoExecutionCourse = EditExecutionCourseInfo.run(infoExecutionCourseEditor);
@@ -161,7 +153,7 @@ public class EditExecutionCourseDispatchAction extends FenixDispatchAction {
         return mapping.findForward("listExecutionCourseActions");
     }
 
-    private void fillForm(ActionForm form, InfoExecutionCourse infoExecutionCourse, HttpServletRequest request) {
+    private void fillForm(ActionForm form, ExecutionCourse infoExecutionCourse, HttpServletRequest request) {
 
         DynaActionForm executionCourseForm = (DynaActionForm) form;
         executionCourseForm.set("name", infoExecutionCourse.getNome());
@@ -171,7 +163,7 @@ public class EditExecutionCourseDispatchAction extends FenixDispatchAction {
         if (infoExecutionCourse.getAvailableGradeSubmission() != null) {
             executionCourseForm.set("availableGradeSubmission", infoExecutionCourse.getAvailableGradeSubmission().toString());
         }
-        request.setAttribute("courseLoadBean", new CourseLoadBean(infoExecutionCourse.getExecutionCourse()));
+        request.setAttribute("courseLoadBean", new CourseLoadBean(infoExecutionCourse));
     }
 
     protected DynaActionForm prepareReturnAttributes(ActionForm form, HttpServletRequest request) {

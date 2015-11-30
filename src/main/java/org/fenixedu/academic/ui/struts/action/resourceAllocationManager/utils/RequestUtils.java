@@ -37,7 +37,6 @@ import org.fenixedu.academic.dto.InfoExecutionYear;
 import org.fenixedu.academic.service.services.commons.ReadExecutionPeriod;
 import org.fenixedu.academic.service.services.commons.ReadExecutionYear;
 import org.fenixedu.academic.service.services.exceptions.FenixServiceException;
-import org.fenixedu.academic.service.services.publico.ReadExecutionCourse;
 import org.fenixedu.academic.service.services.publico.ReadExecutionDegreesByExecutionYearAndDegreeInitials;
 import org.fenixedu.academic.ui.struts.action.exceptions.FenixActionException;
 
@@ -55,23 +54,12 @@ public abstract class RequestUtils {
                 AcademicInterval.getAcademicIntervalFromResumedString((String) request
                         .getAttribute(PresentationConstants.ACADEMIC_INTERVAL));
 
-        final Course executionCourse =
-                Course.getExecutionCourseByInitials(academicInterval, infoExecutionCourseInitials);
+        final Course executionCourse = Course.getExecutionCourseByInitials(academicInterval, infoExecutionCourseInitials);
         if (executionCourse != null) {
             return InfoExecutionCourse.newInfoFromDomain(executionCourse);
         }
 
         throw new IllegalArgumentException("Not find executionCourse!");
-    }
-
-    public static final InfoExecutionCourse getExecutionCourseFromRequest(HttpServletRequest request)
-            throws FenixActionException, FenixServiceException {
-        InfoExecutionCourse infoExecutionCourse = null;
-        InfoExecutionPeriod infoExecutionPeriod = getExecutionPeriodFromRequest(request);
-        String code = request.getParameter("exeCode");
-
-        infoExecutionCourse = (InfoExecutionCourse) ReadExecutionCourse.run(infoExecutionPeriod, code);
-        return infoExecutionCourse;
     }
 
     public static final InfoExecutionYear getExecutionYearFromRequest(HttpServletRequest request) throws FenixActionException,

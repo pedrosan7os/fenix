@@ -18,7 +18,6 @@
  */
 package org.fenixedu.academic.service.services.manager.executionCourseManagement;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.fenixedu.academic.domain.CurricularYear;
@@ -27,7 +26,6 @@ import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExecutionYear;
-import org.fenixedu.academic.dto.InfoExecutionCourse;
 import org.fenixedu.academic.service.services.exceptions.FenixServiceException;
 
 import pt.ist.fenixframework.Atomic;
@@ -40,7 +38,7 @@ import pt.ist.fenixframework.FenixFramework;
 public class ReadExecutionCoursesByExecutionDegreeIdAndExecutionPeriodIdAndCurYear {
 
     @Atomic
-    public static List run(String executionDegreeId, String executionPeriodId, Integer curricularYearInt)
+    public static List<ExecutionCourse> run(String executionDegreeId, String executionPeriodId, Integer curricularYearInt)
             throws FenixServiceException {
 
         if (executionPeriodId == null) {
@@ -61,12 +59,7 @@ public class ReadExecutionCoursesByExecutionDegreeIdAndExecutionPeriodIdAndCurYe
                             degreeCurricularPlan, curricularYear, "%");
         }
 
-        final List infoExecutionCourseList = new ArrayList(executionCourseList.size());
-        for (final ExecutionCourse executionCourse : executionCourseList) {
-            infoExecutionCourseList.add(InfoExecutionCourse.newInfoFromDomain(executionCourse));
-        }
-
-        return infoExecutionCourseList;
+        return executionCourseList;
     }
 
     private static ExecutionDegree findExecutionDegreeByID(final ExecutionSemester executionSemester,

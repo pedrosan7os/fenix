@@ -21,7 +21,6 @@ package org.fenixedu.academic.service.services.manager.executionCourseManagement
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.exceptions.DomainException;
-import org.fenixedu.academic.dto.InfoExecutionCourse;
 import org.fenixedu.academic.dto.InfoExecutionCourseEditor;
 import org.fenixedu.academic.service.services.exceptions.InvalidArgumentsServiceException;
 
@@ -31,7 +30,7 @@ import pt.ist.fenixframework.FenixFramework;
 public class EditExecutionCourseInfo {
 
     @Atomic
-    public static InfoExecutionCourse run(InfoExecutionCourseEditor infoExecutionCourse) throws InvalidArgumentsServiceException {
+    public static ExecutionCourse run(InfoExecutionCourseEditor infoExecutionCourse) throws InvalidArgumentsServiceException {
 
         final ExecutionCourse executionCourse = FenixFramework.getDomainObject(infoExecutionCourse.getExternalId());
         if (executionCourse == null) {
@@ -56,6 +55,6 @@ public class EditExecutionCourseInfo {
                 infoExecutionCourse.getComment(), infoExecutionCourse.getAvailableGradeSubmission(),
                 infoExecutionCourse.getEntryPhase());
 
-        return new InfoExecutionCourse(executionCourse);
+        return executionCourse;
     }
 }

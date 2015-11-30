@@ -31,7 +31,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.person.RoleType;
-import org.fenixedu.academic.domain.util.email.ExecutionCourseSender;
 import org.fenixedu.academic.domain.util.email.Message;
 import org.fenixedu.academic.domain.util.email.MessageDeleteService;
 import org.fenixedu.academic.domain.util.email.Sender;
@@ -67,27 +66,13 @@ public class ViewSentEmailsDA extends FenixDispatchAction {
 
         final User userView = Authenticate.getUser();
         final Set<Sender> sendersGroups = new TreeSet<Sender>(Sender.COMPARATOR_BY_FROM_NAME);
-        final TreeSet<ExecutionCourseSender> sendersGroupsCourses =
-                new TreeSet<ExecutionCourseSender>(ExecutionCourseSender.COMPARATOR_BY_EXECUTION_COURSE_SENDER);
         for (final Sender sender : Bennu.getInstance().getUtilEmailSendersSet()) {
             boolean allow = sender.getMembers().isMember(userView);
-            boolean isExecutionCourseSender = sender instanceof ExecutionCourseSender;
-            if (allow && !isExecutionCourseSender) {
+            if (allow) {
                 sendersGroups.add(sender);
-            }
-            if (allow && isExecutionCourseSender) {
-                sendersGroupsCourses.add((ExecutionCourseSender) sender);
-            }
-        }
-        if (isSenderUnique(sendersGroups, sendersGroupsCourses)) {
-            if (sendersGroupsCourses.size() == 1) {
-                return viewSentEmails(mapping, request, (sendersGroupsCourses.iterator().next()).getExternalId());
-            } else {
-                return viewSentEmails(mapping, request, sendersGroups.iterator().next().getExternalId());
             }
         }
         request.setAttribute("sendersGroups", sendersGroups);
-        request.setAttribute("sendersGroupsCourses", sendersGroupsCourses);
 
         final Person person = AccessControl.getPerson();
         if (person != null && RoleType.MANAGER.isMember(person.getUser())) {
@@ -156,16 +141,6 @@ public class ViewSentEmailsDA extends FenixDispatchAction {
             return 0;
         }
         return pager.getNumberOfPages();
-    }
-
-    private boolean isSenderUnique(Set<?> arg0, Set<?> arg1) {
-        if (arg0 == null) {
-            return arg1.size() == 1;
-        }
-        if (arg1 == null) {
-            return arg0.size() == 1;
-        }
-        return arg0.size() + arg0.size() == 1;
     }
 
     @Atomic

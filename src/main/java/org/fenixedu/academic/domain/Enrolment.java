@@ -29,8 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -58,7 +56,6 @@ import org.fenixedu.academic.domain.studentCurriculum.EnrolmentWrapper;
 import org.fenixedu.academic.domain.studentCurriculum.InternalCreditsSourceCurriculumGroup;
 import org.fenixedu.academic.domain.studentCurriculum.InternalEnrolmentWrapper;
 import org.fenixedu.academic.domain.studentCurriculum.OptionalDismissal;
-import org.fenixedu.academic.domain.thesis.Thesis;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academic.util.EnrolmentAction;
 import org.fenixedu.academic.util.EnrolmentEvaluationState;
@@ -69,8 +66,6 @@ import org.fenixedu.bennu.signals.DomainObjectEvent;
 import org.fenixedu.bennu.signals.Signal;
 import org.joda.time.DateTime;
 import org.joda.time.YearMonthDay;
-
-import pt.ist.fenixframework.consistencyPredicates.ConsistencyPredicate;
 
 /**
  * @author dcs-rjao
@@ -254,16 +249,6 @@ public class Enrolment extends Enrolment_Base implements IEnrolment {
     }
 
     protected void deleteInformation() {
-
-        final Iterator<Thesis> theses = getThesesSet().iterator();
-        while (theses.hasNext()) {
-            final Thesis thesis = theses.next();
-            if (!thesis.isDeletable()) {
-                throw new DomainException("error.Enrolment.cannot.delete.thesis");
-            }
-            thesis.delete();
-        }
-
         final Registration registration = getRegistration();
 
         getStudentCurricularPlan().setIsFirstTimeToNull();
@@ -1137,50 +1122,8 @@ public class Enrolment extends Enrolment_Base implements IEnrolment {
         return getStudentCurricularPlan().getDegree().getPresentationName(getExecutionYear()) + " > " + getName().getContent();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * This method assumes that each Student has at most one non evaluated Thesis and no more that two Thesis.
-     */
-    @Override
-    final public Thesis getThesis() {
-        Collection<Thesis> theses = getThesesSet();
-
-        switch (theses.size()) {
-        case 0:
-            return null;
-        case 1:
-            return theses.iterator().next();
-        default:
-            SortedSet<Thesis> sortedTheses = new TreeSet<Thesis>(new Comparator<Thesis>() {
-                @Override
-                public int compare(Thesis o1, Thesis o2) {
-                    return o2.getCreation().compareTo(o1.getCreation());
-                }
-            });
-
-            sortedTheses.addAll(theses);
-            return sortedTheses.iterator().next();
-        }
-    }
-
     final public boolean isBefore(final Enrolment enrolment) {
         return getExecutionPeriod().isBefore(enrolment.getExecutionPeriod());
-    }
-
-    public Thesis getPreviousYearThesis() {
-        ExecutionYear executionYear = getExecutionYear().getPreviousExecutionYear();
-        Enrolment enrolment = getStudent().getDissertationEnrolment(null, executionYear);
-        if (enrolment != null && enrolment.getThesis() != null) {
-            return enrolment.getThesis();
-        }
-        return null;
-    }
-
-    public Thesis getPossibleThesis() {
-        Thesis thesis = getThesis();
-        return (thesis == null /*&& getDissertationProposal() == null */) ? getPreviousYearThesis() : thesis;
     }
 
     @Override
@@ -1291,7 +1234,6 @@ public class Enrolment extends Enrolment_Base implements IEnrolment {
         enrolment.getCourseLoadRequestsSet().addAll(optionalEnrolment.getCourseLoadRequestsSet());
         enrolment.getExtraExamRequestsSet().addAll(optionalEnrolment.getExtraExamRequestsSet());
         enrolment.getEnrolmentWrappersSet().addAll(optionalEnrolment.getEnrolmentWrappersSet());
-        enrolment.getThesesSet().addAll(optionalEnrolment.getThesesSet());
         enrolment.getExamDateCertificateRequestsSet().addAll(optionalEnrolment.getExamDateCertificateRequestsSet());
         changeAttends(optionalEnrolment, enrolment);
         enrolment.createCurriculumLineLog(EnrolmentAction.ENROL);
@@ -1364,11 +1306,6 @@ public class Enrolment extends Enrolment_Base implements IEnrolment {
         return BundleUtil.getString(Bundle.ENUMERATION, this.getClass().getName());
     }
 
-    @ConsistencyPredicate
-    public boolean checkThesisMultiplicity() {
-        return this.getThesesSet().size() <= 2;
-    }
-
     public void annul() {
         setEnrollmentState(EnrollmentState.ANNULED);
     }
@@ -1379,5 +1316,4 @@ public class Enrolment extends Enrolment_Base implements IEnrolment {
             setEnrollmentState(finalGrade.isEmpty() ? EnrollmentState.ENROLLED : finalGrade.getEnrolmentState());
         }
     }
-
 }

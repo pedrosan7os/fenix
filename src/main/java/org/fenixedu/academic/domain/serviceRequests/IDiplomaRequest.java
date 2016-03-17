@@ -32,7 +32,4 @@ public interface IDiplomaRequest extends IProgramConclusionRequest {
     public Integer getFinalAverage();
 
     public String getFinalAverageQualified();
-
-    public String getDissertationThesisTitle();
-
 }

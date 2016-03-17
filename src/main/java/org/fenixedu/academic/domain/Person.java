@@ -459,7 +459,7 @@ public class Person extends Person_Base {
             getStudent().delete();
         }
 
-        getThesisEvaluationParticipantsSet().clear();
+//        getThesisEvaluationParticipantsSet().clear();
 
         for (; !getIdDocumentsSet().isEmpty(); getIdDocumentsSet().iterator().next().delete()) {
             ;

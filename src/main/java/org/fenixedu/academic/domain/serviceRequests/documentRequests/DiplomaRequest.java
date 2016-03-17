@@ -180,10 +180,6 @@ public class DiplomaRequest extends DiplomaRequest_Base implements IDiplomaReque
                 throw new DomainException("DiplomaRequest.registration.not.submited.to.conclusion.process");
             }
 
-            if (hasDissertationTitle() && !getRegistration().hasDissertationThesis()) {
-                throw new DomainException("DiplomaRequest.registration.doesnt.have.dissertation.thesis");
-            }
-
             if (!getFreeProcessed()) {
                 if (hasCurriculumGroup()) {
                     assertPayedEvents(getCurriculumGroup().getIEnrolmentsLastExecutionYear());
@@ -227,14 +223,6 @@ public class DiplomaRequest extends DiplomaRequest_Base implements IDiplomaReque
         if (academicServiceRequestBean.isToCancelOrReject() && getEvent() != null && getEvent().isOpen()) {
             getEvent().cancel(academicServiceRequestBean.getResponsible());
         }
-    }
-
-    final public boolean hasFinalAverageDescription() {
-        return !hasDissertationTitle();
-    }
-
-    final public boolean hasDissertationTitle() {
-        return getDegreeType().isPreBolonhaMasterDegree();
     }
 
     @Override
@@ -354,10 +342,10 @@ public class DiplomaRequest extends DiplomaRequest_Base implements IDiplomaReque
         return getRegistration().getDegree().getGradeScale().getQualifiedName(getFinalAverage().toString());
     }
 
-    @Override
-    public String getDissertationThesisTitle() {
-        return getRegistration().getDissertationThesisTitle();
-    }
+//    @Override
+//    public String getDissertationThesisTitle() {
+//        return getRegistration().getDissertationThesisTitle();
+//    }
 
     public ExecutionYear getConclusionYear() {
         return getProgramConclusion().groupFor(getRegistration()).map(CurriculumGroup::getConclusionProcess)

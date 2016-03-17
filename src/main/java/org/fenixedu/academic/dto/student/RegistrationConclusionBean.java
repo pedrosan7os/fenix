@@ -197,18 +197,6 @@ public class RegistrationConclusionBean implements Serializable, IRegistrationBe
         return calculateConclusionYear();
     }
 
-    public boolean hasDissertationThesis() {
-        return getRegistration().hasDissertationThesis();
-    }
-
-    public String getDissertationThesisTitle() {
-        return hasDissertationThesis() ? getRegistration().getDissertationThesisTitle() : null;
-    }
-
-    public LocalDate getDissertationThesisDiscussedDate() {
-        return hasDissertationThesis() ? getRegistration().getDissertationThesisDiscussedDate() : null;
-    }
-
     public double getEctsCredits() {
         if (isConclusionProcessed()) {
             return getCurriculumGroup().getCreditsConcluded();

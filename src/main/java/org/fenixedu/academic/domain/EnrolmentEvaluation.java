@@ -30,7 +30,6 @@ import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.exceptions.EnrolmentNotPayedException;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.Student;
-import org.fenixedu.academic.domain.thesis.Thesis;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academic.util.EnrolmentEvaluationState;
 import org.fenixedu.academic.util.FenixDigestUtils;
@@ -110,24 +109,6 @@ public class EnrolmentEvaluation extends EnrolmentEvaluation_Base {
         setExamDate(examDate);
 
         generateCheckSum();
-    }
-
-    @Override
-    public void setExamDateYearMonthDay(YearMonthDay evaluationDateYearMonthDay) {
-        if (evaluationDateYearMonthDay != null) {
-            final Enrolment enrolment = getEnrolment();
-            final Thesis thesis = enrolment.getThesis();
-            if (thesis != null) {
-                DateTime newDateTime = evaluationDateYearMonthDay.toDateTimeAtMidnight();
-                final DateTime dateTime = thesis.getDiscussed();
-                if (dateTime != null) {
-                    newDateTime = newDateTime.withHourOfDay(dateTime.getHourOfDay());
-                    newDateTime = newDateTime.withMinuteOfHour(dateTime.getMinuteOfHour());
-                }
-                thesis.setDiscussed(newDateTime);
-            }
-        }
-        super.setExamDateYearMonthDay(evaluationDateYearMonthDay);
     }
 
     protected EnrolmentEvaluation(Enrolment enrolment, EnrolmentEvaluationState enrolmentEvaluationState,
@@ -418,18 +399,6 @@ public class EnrolmentEvaluation extends EnrolmentEvaluation_Base {
         }
 
         super.setGrade(grade);
-
-        final Enrolment enrolment = getEnrolment();
-        if (enrolment != null && enrolment.getCurricularCourse().isDissertation()) {
-            final Thesis thesis = enrolment.getThesis();
-            if (thesis != null) {
-                if (grade.isEmpty()) {
-                    thesis.removeMark();
-                } else {
-                    thesis.setMark(Integer.valueOf(grade.getValue()));
-                }
-            }
-        }
 
         // TODO remove this once we're sure migration to Grade went OK
         super.setGradeValue(grade.getValue());

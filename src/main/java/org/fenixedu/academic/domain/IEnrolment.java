@@ -22,7 +22,6 @@ import java.util.Comparator;
 
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculumEntry;
-import org.fenixedu.academic.domain.thesis.Thesis;
 import org.joda.time.DateTime;
 
 public interface IEnrolment extends ICurriculumEntry {
@@ -87,7 +86,6 @@ public interface IEnrolment extends ICurriculumEntry {
      * 
      * @return the last valid thesis for this enrolment
      */
-    Thesis getThesis();
 
     void delete();
 }

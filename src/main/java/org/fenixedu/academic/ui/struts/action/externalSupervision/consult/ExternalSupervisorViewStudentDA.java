@@ -121,14 +121,8 @@ public class ExternalSupervisorViewStudentDA extends FenixDispatchAction {
 
         final Person personStudent = bean.getStudent();
         final Collection<Registration> registrations = personStudent.getStudent().getRegistrationsSet();
-        Boolean hasDissertations;
 
         List<ExecutionPeriodStatisticsBean> studentStatistics = getStudentStatistics(registrations);
-
-        if (ShowThesisStatus.hasDissertations(personStudent.getStudent())) {
-            hasDissertations = true;
-            request.setAttribute("hasDissertations", hasDissertations);
-        }
 
         request.setAttribute("studentStatistics", studentStatistics);
         request.setAttribute("sessionBean", bean);

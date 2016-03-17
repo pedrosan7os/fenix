@@ -18,8 +18,6 @@
  */
 package org.fenixedu.academic.domain.student;
 
-import static org.fenixedu.academic.predicate.AccessControl.check;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -111,7 +109,6 @@ import org.fenixedu.academic.domain.studentCurriculum.CycleCurriculumGroup;
 import org.fenixedu.academic.domain.studentCurriculum.Dismissal;
 import org.fenixedu.academic.domain.studentCurriculum.ExternalEnrolment;
 import org.fenixedu.academic.domain.studentCurriculum.StandaloneCurriculumGroup;
-import org.fenixedu.academic.domain.thesis.Thesis;
 import org.fenixedu.academic.domain.transactions.InsuranceTransaction;
 import org.fenixedu.academic.predicate.AccessControl;
 import org.fenixedu.academic.predicate.RegistrationPredicates;
@@ -2871,29 +2868,6 @@ public class Registration extends Registration_Base {
             }
         }
         return false;
-    }
-
-    final public boolean hasDissertationThesis() {
-        return getDissertationEnrolment() != null && getDissertationEnrolment().getThesis() != null;
-    }
-
-    final public String getDissertationThesisTitle() {
-        String result = null;
-
-        if (hasDissertationThesis()) {
-            result = getDissertationEnrolment().getThesis().getFinalFullTitle().getContent().trim();
-        }
-
-        return result;
-    }
-
-    final public LocalDate getDissertationThesisDiscussedDate() {
-        if (hasDissertationThesis()) {
-            final Thesis thesis = getDissertationEnrolment().getThesis();
-            return thesis.hasCurrentDiscussedDate() ? thesis.getCurrentDiscussedDate().toLocalDate() : null;
-        }
-
-        return null;
     }
 
     final public Enrolment getDissertationEnrolment() {

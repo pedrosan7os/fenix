@@ -220,7 +220,6 @@ public class PhdDiplomaRequest extends PhdDiplomaRequest_Base implements IDiplom
         return null;
     }
 
-    @Override
     public String getDissertationThesisTitle() {
         return getPhdIndividualProgramProcess().getThesisTitle();
     }

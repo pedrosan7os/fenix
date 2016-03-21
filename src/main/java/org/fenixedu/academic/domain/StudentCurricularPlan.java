@@ -41,7 +41,6 @@ import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.accessControl.academicAdministration.AcademicAccessRule;
 import org.fenixedu.academic.domain.accessControl.academicAdministration.AcademicOperationType;
 import org.fenixedu.academic.domain.accounting.events.EnrolmentOutOfPeriodEvent;
-import org.fenixedu.academic.domain.accounting.events.ImprovementOfApprovedEnrolmentEvent;
 import org.fenixedu.academic.domain.accounting.events.gratuity.GratuityEvent;
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOffice;
 import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
@@ -65,7 +64,6 @@ import org.fenixedu.academic.domain.enrolment.IDegreeModuleToEvaluate;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.gratuity.GratuitySituationType;
 import org.fenixedu.academic.domain.student.Registration;
-import org.fenixedu.academic.domain.student.RegistrationProtocol;
 import org.fenixedu.academic.domain.student.Student;
 import org.fenixedu.academic.domain.student.curriculum.Curriculum;
 import org.fenixedu.academic.domain.student.registrationStates.RegistrationStateType;
@@ -111,6 +109,7 @@ import org.fenixedu.academic.util.predicates.ResultCollection;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.bennu.core.security.Authenticate;
+import org.fenixedu.bennu.signals.Signal;
 import org.fenixedu.spaces.domain.Space;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -123,6 +122,8 @@ import pt.ist.fenixframework.Atomic;
  */
 
 public class StudentCurricularPlan extends StudentCurricularPlan_Base {
+
+    public static final String ENROLMENT_IMPROVEMENT_EVALUATION_CREATED_SIGNAL = "enrolment.improvement.evaluation.created";
 
     public static final Comparator<StudentCurricularPlan> COMPARATOR_BY_STUDENT_NUMBER = new Comparator<StudentCurricularPlan>() {
 
@@ -1695,14 +1696,43 @@ public class StudentCurricularPlan extends StudentCurricularPlan_Base {
             created.add(enrolment.createEnrolmentEvaluationForImprovement(person, executionSemester));
         }
 
-        if (isToPayImprovementOfApprovedEnrolments()) {
-            new ImprovementOfApprovedEnrolmentEvent(this.getDegree().getAdministrativeOffice(), getPerson(), created);
-        }
+        Signal.emit(ENROLMENT_IMPROVEMENT_EVALUATION_CREATED_SIGNAL, new ImprovementOfApprovedEnrolmentCreationEvent(this
+                .getDegree().getAdministrativeOffice(), getPerson(), getRegistration(), created));
     }
 
-    private boolean isToPayImprovementOfApprovedEnrolments() {
-        final RegistrationProtocol protocol = getRegistration().getRegistrationProtocol();
-        return !protocol.isMilitaryAgreement();
+    public static class ImprovementOfApprovedEnrolmentCreationEvent {
+
+        private AdministrativeOffice administrativeOffice;
+
+        private Person responsible;
+
+        private Registration registration;
+
+        private Collection<EnrolmentEvaluation> evaluations;
+
+        public ImprovementOfApprovedEnrolmentCreationEvent(AdministrativeOffice administrativeOffice, Person responsible,
+                Registration registration, Collection<EnrolmentEvaluation> evaluations) {
+            this.administrativeOffice = administrativeOffice;
+            this.responsible = responsible;
+            this.registration = registration;
+            this.evaluations = evaluations;
+        }
+
+        public AdministrativeOffice getAdministrativeOffice() {
+            return administrativeOffice;
+        }
+
+        public Person getResponsible() {
+            return responsible;
+        }
+
+        public Registration getRegistration() {
+            return registration;
+        }
+
+        public Collection<EnrolmentEvaluation> getEvaluations() {
+            return evaluations;
+        }
     }
 
     final public List<Enrolment> getEnroledImprovements() {

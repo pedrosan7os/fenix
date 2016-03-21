@@ -34,14 +34,13 @@ import org.apache.struts.action.DynaActionForm;
 import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
-import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.MarkSheet;
+import org.fenixedu.academic.domain.MarkSheet.MarksheetSubmissionRequirementException;
 import org.fenixedu.academic.domain.Teacher;
 import org.fenixedu.academic.domain.exceptions.DomainException;
-import org.fenixedu.academic.domain.exceptions.InDebtEnrolmentsException;
 import org.fenixedu.academic.dto.degreeAdministrativeOffice.gradeSubmission.CurricularCourseMarksheetManagementBean;
 import org.fenixedu.academic.dto.degreeAdministrativeOffice.gradeSubmission.MarkSheetManagementBaseBean;
 import org.fenixedu.academic.service.services.administrativeOffice.gradeSubmission.ConfirmMarkSheet;
@@ -151,10 +150,9 @@ abstract public class MarkSheetDispatchAction extends FenixDispatchAction {
         ActionMessages actionMessages = new ActionMessages();
         try {
             ConfirmMarkSheet.run(markSheet, userView.getPerson());
-        } catch (InDebtEnrolmentsException e) {
-            for (Enrolment enrolment : e.getEnrolments()) {
-                addMessage(request, actionMessages, e.getMessage(), enrolment.getRegistration().getStudent().getNumber()
-                        .toString());
+        } catch (MarksheetSubmissionRequirementException e) {
+            for (String message : e.getMessages()) {
+                addMessage(request, actionMessages, message);
             }
             return prepareConfirmMarkSheet(mapping, actionForm, request, response);
         } catch (DomainException e) {

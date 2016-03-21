@@ -18,16 +18,19 @@
  */
 package org.fenixedu.academic.domain;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.fenixedu.academic.domain.curriculum.EnrollmentState;
 import org.fenixedu.academic.domain.curriculum.EnrolmentEvaluationContext;
 import org.fenixedu.academic.domain.curriculum.GradeFactory;
 import org.fenixedu.academic.domain.curriculum.IGrade;
 import org.fenixedu.academic.domain.exceptions.DomainException;
-import org.fenixedu.academic.domain.exceptions.EnrolmentNotPayedException;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.Student;
 import org.fenixedu.academic.domain.thesis.Thesis;
@@ -37,6 +40,7 @@ import org.fenixedu.academic.util.FenixDigestUtils;
 import org.fenixedu.academic.util.MarkType;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
+import org.fenixedu.commons.i18n.LocalizedString;
 import org.joda.time.DateTime;
 import org.joda.time.YearMonthDay;
 
@@ -290,9 +294,12 @@ public class EnrolmentEvaluation extends EnrolmentEvaluation_Base {
          * ); }
          */
 
-        if (isPayable() && !isPayed()) {
-            throw new EnrolmentNotPayedException("EnrolmentEvaluation.cannot.set.grade.on.not.payed.enrolment.evaluation",
-                    getEnrolment());
+        List<String> failures = new ArrayList<>();
+        for (GradeSubmissionRequirement requirement : GRADE_SUBMISSION_REQUIREMENTS) {
+            requirement.canSubmit(this).ifPresent(f -> failures.add(f.getContent()));
+        }
+        if (!failures.isEmpty()) {
+            throw new GradeSubmissionRequirementException(failures.stream().collect(Collectors.joining("; ")));
         }
 
         if (enrolmentEvaluationState == EnrolmentEvaluationState.RECTIFICATION_OBJ && getRectified() != null) {
@@ -322,9 +329,6 @@ public class EnrolmentEvaluation extends EnrolmentEvaluation_Base {
         if (!isTemporary() || hasConfirmedMarkSheet()) {
             blockers.add(BundleUtil.getString(Bundle.APPLICATION,
                     "error.enrolmentEvaluation.isTemporary.or.hasConfirmedMarksheet"));
-        }
-        if (getImprovementOfApprovedEnrolmentEvent() != null && getImprovementOfApprovedEnrolmentEvent().isPayed()) {
-            blockers.add(BundleUtil.getString(Bundle.APPLICATION, "error.enrolmentEvaluation.has.been.payed"));
         }
     }
 
@@ -359,9 +363,6 @@ public class EnrolmentEvaluation extends EnrolmentEvaluation_Base {
         setMarkSheet(null);
         setRectification(null);
         setRectified(null);
-        if (getImprovementOfApprovedEnrolmentEvent() != null) {
-            getImprovementOfApprovedEnrolmentEvent().removeImprovementEnrolmentEvaluations(this);
-        }
         setExecutionPeriod(null);
         setEvaluationSeason(null);
 
@@ -468,14 +469,6 @@ public class EnrolmentEvaluation extends EnrolmentEvaluation_Base {
         return getExamDateYearMonthDay() != null;
     }
 
-    public boolean isPayable() {
-        return getImprovementOfApprovedEnrolmentEvent() != null && !getImprovementOfApprovedEnrolmentEvent().isCancelled();
-    }
-
-    public boolean isPayed() {
-        return getImprovementOfApprovedEnrolmentEvent().isPayed();
-    }
-
     @Override
     public ExecutionSemester getExecutionPeriod() {
         if (getEvaluationSeason().isImprovement()) {
@@ -534,4 +527,21 @@ public class EnrolmentEvaluation extends EnrolmentEvaluation_Base {
         }
     }
 
+    public static interface GradeSubmissionRequirement {
+        Optional<LocalizedString> canSubmit(EnrolmentEvaluation evaluation);
+    }
+
+    public static class GradeSubmissionRequirementException extends RuntimeException {
+        private static final long serialVersionUID = 8400609160046141929L;
+
+        public GradeSubmissionRequirementException(String message) {
+            super(message);
+        }
+    }
+
+    private static List<GradeSubmissionRequirement> GRADE_SUBMISSION_REQUIREMENTS = new ArrayList<>();
+
+    public static void registerGradeSubmissionRequirement(GradeSubmissionRequirement requirement) {
+        GRADE_SUBMISSION_REQUIREMENTS.add(requirement);
+    }
 }

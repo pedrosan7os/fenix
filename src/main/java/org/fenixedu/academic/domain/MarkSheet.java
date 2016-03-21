@@ -20,22 +20,22 @@ package org.fenixedu.academic.domain;
 
 import static org.fenixedu.academic.predicate.AccessControl.check;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.comparators.ComparatorChain;
+import org.fenixedu.academic.domain.EnrolmentEvaluation.GradeSubmissionRequirementException;
 import org.fenixedu.academic.domain.accessControl.academicAdministration.AcademicAccessRule;
 import org.fenixedu.academic.domain.accessControl.academicAdministration.AcademicOperationType;
 import org.fenixedu.academic.domain.curriculum.EnrollmentState;
 import org.fenixedu.academic.domain.exceptions.DomainException;
-import org.fenixedu.academic.domain.exceptions.EnrolmentNotPayedException;
-import org.fenixedu.academic.domain.exceptions.InDebtEnrolmentsException;
 import org.fenixedu.academic.domain.person.RoleType;
 import org.fenixedu.academic.domain.student.Student;
 import org.fenixedu.academic.dto.degreeAdministrativeOffice.gradeSubmission.MarkSheetEnrolmentEvaluationBean;
@@ -301,14 +301,12 @@ public class MarkSheet extends MarkSheet_Base {
         final Set<Enrolment> enrolmentsNotInAnyMarkSheet =
                 getCurricularCourse().getEnrolmentsNotInAnyMarkSheet(getEvaluationSeason(), getExecutionPeriod());
 
-        Set<Enrolment> notPayedEnrolments = new HashSet<Enrolment>();
         for (final MarkSheetEnrolmentEvaluationBean evaluationBean : evaluationBeans) {
 
             if (enrolmentsNotInAnyMarkSheet.contains(evaluationBean.getEnrolment())) {
                 try {
                     addEnrolmentEvaluationToMarkSheet(responsibleTeacher, enrolmentEvaluationState, evaluationBean);
-                } catch (EnrolmentNotPayedException e) {
-                    notPayedEnrolments.add(e.getEnrolment());
+                } catch (GradeSubmissionRequirementException e) {
                 }
             } else {
                 // TODO:
@@ -485,18 +483,17 @@ public class MarkSheet extends MarkSheet_Base {
         if (isNotConfirmed()) {
             setValidator(validator);
 
-            Set<Enrolment> inDebtEnrolments = new HashSet<Enrolment>();
+            List<String> inDebtEnrolments = new ArrayList<String>();
             for (final EnrolmentEvaluation enrolmentEvaluation : this.getEnrolmentEvaluationsSet()) {
                 try {
                     enrolmentEvaluation.confirmSubmission(getEnrolmentEvaluationStateToConfirm(), validator, "");
-                } catch (EnrolmentNotPayedException e) {
-                    inDebtEnrolments.add(e.getEnrolment());
+                } catch (GradeSubmissionRequirementException e) {
+                    inDebtEnrolments.add(e.getMessage());
                 }
             }
 
             if (!inDebtEnrolments.isEmpty()) {
-                throw new InDebtEnrolmentsException("EnrolmentEvaluation.cannot.set.grade.on.not.payed.enrolment.evaluation",
-                        inDebtEnrolments);
+                throw new MarksheetSubmissionRequirementException(inDebtEnrolments);
             }
 
             setConfirmationDateDateTime(new DateTime());
@@ -504,6 +501,21 @@ public class MarkSheet extends MarkSheet_Base {
 
         } else {
             throw new DomainException("error.markSheet.already.confirmed");
+        }
+    }
+
+    public static class MarksheetSubmissionRequirementException extends RuntimeException {
+        private static final long serialVersionUID = 4750602356600952657L;
+
+        private List<String> messages;
+
+        public MarksheetSubmissionRequirementException(List<String> messages) {
+            super(messages.stream().collect(Collectors.joining(";")));
+            this.messages = messages;
+        }
+
+        public List<String> getMessages() {
+            return messages;
         }
     }
 

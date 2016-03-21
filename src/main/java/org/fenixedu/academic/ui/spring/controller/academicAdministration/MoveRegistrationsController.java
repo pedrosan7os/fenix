@@ -22,8 +22,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.accounting.Event;
-import org.fenixedu.academic.domain.accounting.events.AdministrativeOfficeFeeAndInsuranceEvent;
 import org.fenixedu.academic.domain.log.StudentRegistrationTransferLog;
 import org.fenixedu.academic.domain.student.Student;
 import org.fenixedu.academic.ui.spring.StrutsFunctionalityController;
@@ -67,23 +65,6 @@ public class MoveRegistrationsController extends StrutsFunctionalityController {
 
     @Atomic(mode = TxMode.WRITE)
     private void merge(Person source, Person target) {
-        // Accounting
-        if (source.getAssociatedPersonAccount() != null) {
-            source.getAssociatedPersonAccount().getTransactionsSet()
-                    .forEach(t -> t.setPersonAccount(target.getAssociatedPersonAccount()));
-        }
-        source.getInternalAccount().getEntriesSet().forEach(entry -> entry.setAccount(target.getInternalAccount()));
-        source.getExternalAccount().getEntriesSet().forEach(entry -> entry.setAccount(target.getExternalAccount()));
-        source.getEventsSet().forEach(e -> moveEvent(e, target));
-        source.getGuidesSet().forEach(g -> g.setPerson(target));
-        source.getReceiptsSet().forEach(r -> r.setPerson(target));
-        if (target.getPartySocialSecurityNumber() == null) {
-            if (source.getPartySocialSecurityNumber() != null) {
-                source.getPartySocialSecurityNumber().setParty(target);
-            }
-        }
-        source.getPaymentCodesSet().forEach(c -> c.setPerson(target));
-
         // Curriculum
         source.getCandidaciesSet().forEach(c -> c.setPerson(target));
         source.getIndividualCandidaciesSet().forEach(c -> c.setPerson(target));
@@ -91,16 +72,6 @@ public class MoveRegistrationsController extends StrutsFunctionalityController {
         mergeStudent(source.getStudent(), target.getStudent());
 
         new StudentRegistrationTransferLog(source.getStudent(), target.getStudent());
-    }
-
-    private void moveEvent(Event event, Person target) {
-        if (event instanceof AdministrativeOfficeFeeAndInsuranceEvent) {
-            if (target.hasAdministrativeOfficeFeeInsuranceEventFor(((AdministrativeOfficeFeeAndInsuranceEvent) event)
-                    .getExecutionYear())) {
-                return;
-            }
-        }
-        event.setParty(target);
     }
 
     private void mergeStudent(Student source, Student target) {

@@ -21,9 +21,6 @@ package org.fenixedu.academic.domain.serviceRequests;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
-import org.fenixedu.academic.domain.accounting.EventType;
-import org.fenixedu.academic.domain.accounting.events.serviceRequests.PartialRegistrationRegimeRequestEvent;
-import org.fenixedu.academic.domain.accounting.postingRules.FixedAmountPR;
 import org.fenixedu.academic.domain.curricularRules.MaximumNumberOfCreditsForEnrolmentPeriod;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.AcademicServiceRequestType;
@@ -32,7 +29,6 @@ import org.fenixedu.academic.domain.student.RegistrationRegime;
 import org.fenixedu.academic.domain.student.RegistrationRegimeType;
 import org.fenixedu.academic.dto.serviceRequests.AcademicServiceRequestBean;
 import org.fenixedu.academic.dto.serviceRequests.RegistrationAcademicServiceRequestCreateBean;
-import org.fenixedu.academic.util.Money;
 
 public class PartialRegistrationRegimeRequest extends PartialRegistrationRegimeRequest_Base {
 
@@ -71,36 +67,15 @@ public class PartialRegistrationRegimeRequest extends PartialRegistrationRegimeR
 
     @Override
     protected void internalChangeState(final AcademicServiceRequestBean academicServiceRequestBean) {
-        if (academicServiceRequestBean.isToCancelOrReject() && getEvent() != null) {
-            getEvent().cancel(academicServiceRequestBean.getResponsible());
-
-        } else if (academicServiceRequestBean.isToConclude()) {
-            if (isPayable() && !isPayed()) {
-                throw new DomainException("AcademicServiceRequest.hasnt.been.payed");
-            }
+        if (academicServiceRequestBean.isToConclude()) {
             academicServiceRequestBean.setSituationDate(getActiveSituation().getSituationDate().toYearMonthDay());
         }
     }
 
     @Override
-    protected boolean isPayed() {
-        return super.isPayed() || getEvent().isCancelled();
-    }
-
-    @Override
     protected void createAcademicServiceRequestSituations(AcademicServiceRequestBean academicServiceRequestBean) {
         super.createAcademicServiceRequestSituations(academicServiceRequestBean);
-
-        if (academicServiceRequestBean.isToProcess() && !isFree()) {
-            FixedAmountPR partialRegistrationPostingRule =
-                    (FixedAmountPR) getAdministrativeOffice().getServiceAgreementTemplate().findPostingRuleByEventTypeAndDate(
-                            EventType.PARTIAL_REGISTRATION_REGIME_REQUEST,
-                            getExecutionYear().getBeginDateYearMonthDay().toDateTimeAtMidnight());
-
-            if (partialRegistrationPostingRule.getFixedAmount().greaterThan(Money.ZERO)) {
-                new PartialRegistrationRegimeRequestEvent(getAdministrativeOffice(), getPerson(), this);
-            }
-        } else if (academicServiceRequestBean.isToConclude()) {
+        if (academicServiceRequestBean.isToConclude()) {
             AcademicServiceRequestSituation.create(this, new AcademicServiceRequestBean(
                     AcademicServiceRequestSituationType.DELIVERED, academicServiceRequestBean.getResponsible()));
 
@@ -118,18 +93,6 @@ public class PartialRegistrationRegimeRequest extends PartialRegistrationRegimeR
     @Override
     public AcademicServiceRequestType getAcademicServiceRequestType() {
         return AcademicServiceRequestType.PARTIAL_REGIME_REQUEST;
-    }
-
-    @Override
-    public EventType getEventType() {
-        /*
-         * For 2010/2011 partial registration is not charged
-         */
-        if (getExecutionYear().isAfterOrEquals(ExecutionYear.readExecutionYearByName("2010/2011"))) {
-            return null;
-        }
-
-        return EventType.PARTIAL_REGISTRATION_REGIME_REQUEST;
     }
 
     @Override

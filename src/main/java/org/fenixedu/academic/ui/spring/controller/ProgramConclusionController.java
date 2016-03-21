@@ -18,10 +18,6 @@
  */
 package org.fenixedu.academic.ui.spring.controller;
 
-import java.util.Set;
-
-import org.fenixedu.academic.domain.accounting.EventType;
-import org.fenixedu.academic.domain.accounting.EventTypes;
 import org.fenixedu.academic.domain.degreeStructure.ProgramConclusion;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.student.registrationStates.RegistrationStateType;
@@ -71,7 +67,6 @@ public class ProgramConclusionController {
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String create(Model model) {
-        model.addAttribute("allEventTypes", service.getEventTypes());
         model.addAttribute("registrationStates", RegistrationStateType.values());
         return view("create");
     }
@@ -87,11 +82,10 @@ public class ProgramConclusionController {
             @RequestParam(defaultValue = "{}") LocalizedString graduationLevel,
             @RequestParam(defaultValue = "false") boolean isAverageEditable,
             @RequestParam(defaultValue = "false") boolean isAlumniProvider,
-            @RequestParam(defaultValue = "false") boolean isSkipValidation, @RequestParam(defaultValue = "") String targetState,
-            @RequestParam(defaultValue = "#{new java.util.HashSet()}") Set<EventType> eventTypes) {
+            @RequestParam(defaultValue = "false") boolean isSkipValidation, @RequestParam(defaultValue = "") String targetState) {
         try {
             service.createProgramConclusion(name, description, graduationTitle, graduationLevel, isAverageEditable,
-                    isAlumniProvider, isSkipValidation, getRegistrationStateType(targetState), new EventTypes(eventTypes));
+                    isAlumniProvider, isSkipValidation, getRegistrationStateType(targetState));
             return "redirect:/program-conclusion-management";
         } catch (DomainException de) {
             model.addAttribute("error", de.getLocalizedMessage());
@@ -101,7 +95,6 @@ public class ProgramConclusionController {
 
     @RequestMapping(value = "/{programConclusion}", method = RequestMethod.GET)
     public String edit(Model model, @PathVariable ProgramConclusion programConclusion) {
-        model.addAttribute("allEventTypes", service.getEventTypes());
         model.addAttribute("registrationStates", RegistrationStateType.values());
         model.addAttribute("programConclusion", programConclusion);
         return view("create");
@@ -114,12 +107,10 @@ public class ProgramConclusionController {
             @RequestParam(defaultValue = "{}") LocalizedString graduationLevel,
             @RequestParam(defaultValue = "false") boolean isAverageEditable,
             @RequestParam(defaultValue = "false") boolean isAlumniProvider,
-            @RequestParam(defaultValue = "false") boolean isSkipValidation, @RequestParam(defaultValue = "") String targetState,
-            @RequestParam(defaultValue = "#{new java.util.HashSet()}") Set<EventType> eventTypes) {
+            @RequestParam(defaultValue = "false") boolean isSkipValidation, @RequestParam(defaultValue = "") String targetState) {
         try {
             service.editProgramConclusion(programConclusion, name, description, graduationTitle, graduationLevel,
-                    isAverageEditable, isAlumniProvider, isSkipValidation, getRegistrationStateType(targetState), new EventTypes(
-                            eventTypes));
+                    isAverageEditable, isAlumniProvider, isSkipValidation, getRegistrationStateType(targetState));
             return "redirect:/program-conclusion-management";
         } catch (DomainException de) {
             model.addAttribute("error", de.getLocalizedMessage());

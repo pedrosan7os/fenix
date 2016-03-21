@@ -369,7 +369,7 @@ public class DegreeChangeIndividualCandidacyProcess extends DegreeChangeIndividu
                 throw new PreConditionNotValidException();
             }
 
-            if (process.isCandidacyCancelled() || !process.isCandidacyDebtPayed()) {
+            if (process.isCandidacyCancelled()) {
                 throw new PreConditionNotValidException();
             }
 
@@ -406,10 +406,6 @@ public class DegreeChangeIndividualCandidacyProcess extends DegreeChangeIndividu
                 throw new PreConditionNotValidException();
             }
 
-            if (!process.isCandidacyDebtPayed()) {
-                throw new PreConditionNotValidException();
-            }
-
             if (!process.isSentToCoordinator() && !process.isSentToScientificCouncil()) {
                 throw new PreConditionNotValidException();
             }
@@ -432,7 +428,7 @@ public class DegreeChangeIndividualCandidacyProcess extends DegreeChangeIndividu
             if (!isAllowedToManageProcess(process, userView)) {
                 throw new PreConditionNotValidException();
             }
-            if (process.hasAnyPaymentForCandidacy() || !process.isCandidacyInStandBy()) {
+            if (!process.isCandidacyInStandBy()) {
                 throw new PreConditionNotValidException();
             }
         }

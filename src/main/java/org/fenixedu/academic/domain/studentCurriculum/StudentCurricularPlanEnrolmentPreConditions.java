@@ -97,27 +97,6 @@ public class StudentCurricularPlanEnrolmentPreConditions {
             return result;
         }
 
-        return checkDebts(scp);
-    }
-
-    /**
-     * 
-     * Check if student has any debts that prevent him to enrol in curricular
-     * courses
-     * 
-     * @param scp
-     * @return EnrolmentPreConditionResult
-     */
-    static EnrolmentPreConditionResult checkDebts(StudentCurricularPlan scp) {
-
-        if (scp.getRegistration().getStudent().isAnyGratuityOrAdministrativeOfficeFeeAndInsuranceInDebt()) {
-            return createFalse("error.StudentCurricularPlan.cannot.enrol.with.debts.for.previous.execution.years");
-        }
-
-        if (scp.getPerson().hasAnyResidencePaymentsInDebtForPreviousYear()) {
-            return createFalse("error.StudentCurricularPlan.cannot.enrol.with.residence.debts");
-        }
-
         return createTrue();
     }
 

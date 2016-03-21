@@ -21,7 +21,6 @@ package org.fenixedu.academic.domain.serviceRequests.documentRequests;
 import java.util.Set;
 
 import org.fenixedu.academic.domain.ExecutionYear;
-import org.fenixedu.academic.domain.accounting.EventType;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.dto.serviceRequests.DocumentRequestCreateBean;
 
@@ -63,11 +62,6 @@ public class SchoolRegistrationDeclarationRequest extends SchoolRegistrationDecl
     @Override
     final public String getDocumentTemplateKey() {
         return getClass().getName();
-    }
-
-    @Override
-    final public EventType getEventType() {
-        return EventType.SCHOOL_REGISTRATION_DECLARATION_REQUEST;
     }
 
     @Override

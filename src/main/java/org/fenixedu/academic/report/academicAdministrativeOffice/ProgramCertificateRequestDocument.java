@@ -142,11 +142,6 @@ public class ProgramCertificateRequestDocument extends AdministrativeOfficeDocum
         }
     }
 
-    @Override
-    protected boolean showPriceFields() {
-        return false;
-    }
-
     private void createProgramsList(Locale language) {
         final List<ProgramInformation> bolonha = new ArrayList<ProgramInformation>();
         final List<ProgramInformation> preBolonha = new ArrayList<ProgramInformation>();

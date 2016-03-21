@@ -687,7 +687,7 @@ public class RaidesCommonReportFieldsWrapper {
         row.setCell(printDouble(totalCreditsDismissed));
 
         // Tem situação de propinas no lectivo dos dados
-        row.setCell(String.valueOf(lastStudentCurricularPlan.hasAnyGratuityEventFor(executionYear)));
+        row.setCell("");
 
         return row;
     }

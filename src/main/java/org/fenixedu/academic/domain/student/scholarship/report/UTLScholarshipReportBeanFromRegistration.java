@@ -35,7 +35,6 @@ import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Qualification;
 import org.fenixedu.academic.domain.QualificationType;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
-import org.fenixedu.academic.domain.accounting.events.gratuity.GratuityEventWithPaymentPlan;
 import org.fenixedu.academic.domain.degreeStructure.CycleType;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.academic.domain.student.Registration;
@@ -47,7 +46,6 @@ import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
 import org.fenixedu.academic.domain.studentCurriculum.Dismissal;
 import org.fenixedu.academic.util.Bundle;
-import org.fenixedu.academic.util.Money;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.commons.spreadsheet.Spreadsheet;
 import org.fenixedu.commons.spreadsheet.Spreadsheet.Row;
@@ -303,20 +301,6 @@ public class UTLScholarshipReportBeanFromRegistration implements Serializable, I
     }
 
     @Override
-    public Money getGratuityAmount() {
-        if (!registration.hasToPayGratuityOrInsurance()) {
-            return Money.ZERO;
-        }
-
-        StudentCurricularPlan lastStudentCurricularPlan = registration.getLastStudentCurricularPlan();
-
-        GratuityEventWithPaymentPlan event =
-                lastStudentCurricularPlan.getGratuityEvent(readCurrentExecutionYear(), GratuityEventWithPaymentPlan.class);
-
-        return event != null ? event.getOriginalAmountToPay() : Money.ZERO;
-    }
-
-    @Override
     public Integer getNumberOfMonthsInExecutionYear() {
         return 10;
     }
@@ -495,7 +479,6 @@ public class UTLScholarshipReportBeanFromRegistration implements Serializable, I
         row.setCell(getCurrentYearEnrolledECTS());
         row.setCell(getDegreeConcluded());
         row.setCell(getFinalResult());
-        row.setCell(getGratuityAmount().toString());
         row.setCell(getNumberOfMonthsInExecutionYear());
         row.setCell(getFirstMonthToPay());
         row.setCell(getIsCETQualificationOwner());

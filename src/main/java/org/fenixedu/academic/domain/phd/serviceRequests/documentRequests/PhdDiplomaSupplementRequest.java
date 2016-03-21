@@ -22,7 +22,6 @@ import java.util.Locale;
 
 import org.fenixedu.academic.domain.DegreeOfficialPublication;
 import org.fenixedu.academic.domain.ExecutionYear;
-import org.fenixedu.academic.domain.accounting.EventType;
 import org.fenixedu.academic.domain.degreeStructure.CycleType;
 import org.fenixedu.academic.domain.degreeStructure.EctsGraduationGradeConversionTable;
 import org.fenixedu.academic.domain.degreeStructure.EctsTableIndex;
@@ -115,11 +114,6 @@ public class PhdDiplomaSupplementRequest extends PhdDiplomaSupplementRequest_Bas
     }
 
     @Override
-    public EventType getEventType() {
-        return null;
-    }
-
-    @Override
     public boolean hasPersonalInfo() {
         return false;
     }
@@ -143,7 +137,6 @@ public class PhdDiplomaSupplementRequest extends PhdDiplomaSupplementRequest_Bas
     protected void internalChangeState(AcademicServiceRequestBean academicServiceRequestBean) {
         try {
             verifyIsToProcessAndHasPersonalInfo(academicServiceRequestBean);
-            verifyIsToDeliveredAndIsPayed(academicServiceRequestBean);
         } catch (DomainException e) {
             throw new PhdDomainOperationException(e.getKey(), e, e.getArgs());
         }

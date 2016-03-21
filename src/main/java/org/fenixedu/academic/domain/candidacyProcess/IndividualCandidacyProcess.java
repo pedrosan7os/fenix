@@ -32,7 +32,6 @@ import org.fenixedu.academic.domain.Attends;
 import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.academic.domain.ExecutionInterval;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.accounting.paymentCodes.IndividualCandidacyPaymentCode;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.period.CandidacyPeriod;
 import org.fenixedu.academic.domain.person.IDDocumentType;
@@ -191,10 +190,6 @@ abstract public class IndividualCandidacyProcess extends IndividualCandidacyProc
         return getCandidacyProcess() != null && getCandidacyProcess().isPublished();
     }
 
-    protected boolean hasAnyPaymentForCandidacy() {
-        return getCandidacy().hasAnyPayment();
-    }
-
     protected void cancelCandidacy(final Person person) {
         getCandidacy().cancel(person);
     }
@@ -212,11 +207,7 @@ abstract public class IndividualCandidacyProcess extends IndividualCandidacyProc
     }
 
     public boolean isCandidacyValid() {
-        return !isCandidacyCancelled() && (isEventCanceledOrNoEvent() || isCandidacyDebtPayed());
-    }
-
-    private boolean isEventCanceledOrNoEvent() {
-        return getCandidacy().getEvent() == null || getCandidacy().getEvent().isCancelled();
+        return !isCandidacyCancelled();
     }
 
     public boolean isCandidacyInStandBy() {
@@ -237,10 +228,6 @@ abstract public class IndividualCandidacyProcess extends IndividualCandidacyProc
 
     public boolean isCandidacyCancelled() {
         return getCandidacy().isCancelled();
-    }
-
-    public boolean isCandidacyDebtPayed() {
-        return getCandidacy().isDebtPayed();
     }
 
     public IndividualCandidacyPersonalDetails getPersonalDetails() {
@@ -408,15 +395,6 @@ abstract public class IndividualCandidacyProcess extends IndividualCandidacyProc
 
     public void bindPerson(ChoosePersonBean choosePersonBean) {
         this.getCandidacy().bindPerson(choosePersonBean);
-    }
-
-    public IndividualCandidacyPaymentCode getAssociatedPaymentCode() {
-        if (getCandidacy().getEvent() != null) {
-            return (IndividualCandidacyPaymentCode) (getCandidacy().getEvent().getAllPaymentCodes().isEmpty() ? null : getCandidacy()
-                    .getEvent().getAllPaymentCodes().iterator().next());
-        }
-
-        return null;
     }
 
     public Boolean getIsCandidateWithRoles() {

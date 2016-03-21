@@ -18,8 +18,6 @@
  */
 package org.fenixedu.academic.domain.serviceRequests.documentRequests;
 
-import org.fenixedu.academic.domain.accounting.EventType;
-import org.fenixedu.academic.domain.accounting.events.serviceRequests.PhotocopyRequestEvent;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.dto.serviceRequests.AcademicServiceRequestBean;
 import org.fenixedu.academic.dto.serviceRequests.RegistrationAcademicServiceRequestCreateBean;
@@ -37,11 +35,6 @@ public class PhotocopyRequest extends PhotocopyRequest_Base {
     }
 
     @Override
-    public EventType getEventType() {
-        return EventType.PHOTOCOPY_REQUEST;
-    }
-
-    @Override
     public DocumentRequestType getDocumentRequestType() {
         return DocumentRequestType.PHOTOCOPY;
     }
@@ -55,21 +48,9 @@ public class PhotocopyRequest extends PhotocopyRequest_Base {
 
     @Override
     protected void internalChangeState(AcademicServiceRequestBean academicServiceRequestBean) {
-
-        if (academicServiceRequestBean.isToCancelOrReject() && getEvent() != null) {
-            getEvent().cancel(academicServiceRequestBean.getResponsible());
-
-        } else if (academicServiceRequestBean.isToConclude()) {
+        if (academicServiceRequestBean.isToConclude()) {
             if (!hasNumberOfPages()) {
                 throw new DomainException("error.serviceRequests.documentRequests.numberOfPages.must.be.set");
-            }
-
-            if (!isFree()) {
-                new PhotocopyRequestEvent(getAdministrativeOffice(), getPerson(), this);
-            }
-        } else if (academicServiceRequestBean.isToDeliver()) {
-            if (isPayable() && !isPayed()) {
-                throw new DomainException("AcademicServiceRequest.hasnt.been.payed");
             }
         }
     }

@@ -32,7 +32,6 @@ import org.fenixedu.academic.domain.Department;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.Teacher;
-import org.fenixedu.academic.domain.accounting.PaymentCode;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.person.IDDocumentType;
 import org.fenixedu.academic.domain.person.RoleType;
@@ -68,22 +67,12 @@ public class SearchPerson implements Serializable {
 
         private Integer studentNumber;
 
-        private String paymentCode;
-
         public SearchParameters() {
         }
 
         public SearchParameters(String name, String email, String username, String documentIdNumber, String idDocumentType,
                 String roleType, String degreeTypeString, String degreeId, String departmentId, Boolean activePersons,
                 Integer studentNumber) {
-
-            this(name, email, username, documentIdNumber, idDocumentType, roleType, degreeTypeString, degreeId, departmentId,
-                    activePersons, studentNumber, (String) null);
-        }
-
-        public SearchParameters(String name, String email, String username, String documentIdNumber, String idDocumentType,
-                String roleType, String degreeTypeString, String degreeId, String departmentId, Boolean activePersons,
-                Integer studentNumber, String paymentCode) {
             this();
 
             setActivePersons(activePersons);
@@ -95,7 +84,6 @@ public class SearchPerson implements Serializable {
                 setIdDocumentType(IDDocumentType.valueOf(idDocumentType));
             }
             setStudentNumber(studentNumber);
-            setPaymentCode(paymentCode);
 
             if (roleType != null && roleType.length() > 0) {
                 role = RoleType.valueOf(roleType);
@@ -118,7 +106,7 @@ public class SearchPerson implements Serializable {
             return StringUtils.isEmpty(this.email) && StringUtils.isEmpty(this.username)
                     && StringUtils.isEmpty(this.documentIdNumber) && this.role == null && this.degree == null
                     && this.department == null && this.degreeType == null && this.nameWords == null && this.studentNumber == null
-                    && this.idDocumentType == null && StringUtils.isEmpty(this.getPaymentCode());
+                    && this.idDocumentType == null;
         }
 
         private static String[] getNameWords(String name) {
@@ -221,14 +209,6 @@ public class SearchPerson implements Serializable {
         public void setStudentNumber(Integer studentNumber) {
             this.studentNumber = studentNumber;
         }
-
-        public String getPaymentCode() {
-            return this.paymentCode;
-        }
-
-        public void setPaymentCode(final String paymentCode) {
-            this.paymentCode = paymentCode;
-        }
     }
 
     public CollectionPager<Person> run(SearchParameters searchParameters, Predicate predicate) {
@@ -290,14 +270,6 @@ public class SearchPerson implements Serializable {
                     }
                 }
             }
-        } else if (!StringUtils.isEmpty(searchParameters.getPaymentCode())) {
-            persons = new ArrayList<Person>();
-
-            PaymentCode paymentCode = PaymentCode.readByCode(searchParameters.getPaymentCode());
-
-            if (paymentCode != null && paymentCode.getPerson() != null) {
-                persons.add(paymentCode.getPerson());
-            }
         } else {
             persons = new ArrayList<Person>(0);
         }
@@ -325,8 +297,7 @@ public class SearchPerson implements Serializable {
                     && verifyNameEquality(searchParameters.getNameWords(), person)
                     && verifyAnyEmailAddress(searchParameters.getEmail(), person)
                     && verifyDegreeType(searchParameters.getDegree(), searchParameters.getDegreeType(), person)
-                    && verifyStudentNumber(searchParameters.getStudentNumber(), person)
-                    && verifyPaymentCodes(searchParameters.getPaymentCode(), person);
+                    && verifyStudentNumber(searchParameters.getStudentNumber(), person);
         }
 
         protected boolean verifyAnyEmailAddress(final String email, final Person person) {
@@ -389,10 +360,6 @@ public class SearchPerson implements Serializable {
 
         protected static boolean verifyNameEquality(String[] nameWords, Person person) {
             return person.verifyNameEquality(nameWords);
-        }
-
-        protected static boolean verifyPaymentCodes(String paymentCode, final Person person) {
-            return StringUtils.isEmpty(paymentCode) || person.getPaymentCodeBy(paymentCode) != null;
         }
 
         public SearchParameters getSearchParameters() {

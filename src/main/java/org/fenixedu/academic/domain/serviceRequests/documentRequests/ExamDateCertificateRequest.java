@@ -22,7 +22,6 @@ import java.util.Collection;
 
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.Exam;
-import org.fenixedu.academic.domain.accounting.EventType;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.exceptions.DomainExceptionWithLabelFormatter;
 import org.fenixedu.academic.dto.serviceRequests.DocumentRequestCreateBean;
@@ -104,11 +103,6 @@ public class ExamDateCertificateRequest extends ExamDateCertificateRequest_Base 
         return getClass().getName();
     }
 
-    @Override
-    public EventType getEventType() {
-        return EventType.EXAM_DATE_CERTIFICATE_REQUEST;
-    }
-
     public Exam getExamFor(final Enrolment enrolment, final Season season) {
         for (final Exam exam : getExamsSet()) {
             if (exam.contains(enrolment.getCurricularCourse()) && exam.isForSeason(season)) {
@@ -118,10 +112,4 @@ public class ExamDateCertificateRequest extends ExamDateCertificateRequest_Base 
 
         return null;
     }
-
-    @Override
-    public boolean isFree() {
-        return getRegistration().getRegistrationProtocol().isMilitaryAgreement() || super.isFree();
-    }
-
 }

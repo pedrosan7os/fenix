@@ -25,13 +25,8 @@ import java.util.Set;
 
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.accounting.Event;
-import org.fenixedu.academic.domain.accounting.EventType;
-import org.fenixedu.academic.domain.accounting.events.dfa.DFACandidacyEvent;
-import org.fenixedu.academic.domain.accounting.serviceAgreements.DegreeCurricularPlanServiceAgreement;
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOffice;
 import org.fenixedu.academic.domain.util.workflow.Operation;
-import org.fenixedu.academic.predicate.AccessControl;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.joda.time.YearMonthDay;
@@ -105,8 +100,6 @@ public class DFACandidacy extends DFACandidacy_Base {
         addCandidacyDocuments(new CandidacyDocument("interest.letter"));
 
         final AdministrativeOffice administrativeOffice = executionDegree.getDegree().getAdministrativeOffice();
-        new DFACandidacyEvent(administrativeOffice, person, this);
-        new DegreeCurricularPlanServiceAgreement(person, executionDegree.getDegreeCurricularPlan().getServiceAgreementTemplate());
     }
 
     public DFACandidacy(Person person, ExecutionDegree executionDegree, YearMonthDay startDate) {
@@ -133,15 +126,6 @@ public class DFACandidacy extends DFACandidacy_Base {
     protected void moveToNextState(CandidacyOperationType candidacyOperationType, Person person) {
         // TODO Auto-generated method stub
 
-    }
-
-    public void cancelEvents() {
-        for (Event event : getPerson().getEventsByEventType(EventType.CANDIDACY_ENROLMENT)) {
-            DFACandidacyEvent candidacyEvent = (DFACandidacyEvent) event;
-            if (candidacyEvent.getCandidacy() == this) {
-                candidacyEvent.cancel(AccessControl.getPerson());
-            }
-        }
     }
 
     @Override

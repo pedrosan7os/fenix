@@ -23,17 +23,14 @@ import java.util.Optional;
 
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
-import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.degreeStructure.ProgramConclusion;
 import org.fenixedu.academic.domain.documents.DocumentRequestGeneratedDocument;
 import org.fenixedu.academic.domain.exceptions.DomainException;
-import org.fenixedu.academic.domain.phd.exceptions.PhdDomainOperationException;
 import org.fenixedu.academic.domain.phd.serviceRequests.PhdAcademicServiceRequestCreateBean;
 import org.fenixedu.academic.domain.phd.serviceRequests.PhdDocumentRequestCreateBean;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.AcademicServiceRequestType;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.DocumentRequestType;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.IDocumentRequest;
-import org.fenixedu.academic.dto.serviceRequests.AcademicServiceRequestBean;
 import org.fenixedu.academic.report.academicAdministrativeOffice.AdministrativeOfficeDocument;
 import org.fenixedu.academic.util.report.ReportsUtils;
 import org.slf4j.Logger;
@@ -95,40 +92,6 @@ public abstract class PhdDocumentRequest extends PhdDocumentRequest_Base impleme
     @Override
     public boolean isToShowCredits() {
         return false;
-    }
-
-    @Override
-    protected void internalChangeState(AcademicServiceRequestBean academicServiceRequestBean) {
-        super.internalChangeState(academicServiceRequestBean);
-
-        if (academicServiceRequestBean.isToProcess()) {
-            if (!getFreeProcessed()) {
-                assertPayedEvents();
-            }
-        }
-    }
-
-    protected void assertPayedEvents() {
-        if (getPhdIndividualProgramProcess().hasInsuranceDebtsCurrently()) {
-            throw new PhdDomainOperationException("DocumentRequest.registration.has.not.payed.insurance.fees");
-        }
-
-        if (getPhdIndividualProgramProcess().hasAdministrativeOfficeFeeAndInsuranceDebtsCurrently(getAdministrativeOffice())) {
-            throw new PhdDomainOperationException("DocumentRequest.registration.has.not.payed.administrative.office.fees");
-        }
-    }
-
-    protected void assertPayedEvents(final ExecutionYear executionYear) {
-        if (executionYear != null) {
-            if (getPhdIndividualProgramProcess().hasInsuranceDebts(executionYear)) {
-                throw new PhdDomainOperationException("DocumentRequest.registration.has.not.payed.insurance.fees");
-            }
-
-            if (getPhdIndividualProgramProcess().hasAdministrativeOfficeFeeAndInsuranceDebts(getAdministrativeOffice(),
-                    executionYear)) {
-                throw new PhdDomainOperationException("DocumentRequest.registration.has.not.payed.administrative.office.fees");
-            }
-        }
     }
 
     @Override

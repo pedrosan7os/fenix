@@ -18,7 +18,6 @@
  */
 package org.fenixedu.academic.domain.serviceRequests.documentRequests;
 
-import org.fenixedu.academic.domain.accounting.events.serviceRequests.DeclarationRequestEvent;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.dto.serviceRequests.AcademicServiceRequestBean;
 import org.fenixedu.academic.dto.serviceRequests.DocumentRequestBean;
@@ -71,11 +70,6 @@ abstract public class DeclarationRequest extends DeclarationRequest_Base {
     }
 
     final public void edit(final DocumentRequestBean documentRequestBean) {
-
-        if (isPayable() && isPayed() && !getNumberOfPages().equals(documentRequestBean.getNumberOfPages())) {
-            throw new DomainException("error.serviceRequests.documentRequests.cannot.change.numberOfPages.on.payed.documents");
-        }
-
         super.edit(documentRequestBean);
         super.setNumberOfPages(documentRequestBean.getNumberOfPages());
     }
@@ -88,23 +82,7 @@ abstract public class DeclarationRequest extends DeclarationRequest_Base {
             if (getNumberOfPages() == null || getNumberOfPages().intValue() == 0) {
                 throw new DomainException("error.serviceRequests.documentRequests.numberOfPages.must.be.set");
             }
-
-            if (!isFree()) {
-                new DeclarationRequestEvent(getAdministrativeOffice(), getEventType(), getRegistration().getPerson(), this);
-            }
         }
-    }
-
-    /**
-     * Important: Notice that this method's return value may not be the same
-     * before and after conclusion of the academic service request.
-     */
-    @Override
-    final public boolean isFree() {
-        if (getDocumentPurposeType() == DocumentPurposeType.PPRE) {
-            return false;
-        }
-        return super.isFree() || hasFreeDeclarationRequests();
     }
 
     abstract protected boolean hasFreeDeclarationRequests();

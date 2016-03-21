@@ -52,10 +52,6 @@ public class StudentCurricularPlanImprovementOfApprovedEnrolmentManager extends 
             throw new DomainException("error.StudentCurricularPlan.cannot.enrol.with.registration.inactive");
         }
 
-        if (getStudent().isAnyGratuityOrAdministrativeOfficeFeeAndInsuranceInDebt()) {
-            throw new DomainException("error.StudentCurricularPlan.cannot.enrol.with.debts.for.previous.execution.years");
-        }
-
         if (areModifiedCyclesConcluded()) {
             checkUpdateRegistrationAfterConclusion();
         }

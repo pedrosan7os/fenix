@@ -31,7 +31,6 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.util.Bundle;
-import org.fenixedu.academic.util.Money;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -189,7 +188,6 @@ public class ReportStudentsUTLCandidates implements java.io.Serializable {
         Integer curricularYearInCurrentYear = studentLine.getCurricularYearInCurrentYear();
         Double numberOfEnrolledECTS = studentLine.getNumberOfEnrolledECTS();
         double numberOfDoneECTS = studentLine.getNumberOfDoneECTS();
-        Money gratuityAmount = studentLine.getGratuityAmount();
         Integer numberOfMonthsExecutionYear = studentLine.getNumberOfMonthsExecutionYear();
         String firstMonthOfPayment = studentLine.getFirstMonthOfPayment();
         Boolean ownerOfCETQualification = studentLine.getOwnerOfCETQualification();
@@ -235,7 +233,6 @@ public class ReportStudentsUTLCandidates implements java.io.Serializable {
                 BigDecimal numberOfApprovedEctsOneYearAgo = studentLine.getNumberOfApprovedEctsOneYearAgo();
                 Integer curricularYearInCurrentYear = studentLine.getCurricularYearInCurrentYear();
                 Double numberOfEnrolledECTS = studentLine.getNumberOfEnrolledECTS();
-                Money gratuityAmount = studentLine.getGratuityAmount();
                 Integer numberOfMonthsExecutionYear = studentLine.getNumberOfMonthsExecutionYear();
                 String firstMonthOfPayment = studentLine.getFirstMonthOfPayment();
                 Boolean ownerOfCETQualification = studentLine.getOwnerOfCETQualification();
@@ -278,8 +275,6 @@ public class ReportStudentsUTLCandidates implements java.io.Serializable {
                 addCellValue(row,
                         onNullEmptyString(numberOfEnrolledECTS != null ? numberOfEnrolledECTS.toString().replace('.', ',') : ""),
                         25);
-                addCellValue(row,
-                        onNullEmptyString(gratuityAmount != null ? gratuityAmount.toPlainString().replace('.', ',') : ""), 26);
                 addCellValue(row, onNullEmptyString(numberOfMonthsExecutionYear), 27);
                 addCellValue(row, onNullEmptyString(firstMonthOfPayment), 28);
                 addCellValue(row, onNullEmptyString(ownerOfCETQualification), 29);

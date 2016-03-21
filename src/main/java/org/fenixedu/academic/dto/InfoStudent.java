@@ -51,10 +51,6 @@ public class InfoStudent extends InfoObject {
         return getRegistration().getDegreeType();
     }
 
-    public Boolean getPayedTuition() {
-        return getRegistration().getPayedTuition();
-    }
-
     @Override
     public boolean equals(Object obj) {
         return obj instanceof InfoStudent && getRegistration() == ((InfoStudent) obj).getRegistration();

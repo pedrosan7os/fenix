@@ -28,7 +28,6 @@ import org.apache.struts.action.DynaActionForm;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.CurricularRuleLevel;
-import org.fenixedu.academic.domain.student.Student;
 import org.fenixedu.academic.dto.student.enrollment.bolonha.BolonhaStudentEnrollmentBean;
 import org.fenixedu.academic.ui.struts.action.administrativeOffice.student.SearchForStudentsDA;
 import org.fenixedu.academic.ui.struts.action.commons.student.enrollment.bolonha.AbstractBolonhaStudentEnrollmentDA;
@@ -53,16 +52,7 @@ public class AcademicAdminOfficeBolonhaStudentEnrollmentDA extends AbstractBolon
             HttpServletResponse response, StudentCurricularPlan studentCurricularPlan, ExecutionSemester executionSemester) {
 
         request.setAttribute("action", getAction());
-        addDebtsWarningMessages(studentCurricularPlan.getRegistration().getStudent(), executionSemester, request);
-
         return super.prepareShowDegreeModulesToEnrol(mapping, form, request, response, studentCurricularPlan, executionSemester);
-    }
-
-    protected void addDebtsWarningMessages(final Student student, final ExecutionSemester executionSemester,
-            final HttpServletRequest request) {
-        if (student.isAnyGratuityOrAdministrativeOfficeFeeAndInsuranceInDebt()) {
-            addActionMessage("warning", request, "label.student.events.in.debt.warning");
-        }
     }
 
     protected StudentCurricularPlan getStudentCurricularPlan(final HttpServletRequest request) {

@@ -26,7 +26,6 @@ import java.util.stream.Stream;
 
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
-import org.fenixedu.academic.domain.accounting.EventTypes;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.curriculum.ConclusionProcess;
@@ -59,15 +58,15 @@ public class ProgramConclusion extends ProgramConclusion_Base {
 
     public ProgramConclusion(LocalizedString name, LocalizedString description, LocalizedString graduationTitle,
             LocalizedString graduationLevel, boolean isAverageEditable, boolean isAlumniProvider, boolean isSkipValidation,
-            RegistrationStateType targetState, EventTypes eventTypes) {
+            RegistrationStateType targetState) {
         this();
         edit(name, description, graduationTitle, graduationLevel, isAverageEditable, isAlumniProvider, isSkipValidation,
-                targetState, eventTypes);
+                targetState);
     }
 
     public void edit(LocalizedString name, LocalizedString description, LocalizedString graduationTitle,
             LocalizedString graduationLevel, boolean isAverageEditable, boolean isAlumniProvider, boolean isSkipValidation,
-            RegistrationStateType targetState, EventTypes eventTypes) {
+            RegistrationStateType targetState) {
         setName(name);
         setDescription(description);
         setGraduationTitle(graduationTitle);
@@ -76,7 +75,6 @@ public class ProgramConclusion extends ProgramConclusion_Base {
         setAlumniProvider(isAlumniProvider);
         setSkipValidation(isSkipValidation);
         setTargetState(targetState);
-        setEventTypes(eventTypes);
     }
 
     public boolean isAverageEditable() {

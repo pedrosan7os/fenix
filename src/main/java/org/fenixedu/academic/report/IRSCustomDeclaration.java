@@ -22,10 +22,6 @@ import java.io.Serializable;
 import java.text.MessageFormat;
 
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.accounting.Event;
-import org.fenixedu.academic.domain.accounting.ResidenceEvent;
-import org.fenixedu.academic.domain.accounting.events.gratuity.GratuityEventWithPaymentPlan;
-import org.fenixedu.academic.domain.accounting.events.gratuity.StandaloneEnrolmentGratuityEvent;
 import org.fenixedu.academic.domain.person.IDDocumentType;
 import org.fenixedu.academic.util.Money;
 import org.joda.time.DateTime;
@@ -197,16 +193,6 @@ public class IRSCustomDeclaration extends FenixReport {
 
         public Money getTotalAmount() {
             return getGratuityAmount().add(getOtherAmount()).add(getResidenceAmount());
-        }
-
-        public void addAmount(final Event event, final int civilYear) {
-            if (event instanceof GratuityEventWithPaymentPlan || event instanceof StandaloneEnrolmentGratuityEvent) {
-                addGratuityAmount(event.getMaxDeductableAmountForLegalTaxes(civilYear));
-            } else if (event instanceof ResidenceEvent) {
-                addResidenceAmount(event.getMaxDeductableAmountForLegalTaxes(civilYear));
-            } else {
-                addOtherAmount(event.getMaxDeductableAmountForLegalTaxes(civilYear));
-            }
         }
     }
 

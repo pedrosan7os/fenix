@@ -39,7 +39,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
-import org.fenixedu.academic.domain.accounting.serviceAgreementTemplates.DegreeCurricularPlanServiceAgreementTemplate;
 import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
 import org.fenixedu.academic.domain.curricularRules.CurricularRule;
 import org.fenixedu.academic.domain.curricularRules.MaximumNumberOfCreditsForEnrolmentPeriod;
@@ -210,7 +209,6 @@ public class DegreeCurricularPlan extends DegreeCurricularPlan_Base {
         newStructureFieldsChange(CurricularStage.DRAFT, null);
 
         createDefaultCurricularRules();
-        new DegreeCurricularPlanServiceAgreementTemplate(this);
     }
 
     private void createDefaultCourseGroups() {
@@ -360,7 +358,7 @@ public class DegreeCurricularPlan extends DegreeCurricularPlan_Base {
     private Boolean getCanBeDeleted() {
         return canDeleteRoot() && getStudentCurricularPlansSet().isEmpty() && getCurricularCourseEquivalencesSet().isEmpty()
                 && getEnrolmentPeriodsSet().isEmpty() && getCurricularCoursesSet().isEmpty()
-                && getExecutionDegreesSet().isEmpty() && getAreasSet().isEmpty() && canDeleteServiceAgreement()
+                && getExecutionDegreesSet().isEmpty() && getAreasSet().isEmpty()
                 && getTeachersWithIncompleteEvaluationWorkGroupSet().isEmpty() && getEquivalencePlan() == null
                 && getTargetEquivalencePlansSet().isEmpty() && getDegreeContextsSet().isEmpty();
     }
@@ -369,22 +367,12 @@ public class DegreeCurricularPlan extends DegreeCurricularPlan_Base {
         return getRoot().getCanBeDeleted();
     }
 
-    private boolean canDeleteServiceAgreement() {
-        return getServiceAgreementTemplate() == null || getServiceAgreementTemplate().getPostingRulesSet().isEmpty()
-                && getServiceAgreementTemplate().getServiceAgreementsSet().isEmpty();
-    }
-
     public void delete() {
         if (getCanBeDeleted()) {
             setDegree(null);
             getRoot().delete();
             if (getDegreeStructure() != null) {
                 getDegreeStructure().delete();
-            }
-            if (getServiceAgreementTemplate() != null) {
-                DegreeCurricularPlanServiceAgreementTemplate template = getServiceAgreementTemplate();
-                setServiceAgreementTemplate(null);
-                template.delete();
             }
             setShift(null);
             setMembersGroup(null);

@@ -101,8 +101,6 @@ abstract public class StudentCurricularPlanEnrolment {
             return;
         }
 
-        checkDebts();
-
         if (isResponsiblePersonAllowedToEnrolStudents() || isResponsibleInternationalRelationOffice()) {
             assertAcademicAdminOfficePreConditions();
 
@@ -125,16 +123,6 @@ abstract public class StudentCurricularPlanEnrolment {
 
     public static void registerCondition(CurricularCourseEnrollmentCondition condition) {
         conditions.add(condition);
-    }
-
-    protected void checkDebts() {
-
-        final EnrolmentPreConditionResult result =
-                StudentCurricularPlanEnrolmentPreConditions.checkDebts(getStudentCurricularPlan());
-
-        if (!result.isValid()) {
-            throw new DomainException(result.message(), result.args());
-        }
     }
 
     protected Person getPerson() {
@@ -398,6 +386,7 @@ abstract public class StudentCurricularPlanEnrolment {
 
     static private Supplier<EnrolmentManagerFactory> ENROLMENT_MANAGER_FACTORY = () -> new EnrolmentManagerFactory() {
 
+        @Override
         public StudentCurricularPlanEnrolment createManager(final EnrolmentContext enrolmentContext) {
 
             if (enrolmentContext.isNormal()) {

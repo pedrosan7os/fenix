@@ -28,7 +28,6 @@ import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.accounting.events.candidacy.DegreeCandidacyForGraduatedPersonEvent;
 import org.fenixedu.academic.domain.candidacy.IngressionType;
 import org.fenixedu.academic.domain.candidacyProcess.IndividualCandidacyProcess;
 import org.fenixedu.academic.domain.candidacyProcess.IndividualCandidacyProcessBean;
@@ -61,14 +60,6 @@ public class DegreeCandidacyForGraduatedPerson extends DegreeCandidacyForGraduat
         newSCICSeriesGrade.setDegree(bean.getSelectedDegree());
         getIndividualCandidacySeriesGradeSet().add(newSCICSeriesGrade);
         setSelectedDegree(bean.getSelectedDegree());
-
-        /*
-         * 06/04/2009 - The candidacy may not be associated with a person. In
-         * this case we will not create an Event
-         */
-        if (bean.getInternalPersonCandidacy()) {
-            createDebt(person);
-        }
     }
 
     @Override
@@ -112,11 +103,6 @@ public class DegreeCandidacyForGraduatedPerson extends DegreeCandidacyForGraduat
         if (precedentDegreeInformation == null) {
             throw new DomainException("error.DegreeCandidacyForGraduatedPerson.invalid.precedentDegreeInformation");
         }
-    }
-
-    @Override
-    protected void createDebt(final Person person) {
-        new DegreeCandidacyForGraduatedPersonEvent(this, person);
     }
 
     @Override

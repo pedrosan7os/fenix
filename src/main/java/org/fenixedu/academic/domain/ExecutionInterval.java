@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import org.fenixedu.academic.domain.accounting.PaymentCode;
-import org.fenixedu.academic.domain.accounting.PaymentCodeMapping;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.period.CandidacyPeriod;
 import org.fenixedu.academic.domain.period.DegreeCandidacyForGraduatedPersonCandidacyPeriod;
@@ -159,15 +157,6 @@ abstract public class ExecutionInterval extends ExecutionInterval_Base {
 
     public boolean hasAnyStandaloneCandidacyPeriod() {
         return hasCandidacyPeriods(StandaloneCandidacyPeriod.class);
-    }
-
-    public PaymentCode findNewCodeInPaymentCodeMapping(final PaymentCode oldCode) {
-        for (final PaymentCodeMapping mapping : getPaymentCodeMappingsSet()) {
-            if (mapping.hasOldPaymentCode(oldCode)) {
-                return mapping.getNewPaymentCode();
-            }
-        }
-        return null;
     }
 
     abstract public String getQualifiedName();

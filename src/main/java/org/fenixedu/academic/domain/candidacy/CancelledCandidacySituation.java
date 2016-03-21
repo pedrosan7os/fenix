@@ -27,11 +27,6 @@ public class CancelledCandidacySituation extends CancelledCandidacySituation_Bas
     public CancelledCandidacySituation(Candidacy candidacy, Person person) {
         super();
         super.init(candidacy, person);
-
-        if (getCandidacy() instanceof DFACandidacy) {
-            ((DFACandidacy) getCandidacy()).cancelEvents();
-        }
-
     }
 
     public CancelledCandidacySituation(Candidacy candidacy) {

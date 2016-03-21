@@ -63,7 +63,6 @@ public class PhdProgram extends PhdProgram_Base {
         setRootDomainObject(Bennu.getInstance());
         setWhenCreated(new DateTime());
         setCreator(Authenticate.getUser().getUsername());
-        new PhdProgramServiceAgreementTemplate(this);
     }
 
     private PhdProgram(final Degree degree, final MultiLanguageString name, final String acronym) {
@@ -147,7 +146,6 @@ public class PhdProgram extends PhdProgram_Base {
     protected void disconnect() {
         getPhdProgramUnit().delete();
         setDegree(null);
-        setServiceAgreementTemplate(null);
         setRootDomainObject(null);
         super.disconnect();
     }

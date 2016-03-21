@@ -22,12 +22,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.documents.DocumentRequestGeneratedDocument;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.serviceRequests.AcademicServiceRequest;
 import org.fenixedu.academic.domain.serviceRequests.RegistryCode;
-import org.fenixedu.academic.dto.serviceRequests.AcademicServiceRequestBean;
 import org.fenixedu.academic.dto.serviceRequests.DocumentRequestCreateBean;
 import org.fenixedu.academic.report.academicAdministrativeOffice.AdministrativeOfficeDocument;
 import org.fenixedu.academic.util.report.ReportsUtils;
@@ -101,47 +99,6 @@ public abstract class DocumentRequest extends DocumentRequest_Base implements ID
     @Override
     final public boolean isDiplomaSupplement() {
         return getDocumentRequestType().isDiplomaSupplement();
-    }
-
-    @Override
-    protected void internalChangeState(AcademicServiceRequestBean academicServiceRequestBean) {
-        super.internalChangeState(academicServiceRequestBean);
-
-        if (academicServiceRequestBean.isToProcess()) {
-            if (!getFreeProcessed()) {
-                assertPayedEvents();
-            }
-        }
-    }
-
-    protected void assertPayedEvents() {
-        if (getRegistration().hasGratuityDebtsCurrently()) {
-            throw new DomainException("DocumentRequest.registration.has.not.payed.gratuities");
-        }
-
-        if (getRegistration().hasInsuranceDebtsCurrently()) {
-            throw new DomainException("DocumentRequest.registration.has.not.payed.insurance.fees");
-        }
-
-        if (getRegistration().hasAdministrativeOfficeFeeAndInsuranceDebtsCurrently(getAdministrativeOffice())) {
-            throw new DomainException("DocumentRequest.registration.has.not.payed.administrative.office.fees");
-        }
-    }
-
-    protected void assertPayedEvents(final ExecutionYear executionYear) {
-        if (executionYear != null) {
-            if (getRegistration().hasGratuityDebts(executionYear)) {
-                throw new DomainException("DocumentRequest.registration.has.not.payed.gratuities");
-            }
-
-            if (getRegistration().hasInsuranceDebts(executionYear)) {
-                throw new DomainException("DocumentRequest.registration.has.not.payed.insurance.fees");
-            }
-
-            if (getRegistration().hasAdministrativeOfficeFeeAndInsuranceDebts(getAdministrativeOffice(), executionYear)) {
-                throw new DomainException("DocumentRequest.registration.has.not.payed.administrative.office.fees");
-            }
-        }
     }
 
     @Override

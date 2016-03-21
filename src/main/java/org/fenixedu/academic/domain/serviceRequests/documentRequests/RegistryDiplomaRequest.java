@@ -19,11 +19,8 @@
 package org.fenixedu.academic.domain.serviceRequests.documentRequests;
 
 import java.util.Locale;
-import java.util.Set;
 
 import org.fenixedu.academic.domain.ExecutionYear;
-import org.fenixedu.academic.domain.accounting.EventType;
-import org.fenixedu.academic.domain.accounting.events.serviceRequests.RegistryDiplomaRequestEvent;
 import org.fenixedu.academic.domain.degreeStructure.CycleType;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.serviceRequests.IRegistryDiplomaRequest;
@@ -35,9 +32,6 @@ import org.fenixedu.academic.dto.serviceRequests.DocumentRequestCreateBean;
 import org.joda.time.LocalDate;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-import com.google.common.collect.Sets.SetView;
 
 public class RegistryDiplomaRequest extends RegistryDiplomaRequest_Base implements IRegistryDiplomaRequest,
         IRectorateSubmissionBatchDocumentEntry {
@@ -52,9 +46,6 @@ public class RegistryDiplomaRequest extends RegistryDiplomaRequest_Base implemen
         checkParameters(bean);
         setProgramConclusion(bean.getProgramConclusion());
 
-        if (isPayedUponCreation() && !isFree()) {
-            RegistryDiplomaRequestEvent.create(getAdministrativeOffice(), getRegistration().getPerson(), this);
-        }
         if (bean.getRegistration().isBolonha()) {
             setDiplomaSupplement(new DiplomaSupplementRequest(bean));
         }
@@ -107,24 +98,6 @@ public class RegistryDiplomaRequest extends RegistryDiplomaRequest_Base implemen
         return getClass().getName();
     }
 
-    public static Set<EventType> getPossibleEventTypes() {
-        return ImmutableSet.of(EventType.BOLONHA_DEGREE_REGISTRY_DIPLOMA_REQUEST,
-                EventType.BOLONHA_MASTER_DEGREE_REGISTRY_DIPLOMA_REQUEST,
-                EventType.BOLONHA_ADVANCED_FORMATION_REGISTRY_DIPLOMA_REQUEST);
-    }
-
-    @Override
-    public EventType getEventType() {
-        final SetView<EventType> eventTypesToUse =
-                Sets.intersection(getPossibleEventTypes(), getProgramConclusion().getEventTypes().getTypes());
-
-        if (eventTypesToUse.size() != 1) {
-            throw new DomainException("error.program.conclusion.many.event.types");
-        }
-
-        return eventTypesToUse.iterator().next();
-    }
-
     @Override
     public boolean hasPersonalInfo() {
         return true;
@@ -138,12 +111,6 @@ public class RegistryDiplomaRequest extends RegistryDiplomaRequest_Base implemen
             if (!getProgramConclusion().isConclusionProcessed(getRegistration())) {
                 throw new DomainException("error.registryDiploma.registrationNotSubmitedToConclusionProcess");
             }
-            if (!getFreeProcessed()) {
-                assertPayedEvents();
-            }
-            if (isPayable() && !isPayed()) {
-                throw new DomainException("AcademicServiceRequest.hasnt.been.payed");
-            }
             if (getRegistryCode() == null) {
                 getRootDomainObject().getInstitutionUnit().getRegistryCodeGenerator().createRegistryFor(this);
                 getAdministrativeOffice().getCurrentRectorateSubmissionBatch().addDocumentRequest(this);
@@ -155,16 +122,10 @@ public class RegistryDiplomaRequest extends RegistryDiplomaRequest_Base implemen
                 getDiplomaSupplement().process();
             }
         } else if (academicServiceRequestBean.isToConclude()) {
-            if (!isFree() && getEvent() == null && !isPayedUponCreation()) {
-                RegistryDiplomaRequestEvent.create(getAdministrativeOffice(), getRegistration().getPerson(), this);
-            }
             if (getRegistration().isBolonha() && getDiplomaSupplement().isConcludedSituationAccepted()) {
                 getDiplomaSupplement().conclude();
             }
         } else if (academicServiceRequestBean.isToCancelOrReject()) {
-            if (getEvent() != null) {
-                getEvent().cancel(academicServiceRequestBean.getResponsible());
-            }
             if (getRegistration().isBolonha() && academicServiceRequestBean.isToCancel()) {
                 getDiplomaSupplement().cancel(academicServiceRequestBean.getJustification());
             }

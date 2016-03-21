@@ -21,8 +21,6 @@ package org.fenixedu.academic.domain.phd.serviceRequests.documentRequests;
 import java.util.List;
 import java.util.Locale;
 
-import org.fenixedu.academic.domain.accounting.EventType;
-import org.fenixedu.academic.domain.accounting.events.serviceRequests.PhdDiplomaRequestEvent;
 import org.fenixedu.academic.domain.degreeStructure.CycleType;
 import org.fenixedu.academic.domain.documents.DocumentRequestGeneratedDocument;
 import org.fenixedu.academic.domain.exceptions.DomainException;
@@ -66,10 +64,6 @@ public class PhdDiplomaRequest extends PhdDiplomaRequest_Base implements IDiplom
         checkParameters(bean);
         super.init(bean);
 
-        if (!isFree()) {
-            PhdDiplomaRequestEvent.create(getAdministrativeOffice(), getPhdIndividualProgramProcess().getPerson(), this);
-        }
-
         applyRegistryCode();
     }
 
@@ -105,10 +99,6 @@ public class PhdDiplomaRequest extends PhdDiplomaRequest_Base implements IDiplom
         }
 
         PhdRegistryDiplomaRequest phdRegistryDiploma = process.getRegistryDiplomaRequest();
-
-        if (phdRegistryDiploma.isPayedUponCreation() && !phdRegistryDiploma.getEvent().isPayed()) {
-            throw new PhdDomainOperationException("error.phdDiploma.registryDiploma.must.be.payed");
-        }
     }
 
     @Override
@@ -147,11 +137,6 @@ public class PhdDiplomaRequest extends PhdDiplomaRequest_Base implements IDiplom
     }
 
     @Override
-    public EventType getEventType() {
-        return EventType.BOLONHA_PHD_DIPLOMA_REQUEST;
-    }
-
-    @Override
     public boolean hasPersonalInfo() {
         return true;
     }
@@ -172,7 +157,6 @@ public class PhdDiplomaRequest extends PhdDiplomaRequest_Base implements IDiplom
     protected void internalChangeState(AcademicServiceRequestBean academicServiceRequestBean) {
         try {
             verifyIsToProcessAndHasPersonalInfo(academicServiceRequestBean);
-            verifyIsToDeliveredAndIsPayed(academicServiceRequestBean);
         } catch (DomainException e) {
             throw new PhdDomainOperationException(e.getKey(), e, e.getArgs());
         }
@@ -184,18 +168,10 @@ public class PhdDiplomaRequest extends PhdDiplomaRequest_Base implements IDiplom
                 throw new PhdDomainOperationException("error.registryDiploma.registrationNotSubmitedToConclusionProcess");
             }
 
-            if (isPayable() && !isPayed()) {
-                throw new PhdDomainOperationException("AcademicServiceRequest.hasnt.been.payed");
-            }
-
             getAdministrativeOffice().getCurrentRectorateSubmissionBatch().addDocumentRequest(this);
 
             if (getLastGeneratedDocument() == null) {
                 generateDocument();
-            }
-        } else if (academicServiceRequestBean.isToCancelOrReject()) {
-            if (getEvent() != null) {
-                getEvent().cancel(academicServiceRequestBean.getResponsible());
             }
         }
     }

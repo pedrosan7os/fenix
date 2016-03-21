@@ -41,9 +41,6 @@ import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.Qualification;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
-import org.fenixedu.academic.domain.accounting.AccountingTransaction;
-import org.fenixedu.academic.domain.accounting.Installment;
-import org.fenixedu.academic.domain.accounting.events.gratuity.GratuityEventWithPaymentPlan;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.degreeStructure.CycleType;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
@@ -55,7 +52,6 @@ import org.fenixedu.academic.domain.student.registrationStates.RegistrationState
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumModule;
 import org.fenixedu.academic.util.Bundle;
-import org.fenixedu.academic.util.Money;
 import org.fenixedu.academic.util.MultiLanguageString;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.joda.time.DateTime;
@@ -336,50 +332,6 @@ public class StudentLine implements java.io.Serializable {
         }
 
         return getFirstEnrolmentOnCurrentExecutionYear();
-    }
-
-    public Money getGratuityAmount() {
-        if (getRegistration() == null) {
-            return Money.ZERO;
-        }
-
-        if (!getRegistration().hasToPayGratuityOrInsurance()) {
-            return Money.ZERO;
-        }
-
-        GratuityEventWithPaymentPlan event =
-                getStudentCurricularPlan().getGratuityEvent(getForExecutionYear(), GratuityEventWithPaymentPlan.class);
-
-        if (event == null) {
-            return Money.ZERO;
-        }
-
-        return event.getOriginalAmountToPay();
-    }
-
-    public LocalDate getFirstInstallmentPaymentLocalDate() {
-        if (!getRegistration().hasToPayGratuityOrInsurance()) {
-            return null;
-        }
-
-        GratuityEventWithPaymentPlan gratuityEventWithPaymentPlan =
-                getStudentCurricularPlan().getGratuityEvent(getForExecutionYear(), GratuityEventWithPaymentPlan.class);
-
-        Installment firstInstallment = gratuityEventWithPaymentPlan.getInstallments().iterator().next();
-
-        /*
-         * iterate the non adjusting accounting transactions until its paid
-         */
-        Money paidForFirstInstallment = Money.ZERO;
-        for (AccountingTransaction accountingTransaction : gratuityEventWithPaymentPlan.getNonAdjustingTransactions()) {
-            paidForFirstInstallment = paidForFirstInstallment.add(accountingTransaction.getAmountWithAdjustment());
-
-            if (paidForFirstInstallment.greaterOrEqualThan(firstInstallment.getAmount())) {
-                return accountingTransaction.getWhenRegistered().toLocalDate();
-            }
-        }
-
-        return firstInstallment.getEndDate().toLocalDate();
     }
 
     public String getRegime() {
@@ -1024,7 +976,6 @@ public class StudentLine implements java.io.Serializable {
             getNumberOfApprovedEctsOneYearAgo();
             getCurricularYearInCurrentYear();
             getNumberOfEnrolledECTS();
-            getGratuityAmount();
             getNumberOfMonthsExecutionYear();
             getFirstMonthOfPayment();
             getOwnerOfCETQualification();

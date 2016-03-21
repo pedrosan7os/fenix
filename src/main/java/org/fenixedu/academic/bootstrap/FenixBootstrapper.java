@@ -32,7 +32,6 @@ import org.fenixedu.academic.domain.Department;
 import org.fenixedu.academic.domain.Installation;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.accessControl.academicAdministration.AcademicOperationType;
-import org.fenixedu.academic.domain.accounting.serviceAgreementTemplates.AdministrativeOfficeServiceAgreementTemplate;
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOffice;
 import org.fenixedu.academic.domain.contacts.EmailAddress;
 import org.fenixedu.academic.domain.contacts.PartyContact;
@@ -221,7 +220,6 @@ public class FenixBootstrapper {
             Unit.createNewUnit(new MultiLanguageString(Locale.getDefault(), "Office"), null, null, null, new YearMonthDay(),
                     null, serviceUnits, AccountabilityType.readByType(AccountabilityTypeEnum.ADMINISTRATIVE_STRUCTURE), null,
                     null, administrativeOffice, Boolean.FALSE, null);
-            new AdministrativeOfficeServiceAgreementTemplate(administrativeOffice);
         }
 
         private void createDepartmentUnits(final AggregateUnit departmentUnits) {

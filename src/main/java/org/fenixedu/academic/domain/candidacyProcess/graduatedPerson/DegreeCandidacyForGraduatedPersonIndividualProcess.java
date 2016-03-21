@@ -257,7 +257,7 @@ public class DegreeCandidacyForGraduatedPersonIndividualProcess extends DegreeCa
                 throw new PreConditionNotValidException();
             }
 
-            if (process.isCandidacyCancelled() || !process.isCandidacyDebtPayed()) {
+            if (process.isCandidacyCancelled()) {
                 throw new PreConditionNotValidException();
             }
 
@@ -294,10 +294,6 @@ public class DegreeCandidacyForGraduatedPersonIndividualProcess extends DegreeCa
                 throw new PreConditionNotValidException();
             }
 
-            if (!process.isCandidacyDebtPayed()) {
-                throw new PreConditionNotValidException();
-            }
-
             if (!process.isSentToCoordinator() && !process.isSentToScientificCouncil()) {
                 throw new PreConditionNotValidException();
             }
@@ -322,7 +318,7 @@ public class DegreeCandidacyForGraduatedPersonIndividualProcess extends DegreeCa
                 throw new PreConditionNotValidException();
             }
 
-            if (process.isCandidacyCancelled() || process.hasAnyPaymentForCandidacy() || !process.isCandidacyInStandBy()) {
+            if (process.isCandidacyCancelled() || !process.isCandidacyInStandBy()) {
                 throw new PreConditionNotValidException();
             }
         }

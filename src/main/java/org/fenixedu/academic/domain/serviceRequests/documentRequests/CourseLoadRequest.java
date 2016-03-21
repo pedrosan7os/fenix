@@ -19,7 +19,6 @@
 package org.fenixedu.academic.domain.serviceRequests.documentRequests;
 
 import org.fenixedu.academic.domain.Enrolment;
-import org.fenixedu.academic.domain.accounting.EventType;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.dto.serviceRequests.AcademicServiceRequestBean;
 import org.fenixedu.academic.dto.serviceRequests.DocumentRequestCreateBean;
@@ -72,11 +71,6 @@ public class CourseLoadRequest extends CourseLoadRequest_Base {
     }
 
     @Override
-    public EventType getEventType() {
-        return EventType.COURSE_LOAD_REQUEST;
-    }
-
-    @Override
     protected void internalChangeState(AcademicServiceRequestBean academicServiceRequestBean) {
         super.internalChangeState(academicServiceRequestBean);
 
@@ -92,10 +86,4 @@ public class CourseLoadRequest extends CourseLoadRequest_Base {
         super.getEnrolmentsSet().clear();
         super.disconnect();
     }
-
-    @Override
-    public boolean isFree() {
-        return getRegistration().getRegistrationProtocol().isMilitaryAgreement() || super.isFree();
-    }
-
 }

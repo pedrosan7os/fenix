@@ -27,13 +27,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.fenixedu.academic.domain.ExecutionSemester;
-import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
-import org.fenixedu.academic.domain.accounting.Event;
-import org.fenixedu.academic.domain.accounting.events.AdministrativeOfficeFeeAndInsuranceEvent;
-import org.fenixedu.academic.domain.accounting.events.AnnualEvent;
-import org.fenixedu.academic.domain.accounting.events.gratuity.GratuityEvent;
-import org.fenixedu.academic.domain.accounting.events.insurance.InsuranceEvent;
 import org.fenixedu.academic.domain.curricularRules.executors.ruleExecutors.CurricularRuleLevel;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.Student;
@@ -67,53 +61,7 @@ public class AcademicAdminOfficeSpecialSeasonBolonhaStudentEnrolmentDA extends A
         request.setAttribute("bolonhaStudentEnrollmentBean", new SpecialSeasonBolonhaStudentEnrolmentBean(studentCurricularPlan,
                 executionSemester));
 
-        addDebtsWarningMessages(studentCurricularPlan.getRegistration().getStudent(), executionSemester, request);
-
         return mapping.findForward("showDegreeModulesToEnrol");
-    }
-
-    @Override
-    protected void addDebtsWarningMessages(final Student student, final ExecutionSemester executionSemester,
-            final HttpServletRequest request) {
-
-        if (hasAnyAdministrativeOfficeFeeAndInsuranceInDebt(student, executionSemester.getExecutionYear())) {
-            addActionMessage("warning", request, "registration.has.not.payed.insurance.fees");
-        }
-
-        if (hasAnyGratuityDebt(student, executionSemester.getExecutionYear())) {
-            addActionMessage("warning", request, "registration.has.not.payed.gratuities");
-        }
-    }
-
-    protected boolean hasAnyAdministrativeOfficeFeeAndInsuranceInDebt(final Student student, final ExecutionYear executionYear) {
-        for (final Event event : student.getPerson().getEventsSet()) {
-
-            if (event instanceof AnnualEvent) {
-                final AnnualEvent annualEvent = (AnnualEvent) event;
-                if (annualEvent.getExecutionYear().isAfter(executionYear)) {
-                    continue;
-                }
-            }
-
-            if ((event instanceof AdministrativeOfficeFeeAndInsuranceEvent || event instanceof InsuranceEvent) && event.isOpen()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    protected boolean hasAnyGratuityDebt(final Student student, final ExecutionYear executionYear) {
-        for (final Registration registration : student.getRegistrationsSet()) {
-            for (final StudentCurricularPlan studentCurricularPlan : registration.getStudentCurricularPlansSet()) {
-                for (final GratuityEvent gratuityEvent : studentCurricularPlan.getGratuityEventsSet()) {
-                    if (gratuityEvent.getExecutionYear().isBeforeOrEquals(executionYear) && gratuityEvent.isInDebt()) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     @Override
@@ -142,7 +90,6 @@ public class AcademicAdminOfficeSpecialSeasonBolonhaStudentEnrolmentDA extends A
         request.setAttribute("bolonhaStudentEnrollmentBean", new SpecialSeasonBolonhaStudentEnrolmentBean(studentCurricularPlan,
                 executionSemester));
 
-        addDebtsWarningMessages(studentCurricularPlan.getRegistration().getStudent(), executionSemester, request);
         return mapping.findForward("showDegreeModulesToEnrol");
 
     }

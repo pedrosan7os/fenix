@@ -52,10 +52,6 @@ public class EnrollStudentInShifts {
             throw new StudentNotFoundServiceException();
         }
 
-        if (registration.getPayedTuition() == null || registration.getPayedTuition().equals(Boolean.FALSE)) {
-            throw new FenixServiceException("error.exception.notAuthorized.student.warningTuition");
-        }
-
         final Shift shiftFromStudent = findShiftOfSameTypeForSameExecutionCourse(registration, selectedShift);
 
         if (selectedShift != shiftFromStudent) {

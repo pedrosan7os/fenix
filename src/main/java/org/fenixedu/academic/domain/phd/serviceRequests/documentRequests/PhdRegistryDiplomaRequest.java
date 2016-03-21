@@ -23,8 +23,6 @@ import java.util.Locale;
 
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.ExecutionYear;
-import org.fenixedu.academic.domain.accounting.EventType;
-import org.fenixedu.academic.domain.accounting.events.serviceRequests.PhdRegistryDiplomaRequestEvent;
 import org.fenixedu.academic.domain.degreeStructure.CycleType;
 import org.fenixedu.academic.domain.documents.DocumentRequestGeneratedDocument;
 import org.fenixedu.academic.domain.exceptions.DomainException;
@@ -69,10 +67,6 @@ public class PhdRegistryDiplomaRequest extends PhdRegistryDiplomaRequest_Base im
         checkParameters(bean);
         super.init(bean);
 
-        if (!isFree()) {
-            PhdRegistryDiplomaRequestEvent.create(getAdministrativeOffice(), getPhdIndividualProgramProcess().getPerson(), this);
-        }
-
         setDiplomaSupplement(PhdDiplomaSupplementRequest.create(bean));
     }
 
@@ -110,11 +104,6 @@ public class PhdRegistryDiplomaRequest extends PhdRegistryDiplomaRequest_Base im
     @Override
     public boolean isManagedWithRectorateSubmissionBatch() {
         return true;
-    }
-
-    @Override
-    public EventType getEventType() {
-        return EventType.BOLONHA_PHD_REGISTRY_DIPLOMA_REQUEST;
     }
 
     @Override
@@ -188,7 +177,6 @@ public class PhdRegistryDiplomaRequest extends PhdRegistryDiplomaRequest_Base im
     protected void internalChangeState(AcademicServiceRequestBean academicServiceRequestBean) {
         try {
             verifyIsToProcessAndHasPersonalInfo(academicServiceRequestBean);
-            verifyIsToDeliveredAndIsPayed(academicServiceRequestBean);
         } catch (DomainException e) {
             throw new PhdDomainOperationException(e.getKey(), e, e.getArgs());
         }
@@ -197,10 +185,6 @@ public class PhdRegistryDiplomaRequest extends PhdRegistryDiplomaRequest_Base im
         if (academicServiceRequestBean.isToProcess()) {
             if (!getPhdIndividualProgramProcess().isConclusionProcessed()) {
                 throw new PhdDomainOperationException("error.registryDiploma.registrationNotSubmitedToConclusionProcess");
-            }
-
-            if (isPayable() && !isPayed()) {
-                throw new PhdDomainOperationException("AcademicServiceRequest.hasnt.been.payed");
             }
 
             if (getRegistryCode() == null) {
@@ -226,10 +210,6 @@ public class PhdRegistryDiplomaRequest extends PhdRegistryDiplomaRequest_Base im
                 getDiplomaSupplement().conclude();
             }
         } else if (academicServiceRequestBean.isToCancelOrReject()) {
-            if (getEvent() != null) {
-                getEvent().cancel(academicServiceRequestBean.getResponsible());
-            }
-
             if (academicServiceRequestBean.isToCancel()) {
                 getDiplomaSupplement().cancel(academicServiceRequestBean.getJustification());
             }

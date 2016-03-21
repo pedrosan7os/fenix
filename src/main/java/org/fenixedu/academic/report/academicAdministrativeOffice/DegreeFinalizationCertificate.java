@@ -29,16 +29,13 @@ import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.Grade;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.accounting.postingRules.serviceRequests.CertificateRequestPR;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
-import org.fenixedu.academic.domain.serviceRequests.documentRequests.CertificateRequest;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.DegreeFinalizationCertificateRequest;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.IDocumentRequest;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculumEntry;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academic.util.FenixStringTools;
-import org.fenixedu.academic.util.Money;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.commons.i18n.I18N;
 import org.joda.time.DateTime;
@@ -326,22 +323,4 @@ public class DegreeFinalizationCertificate extends AdministrativeOfficeDocument 
 
         return result.toString();
     }
-
-    @Override
-    protected void addPriceFields() {
-        final CertificateRequest certificateRequest = getDocumentRequest();
-        final CertificateRequestPR certificateRequestPR = (CertificateRequestPR) getPostingRule();
-
-        final Money amountPerPage = certificateRequestPR.getAmountPerPage();
-        final Money baseAmountPlusAmountForUnits =
-                certificateRequestPR.getBaseAmount().add(
-                        certificateRequestPR.getAmountForUnits(certificateRequest.getNumberOfUnits()));
-        final Money urgencyAmount = certificateRequest.getUrgentRequest() ? certificateRequestPR.getBaseAmount() : Money.ZERO;
-
-        addParameter("amountPerPage", amountPerPage);
-        addParameter("baseAmountPlusAmountForUnits", baseAmountPlusAmountForUnits);
-        addParameter("urgencyAmount", urgencyAmount);
-        addParameter("printPriceFields", printPriceParameters(certificateRequest));
-    }
-
 }

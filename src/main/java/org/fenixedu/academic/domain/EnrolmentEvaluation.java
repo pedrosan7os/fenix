@@ -27,7 +27,6 @@ import org.fenixedu.academic.domain.curriculum.EnrolmentEvaluationContext;
 import org.fenixedu.academic.domain.curriculum.GradeFactory;
 import org.fenixedu.academic.domain.curriculum.IGrade;
 import org.fenixedu.academic.domain.exceptions.DomainException;
-import org.fenixedu.academic.domain.exceptions.EnrolmentNotPayedException;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.Student;
 import org.fenixedu.academic.domain.thesis.Thesis;
@@ -289,12 +288,6 @@ public class EnrolmentEvaluation extends EnrolmentEvaluation_Base {
          * DomainException("EnrolmentEvaluation.cannot.submit.without.exam.date"
          * ); }
          */
-
-        if (isPayable() && !isPayed()) {
-            throw new EnrolmentNotPayedException("EnrolmentEvaluation.cannot.set.grade.on.not.payed.enrolment.evaluation",
-                    getEnrolment());
-        }
-
         if (enrolmentEvaluationState == EnrolmentEvaluationState.RECTIFICATION_OBJ && getRectified() != null) {
             getRectified().setEnrolmentEvaluationState(EnrolmentEvaluationState.RECTIFIED_OBJ);
         }
@@ -322,9 +315,6 @@ public class EnrolmentEvaluation extends EnrolmentEvaluation_Base {
         if (!isTemporary() || hasConfirmedMarkSheet()) {
             blockers.add(BundleUtil.getString(Bundle.APPLICATION,
                     "error.enrolmentEvaluation.isTemporary.or.hasConfirmedMarksheet"));
-        }
-        if (getImprovementOfApprovedEnrolmentEvent() != null && getImprovementOfApprovedEnrolmentEvent().isPayed()) {
-            blockers.add(BundleUtil.getString(Bundle.APPLICATION, "error.enrolmentEvaluation.has.been.payed"));
         }
     }
 
@@ -359,9 +349,6 @@ public class EnrolmentEvaluation extends EnrolmentEvaluation_Base {
         setMarkSheet(null);
         setRectification(null);
         setRectified(null);
-        if (getImprovementOfApprovedEnrolmentEvent() != null) {
-            getImprovementOfApprovedEnrolmentEvent().removeImprovementEnrolmentEvaluations(this);
-        }
         setExecutionPeriod(null);
         setEvaluationSeason(null);
 
@@ -466,14 +453,6 @@ public class EnrolmentEvaluation extends EnrolmentEvaluation_Base {
 
     final public boolean hasExamDateYearMonthDay() {
         return getExamDateYearMonthDay() != null;
-    }
-
-    public boolean isPayable() {
-        return getImprovementOfApprovedEnrolmentEvent() != null && !getImprovementOfApprovedEnrolmentEvent().isCancelled();
-    }
-
-    public boolean isPayed() {
-        return getImprovementOfApprovedEnrolmentEvent().isPayed();
     }
 
     @Override

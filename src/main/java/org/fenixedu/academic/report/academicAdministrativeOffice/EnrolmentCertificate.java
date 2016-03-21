@@ -25,8 +25,6 @@ import java.util.TreeSet;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.accounting.PostingRule;
-import org.fenixedu.academic.domain.accounting.postingRules.serviceRequests.EnrolmentCertificateRequestPR;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.degreeStructure.CycleType;
 import org.fenixedu.academic.domain.degreeStructure.ProgramConclusion;
@@ -35,7 +33,6 @@ import org.fenixedu.academic.domain.serviceRequests.documentRequests.IDocumentRe
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academic.util.FenixStringTools;
-import org.fenixedu.academic.util.Money;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.joda.time.DateTime;
 
@@ -78,30 +75,6 @@ public class EnrolmentCertificate extends AdministrativeOfficeDocument {
         return (EnrolmentCertificateRequest) super.getDocumentRequest();
     }
 
-    @Override
-    protected void addPriceFields() {
-        final EnrolmentCertificateRequest request = getDocumentRequest();
-        final PostingRule postingRule = getPostingRule();
-
-        if (postingRule instanceof EnrolmentCertificateRequestPR) {
-            final EnrolmentCertificateRequestPR requestPR = (EnrolmentCertificateRequestPR) postingRule;
-            addParameter("printed",
-                    BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.academicDocument.certificate.printingPriceLabel"));
-            addParameter("printPriceLabel",
-                    BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.academicDocument.certificate.issuingPriceLabel"));
-            addParameter("urgency", BundleUtil.getString(Bundle.ACADEMIC, getLocale(),
-                    "label.academicDocument.certificate.fastDeliveryPriceLabel"));
-            addParameter("total",
-                    BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.academicDocument.certificate.totalsPriceLabel"));
-            addParameter("amountPerPage", requestPR.getAmountPerPage());
-            addParameter("baseAmountPlusAmountForUnits", calculateAmountToPayPlusUnits(request, requestPR));
-            addParameter("urgencyAmount", request.getUrgentRequest() ? requestPR.getBaseAmount() : Money.ZERO);
-            addParameter("printPriceFields", printPriceParameters(request));
-        } else {
-            super.addPriceFields();
-        }
-    }
-
     protected void fillFirstParagraph(Person coordinator, String coordinatorTitle) {
         String institutionName = getInstitutionName();
         String adminOfficeName = getI18NText(getAdministrativeOffice().getName());
@@ -141,20 +114,6 @@ public class EnrolmentCertificate extends AdministrativeOfficeDocument {
                 MessageFormat.format(stringTemplate1, situation, student, executionYear, getDocumentRequest().getExecutionYear()
                         .getYear().toString(), getCurricularYear(), getDegreeDescription(), detailed));
 
-    }
-
-    private Money calculateAmountToPayPlusUnits(final EnrolmentCertificateRequest request,
-            final EnrolmentCertificateRequestPR requestPR) {
-        Money total = requestPR.getBaseAmount();
-        if (request.getDetailed() != null && request.getDetailed().booleanValue()) {
-            total = total.add(getAmountForUnits(request, requestPR));
-        }
-        return total;
-
-    }
-
-    private Money getAmountForUnits(final EnrolmentCertificateRequest request, final EnrolmentCertificateRequestPR requestPR) {
-        return requestPR.getAmountForUnits(request.getNumberOfUnits());
     }
 
     @Override

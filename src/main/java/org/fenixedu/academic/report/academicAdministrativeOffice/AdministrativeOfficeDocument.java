@@ -1,5 +1,5 @@
 /**
- * Copyright © 2002 Instituto Superior Técnico
+\ * Copyright © 2002 Instituto Superior Técnico
  *
  * This file is part of FenixEdu Academic.
  *
@@ -35,9 +35,6 @@ import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Locality;
 import org.fenixedu.academic.domain.OptionalEnrolment;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.accounting.PostingRule;
-import org.fenixedu.academic.domain.accounting.postingRules.serviceRequests.CertificateRequestPR;
-import org.fenixedu.academic.domain.accounting.serviceAgreementTemplates.AdministrativeOfficeServiceAgreementTemplate;
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOffice;
 import org.fenixedu.academic.domain.degree.DegreeType;
 import org.fenixedu.academic.domain.degreeStructure.CycleType;
@@ -45,11 +42,8 @@ import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.academic.domain.organizationalStructure.UniversityUnit;
 import org.fenixedu.academic.domain.phd.serviceRequests.documentRequests.PhdDocumentRequest;
-import org.fenixedu.academic.domain.serviceRequests.AcademicServiceRequest;
-import org.fenixedu.academic.domain.serviceRequests.AcademicServiceRequestSituationType;
 import org.fenixedu.academic.domain.serviceRequests.RegistrationAcademicServiceRequest;
 import org.fenixedu.academic.domain.serviceRequests.Under23TransportsDeclarationRequest;
-import org.fenixedu.academic.domain.serviceRequests.documentRequests.CertificateRequest;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.CourseLoadRequest;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.DocumentRequest;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.DocumentRequestType;
@@ -66,7 +60,6 @@ import org.fenixedu.academic.report.FenixReport;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academic.util.FenixStringTools;
 import org.fenixedu.academic.util.HtmlToTextConverterUtil;
-import org.fenixedu.academic.util.Money;
 import org.fenixedu.academic.util.MultiLanguageString;
 import org.fenixedu.academic.util.StringFormatter;
 import org.fenixedu.bennu.core.domain.Bennu;
@@ -237,10 +230,6 @@ public class AdministrativeOfficeDocument extends FenixReport {
         addParameter("documentRequest", getDocumentRequest());
         addParameter("registration", getRegistration());
 
-        if (showPriceFields() && !((AcademicServiceRequest) getDocumentRequest()).isFree()) {
-            addPriceFields();
-        }
-
         addIntroParameters();
         setDocumentTitle();
         setPersonFields();
@@ -261,45 +250,6 @@ public class AdministrativeOfficeDocument extends FenixReport {
     }
 
     protected void newFillReport() {
-    }
-
-    protected boolean showPriceFields() {
-        return getDocumentRequest().isCertificate() && getDocumentRequest().getEventType() != null;
-    }
-
-    protected void addPriceFields() {
-        final CertificateRequest certificateRequest = (CertificateRequest) getDocumentRequest();
-        final CertificateRequestPR certificateRequestPR = (CertificateRequestPR) getPostingRule();
-
-        final Money amountPerPage = certificateRequestPR.getAmountPerPage();
-        final Money baseAmountPlusAmountForUnits =
-                certificateRequestPR.getBaseAmount().add(
-                        certificateRequestPR.getAmountPerUnit().multiply(
-                                BigDecimal.valueOf(certificateRequest.getNumberOfUnits())));
-        final Money urgencyAmount = certificateRequest.getUrgentRequest() ? certificateRequestPR.getBaseAmount() : Money.ZERO;
-        addParameter("printed",
-                BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.academicDocument.certificate.printingPriceLabel"));
-        addParameter("printPriceLabel",
-                BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.academicDocument.certificate.issuingPriceLabel"));
-        addParameter("urgency",
-                BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.academicDocument.certificate.fastDeliveryPriceLabel"));
-        addParameter("total",
-                BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.academicDocument.certificate.totalsPriceLabel"));
-        addParameter("amountPerPage", amountPerPage);
-        addParameter("baseAmountPlusAmountForUnits", baseAmountPlusAmountForUnits);
-        addParameter("urgencyAmount", urgencyAmount);
-        addParameter("printPriceFields", printPriceParameters(certificateRequest));
-    }
-
-    final protected PostingRule getPostingRule() {
-        final AdministrativeOfficeServiceAgreementTemplate serviceAgreementTemplate =
-                getDocumentRequest().getAdministrativeOffice().getServiceAgreementTemplate();
-        return serviceAgreementTemplate.findPostingRuleByEventType(getDocumentRequest().getEventType());
-    }
-
-    final protected boolean printPriceParameters(final CertificateRequest certificateRequest) {
-        return certificateRequest.getAcademicServiceRequestSituationType() == AcademicServiceRequestSituationType.PROCESSING
-                && !certificateRequest.isFree() || certificateRequest.getEvent() != null;
     }
 
     protected void addIntroParameters() {

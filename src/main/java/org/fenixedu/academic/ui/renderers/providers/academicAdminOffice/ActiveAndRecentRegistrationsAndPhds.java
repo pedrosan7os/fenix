@@ -52,7 +52,7 @@ public class ActiveAndRecentRegistrationsAndPhds implements DataProvider {
             if (!phdProcess.isAllowedToManageProcess(Authenticate.getUser())) {
                 continue;
             }
-            if ((phdProcess.isProcessActive() && student.hasValidInsuranceEvent())) {
+            if (phdProcess.isProcessActive()) {
                 phdRegistrationWrapperResult.add(new PhdRegistrationWrapper(phdProcess));
             } else if (phdProcess.isConcluded()) {
                 ExecutionYear conclusionYear = phdProcess.getConclusionYear();

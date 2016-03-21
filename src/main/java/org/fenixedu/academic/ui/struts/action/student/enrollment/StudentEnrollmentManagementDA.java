@@ -107,15 +107,6 @@ public class StudentEnrollmentManagementDA extends FenixDispatchAction {
         final StudentCurricularPlan studentCurricularPlan = registration.getLastStudentCurricularPlan();
         request.setAttribute("executionSemesterID", executionSemester.getExternalId());
 
-        if (studentCurricularPlan.getRegistration().getStudent().isAnyGratuityOrAdministrativeOfficeFeeAndInsuranceInDebt()) {
-            request.setAttribute("debtsMessage",
-                    "error.StudentCurricularPlan.cannot.enrol.with.debts.for.previous.execution.years");
-        }
-
-        if (studentCurricularPlan.getPerson().hasAnyResidencePaymentsInDebtForPreviousYear()) {
-            request.setAttribute("debtsMessage", "error.StudentCurricularPlan.cannot.enrol.with.residence.debts");
-        }
-
         if (!studentCurricularPlan.isActive() && !studentCurricularPlan.getRegistration().isConcluded()) {
             request.setAttribute("registrationsToEnrol", Collections.singletonList(registration));
             addActionMessage(request, "error.studentCurricularPlan.is.not.active.or.concluded");

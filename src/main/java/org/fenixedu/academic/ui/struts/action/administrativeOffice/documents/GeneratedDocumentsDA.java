@@ -25,7 +25,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.accounting.Event;
 import org.fenixedu.academic.domain.documents.AnnualIRSDeclarationDocument;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.dto.person.SimpleSearchPersonWithStudentBean;
@@ -168,23 +167,9 @@ public class GeneratedDocumentsDA extends FenixDispatchAction {
     private byte[] buildIRSCustomDeclaration(final IRSDeclarationDTO declarationDTO, final Person person)
             throws FenixActionException {
 
-        addPayedAmount(person, declarationDTO.getCivilYear(), declarationDTO);
         final IRSCustomDeclaration customDeclaration = new IRSCustomDeclaration(declarationDTO);
 
         return ReportsUtils.generateReport(customDeclaration.getReportTemplateKey(), customDeclaration.getParameters(),
                 customDeclaration.getDataSource()).getData();
-    }
-
-    private void addPayedAmount(Person person, int civilYear, final IRSDeclarationDTO declarationDTO) throws FenixActionException {
-        for (final Event event : person.getEventsSet()) {
-            if (event.hasPaymentsByPersonForCivilYear(civilYear)
-                    && event.getMaxDeductableAmountForLegalTaxes(civilYear).isPositive()) {
-                declarationDTO.addAmount(event, civilYear);
-            }
-        }
-
-        if (!declarationDTO.getTotalAmount().isPositive()) {
-            throw new FenixActionException("error.annual.irs.declaration.no.payments.for.civil.year", civilYear);
-        }
     }
 }

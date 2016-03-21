@@ -35,7 +35,6 @@ import org.apache.struts.action.ActionMapping;
 import org.fenixedu.academic.domain.Department;
 import org.fenixedu.academic.domain.EmptyDegree;
 import org.fenixedu.academic.domain.EmptyDegreeCurricularPlan;
-import org.fenixedu.academic.domain.accounting.serviceAgreementTemplates.AdministrativeOfficeServiceAgreementTemplate;
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOffice;
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOfficeType;
 import org.fenixedu.academic.domain.degree.DegreeType;
@@ -482,7 +481,6 @@ public class ManageAssociatedObjects extends FenixDispatchAction {
     private void createAcademicOffice(AssociatedObjectsBean bean) {
         AdministrativeOffice office = new AdministrativeOffice();
         office.setAdministrativeOfficeType(bean.getType());
-        new AdministrativeOfficeServiceAgreementTemplate(office);
 
         office.setCampus(bean.getBuilding());
 

@@ -137,10 +137,6 @@ abstract public class IndividualCandidacy extends IndividualCandidacy_Base {
         throw new DomainException("error.IndividualCandidacy.cannot.modify.when.created");
     }
 
-    public boolean hasAnyPayment() {
-        return getEvent() != null && getEvent().hasAnyPayments();
-    }
-
     public void editPersonalCandidacyInformation(final PersonBean personBean) {
         getPersonalDetails().edit(personBean);
     }
@@ -150,12 +146,8 @@ abstract public class IndividualCandidacy extends IndividualCandidacy_Base {
     }
 
     public void cancel(final Person person) {
-        checkRulesToCancel();
         setState(IndividualCandidacyState.CANCELLED);
         setResponsible(person.getUsername());
-        if (getEvent() != null) {
-            getEvent().cancel("IndividualCandidacy.canceled");
-        }
     }
 
     public void reject(final Person person) {
@@ -166,12 +158,6 @@ abstract public class IndividualCandidacy extends IndividualCandidacy_Base {
     public void revertToStandBy(final Person person) {
         setState(IndividualCandidacyState.STAND_BY);
         setResponsible(person.getUsername());
-    }
-
-    protected void checkRulesToCancel() {
-        if (getEvent() != null && hasAnyPayment()) {
-            throw new DomainException("error.IndividualCandidacy.cannot.cancel.candidacy.with.payments");
-        }
     }
 
     public Person getResponsiblePerson() {
@@ -196,10 +182,6 @@ abstract public class IndividualCandidacy extends IndividualCandidacy_Base {
 
     public boolean isRejected() {
         return getState() == IndividualCandidacyState.REJECTED;
-    }
-
-    public boolean isDebtPayed() {
-        return getEvent() == null || (getEvent() != null && getEvent().isClosed());
     }
 
     public boolean isFor(final ExecutionInterval executionInterval) {
@@ -358,8 +340,6 @@ abstract public class IndividualCandidacy extends IndividualCandidacy_Base {
         return this.getPersonalDetails() instanceof IndividualCandidacyInternalPersonDetails;
     }
 
-    protected abstract void createDebt(final Person person);
-
     public void bindPerson(ChoosePersonBean bean) {
         if (this.isCandidacyInternal()) {
             throw new DomainException("error.bind.candidacy.internal");
@@ -373,8 +353,6 @@ abstract public class IndividualCandidacy extends IndividualCandidacy_Base {
             selectedPerson = new Person(this.getPersonalDetails());
             this.setPersonalDetails(new IndividualCandidacyInternalPersonDetails(this, selectedPerson));
         }
-
-        createDebt(this.getPersonalDetails().getPerson());
     }
 
     protected void createFormationEntries(List<FormationBean> formationConcludedBeanList,

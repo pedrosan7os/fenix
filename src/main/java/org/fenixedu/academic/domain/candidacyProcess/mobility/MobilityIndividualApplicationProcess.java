@@ -436,7 +436,7 @@ public class MobilityIndividualApplicationProcess extends MobilityIndividualAppl
             if (!isAllowedToManageProcess(process, userView) && !isInternationalRelationsOfficer(userView)) {
                 throw new PreConditionNotValidException();
             }
-            if (process.isCandidacyCancelled() || !process.isCandidacyInStandBy() || process.hasAnyPaymentForCandidacy()) {
+            if (process.isCandidacyCancelled() || !process.isCandidacyInStandBy()) {
                 throw new PreConditionNotValidException();
             }
         }

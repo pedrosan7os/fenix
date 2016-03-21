@@ -40,7 +40,6 @@ import org.fenixedu.academic.domain.phd.PhdParticipant;
 import org.fenixedu.academic.domain.phd.PhdProgramDocumentUploadBean;
 import org.fenixedu.academic.domain.phd.PhdProgramProcess;
 import org.fenixedu.academic.domain.phd.PhdProgramProcessDocument;
-import org.fenixedu.academic.domain.phd.debts.PhdThesisRequestFee;
 import org.fenixedu.academic.domain.phd.migration.activities.SkipThesisJuryActivities;
 import org.fenixedu.academic.domain.phd.thesis.activities.AddJuryElement;
 import org.fenixedu.academic.domain.phd.thesis.activities.AddPresidentJuryElement;
@@ -85,8 +84,6 @@ import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import pt.ist.fenixframework.Atomic;
-
 public class PhdThesisProcess extends PhdThesisProcess_Base {
 
     @StartActivity
@@ -119,10 +116,6 @@ public class PhdThesisProcess extends PhdThesisProcess_Base {
 
             result.setPresidentTitle(new MultiLanguageString(MultiLanguageString.pt, presidentTitlePt).with(
                     MultiLanguageString.en, presidentTitleEn));
-
-            if (!result.getIndividualProgramProcess().isMigratedProcess()) {
-                new PhdThesisRequestFee(bean.getProcess());
-            }
 
             result.createState(PhdThesisProcessStateType.NEW, userView.getPerson(), bean.getRemarks());
             return result;
@@ -568,11 +561,6 @@ public class PhdThesisProcess extends PhdThesisProcess_Base {
         }
 
         return super.getPhdJuryElementsRatificationEntity();
-    }
-
-    @Atomic
-    public void createRequestFee() {
-        new PhdThesisRequestFee(getIndividualProgramProcess());
     }
 
     @Override

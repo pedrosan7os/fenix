@@ -18,17 +18,13 @@
  */
 package org.fenixedu.academic.service.services.serviceRequests.documentRequests;
 
-import org.fenixedu.academic.domain.accounting.PaymentMode;
-import org.fenixedu.academic.domain.accounting.events.serviceRequests.PastDegreeDiplomaRequestEvent;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.serviceRequests.AcademicServiceRequestSituationType;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.PastDiplomaRequest;
-import org.fenixedu.academic.dto.accounting.AccountingTransactionDetailDTO;
 import org.fenixedu.academic.dto.serviceRequests.AcademicServiceRequestBean;
 import org.fenixedu.academic.dto.serviceRequests.DocumentRequestCreateBean;
 import org.fenixedu.academic.predicate.AccessControl;
 import org.fenixedu.academic.service.factoryExecutors.DocumentRequestCreator;
-import org.fenixedu.bennu.core.security.Authenticate;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -75,31 +71,12 @@ public class CreatePastDiplomaRequest {
             bean.setPastDispatchDate(latestDate);
         }
 
-        createPaymentSituation(request, bean);
         process(request, bean.getPastRequestDate());
         request.setNumberOfPages(1);
         send(request, bean.getPastRequestDate());
         receive(request, bean.getPastRequestDate());
         conclude(request, bean.getPastEmissionDate());
         deliver(request, bean.getPastDispatchDate());
-    }
-
-    private static void createPaymentSituation(PastDiplomaRequest request, DocumentRequestCreateBean bean) {
-        if (isPayed(bean)) {
-            PastDegreeDiplomaRequestEvent event =
-                    new PastDegreeDiplomaRequestEvent(request.getAdministrativeOffice(), request.getPerson(), request,
-                            bean.getPastPaymentAmount());
-
-            event.depositAmount(Authenticate.getUser(), bean.getPastPaymentAmount(), createTransactionDetailDTO(bean));
-        }
-    }
-
-    private static boolean isPayed(DocumentRequestCreateBean bean) {
-        return bean.getPastPaymentAmount() != null && bean.getPastPaymentAmount().isPositive();
-    }
-
-    private static AccountingTransactionDetailDTO createTransactionDetailDTO(DocumentRequestCreateBean bean) {
-        return new AccountingTransactionDetailDTO(bean.getPastPaymentDate().toDateTimeAtStartOfDay(), PaymentMode.CASH);
     }
 
     private static void process(PastDiplomaRequest request, LocalDate requestDate) {

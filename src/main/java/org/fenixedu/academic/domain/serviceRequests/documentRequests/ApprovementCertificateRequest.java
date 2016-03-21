@@ -23,7 +23,6 @@ import java.util.HashSet;
 
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.IEnrolment;
-import org.fenixedu.academic.domain.accounting.EventType;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.student.MobilityProgram;
 import org.fenixedu.academic.domain.student.Registration;
@@ -123,11 +122,6 @@ public class ApprovementCertificateRequest extends ApprovementCertificateRequest
     }
 
     @Override
-    protected boolean isPayed() {
-        return super.isPayed() || getEvent().isCancelled();
-    }
-
-    @Override
     final public DocumentRequestType getDocumentRequestType() {
         return DocumentRequestType.APPROVEMENT_CERTIFICATE;
     }
@@ -135,11 +129,6 @@ public class ApprovementCertificateRequest extends ApprovementCertificateRequest
     @Override
     final public String getDocumentTemplateKey() {
         return getClass().getName();
-    }
-
-    @Override
-    final public EventType getEventType() {
-        return getRegistration().getRegistrationProtocol().isExempted() ? null : EventType.APPROVEMENT_CERTIFICATE_REQUEST;
     }
 
     @Override

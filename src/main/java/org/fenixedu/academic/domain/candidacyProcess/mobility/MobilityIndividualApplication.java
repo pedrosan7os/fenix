@@ -82,11 +82,6 @@ public class MobilityIndividualApplication extends MobilityIndividualApplication
     }
 
     @Override
-    protected void createDebt(final Person person) {
-
-    }
-
-    @Override
     protected void checkParameters(final Person person, final IndividualCandidacyProcess process,
             final IndividualCandidacyProcessBean bean) {
         MobilityIndividualApplicationProcess erasmusIndividualCandidacyProcess = (MobilityIndividualApplicationProcess) process;

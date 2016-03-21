@@ -28,18 +28,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.fenixedu.academic.domain.accounting.events.AccountingEventsManager;
 import org.fenixedu.academic.domain.exceptions.DomainException;
-import org.fenixedu.academic.domain.exceptions.DomainExceptionWithInvocationResult;
 import org.fenixedu.academic.domain.phd.PhdIndividualProgramProcess;
 import org.fenixedu.academic.domain.phd.PhdIndividualProgramProcessState;
 import org.fenixedu.academic.domain.phd.PhdProgramProcessState;
-import org.fenixedu.academic.domain.phd.debts.PhdGratuityEvent;
-import org.fenixedu.academic.domain.phd.debts.PhdRegistrationFee;
-import org.fenixedu.academic.dto.accounting.events.AccountingEventCreateBean;
 import org.fenixedu.academic.ui.struts.action.exceptions.FenixActionException;
 import org.fenixedu.academic.ui.struts.action.phd.PhdProcessDA;
-import org.fenixedu.academic.util.InvocationResult;
 import org.fenixedu.bennu.struts.annotations.Forward;
 import org.fenixedu.bennu.struts.annotations.Forwards;
 import org.fenixedu.bennu.struts.annotations.Mapping;
@@ -79,19 +73,11 @@ public class PhdAccountingEventsManagementDA extends PhdProcessDA {
     public ActionForward createPhdRegistrationFee(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request,
             HttpServletResponse response) {
 
-        try {
-            PhdRegistrationFee.create(getProcess(request));
-        } catch (DomainException e) {
-            addErrorMessage(request, e.getMessage(), e.getArgs());
-        }
-
         return prepare(mapping, actionForm, request, response);
     }
 
     public ActionForward prepareCreateInsuranceEvent(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request,
             HttpServletResponse response) {
-
-        request.setAttribute("eventBean", new AccountingEventCreateBean());
         return mapping.findForward("createInsuranceEvent");
     }
 
@@ -111,12 +97,6 @@ public class PhdAccountingEventsManagementDA extends PhdProcessDA {
             HttpServletResponse response) {
         try {
             PhdGratuityCreationInformation renderedObject = (PhdGratuityCreationInformation) getRenderedObject("yearBean");
-            for (PhdGratuityEvent event : getProcess(request).getPhdGratuityEventsSet()) {
-                if (event.getYear().intValue() == ((PhdGratuityCreationInformation) getRenderedObject("yearBean")).getYear()
-                        && event.isOpen()) {
-                    throw new DomainException("already.has.phd.gratuity.for.that.year");
-                }
-            }
 
             PhdIndividualProgramProcess process = getProcess(request);
             int lastOpenYear = new DateTime().getYear();
@@ -140,8 +120,6 @@ public class PhdAccountingEventsManagementDA extends PhdProcessDA {
                 throw new FenixActionException("error.chosen.year.not.within.working.period");
             }
 
-            PhdGratuityEvent.create(getProcess(request), year, process.getWhenFormalizedRegistration().toDateTimeAtMidnight());
-
             return prepare(mapping, actionForm, request, response);
 
         } catch (DomainException e) {
@@ -163,47 +141,6 @@ public class PhdAccountingEventsManagementDA extends PhdProcessDA {
     public ActionForward createPhdThesisRequestFee(final ActionMapping mapping, final ActionForm actionForm,
             final HttpServletRequest request, final HttpServletResponse response) {
 
-        try {
-            getProcess(request).getThesisProcess().createRequestFee();
-            addActionMessage("success", request, "message.phd.accounting.events.create.thesis.request.fee.created.with.success");
-        } catch (DomainException e) {
-            addErrorMessage(request, e.getKey(), e.getArgs());
-        }
-
         return prepare(mapping, actionForm, request, response);
     }
-
-    public ActionForward createInsuranceEvent(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request,
-            HttpServletResponse response) {
-
-        try {
-
-            final AccountingEventCreateBean bean = getRenderedObject("eventBean");
-            final PhdIndividualProgramProcess process = getProcess(request);
-
-            if (process.getExecutionYear().isAfter(bean.getExecutionYear())) {
-                addActionMessage("error", request, "error.phd.accounting.events.insurance.invalid.execution.period", process
-                        .getExecutionYear().getQualifiedName());
-                return prepareCreateInsuranceEvent(mapping, actionForm, request, response);
-            }
-
-            final InvocationResult result =
-                    new AccountingEventsManager().createInsuranceEvent(process.getPerson(), bean.getExecutionYear());
-
-            if (result.isSuccess()) {
-                addActionMessage("success", request, "message.phd.accounting.events.insurance.created.with.success");
-                return prepare(mapping, actionForm, request, response);
-            } else {
-                addActionMessages("error", request, result.getMessages());
-            }
-
-        } catch (DomainExceptionWithInvocationResult e) {
-            addActionMessages("error", request, e.getInvocationResult().getMessages());
-        } catch (DomainException e) {
-            addActionMessage("error", request, e.getKey(), e.getArgs());
-        }
-
-        return prepareCreateInsuranceEvent(mapping, actionForm, request, response);
-    }
-
 }

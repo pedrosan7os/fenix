@@ -28,8 +28,6 @@ import org.fenixedu.academic.domain.person.IDDocumentType;
 import org.fenixedu.academic.domain.student.Student;
 import org.fenixedu.academic.service.services.person.PersonSearcher;
 
-import com.google.common.base.Strings;
-
 public class SimpleSearchPersonWithStudentBean implements Serializable {
     private String name;
 
@@ -107,11 +105,6 @@ public class SimpleSearchPersonWithStudentBean implements Serializable {
         Stream<Person> stream =
                 new PersonSearcher().name(name).username(username).documentIdNumber(documentIdNumber)
                         .documentIdType(idDocumentType).search();
-
-        if (!Strings.isNullOrEmpty(paymentCode)) {
-            stream = stream.filter(p -> p.getPaymentCodeBy(paymentCode) != null);
-        }
-
         return stream.collect(Collectors.toSet());
     }
 }

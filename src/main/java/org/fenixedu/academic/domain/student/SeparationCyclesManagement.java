@@ -18,7 +18,6 @@
  */
 package org.fenixedu.academic.domain.student;
 
-import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -32,15 +31,7 @@ import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.IEnrolment;
 import org.fenixedu.academic.domain.OptionalEnrolment;
-import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
-import org.fenixedu.academic.domain.accounting.Installment;
-import org.fenixedu.academic.domain.accounting.PaymentCode;
-import org.fenixedu.academic.domain.accounting.PaymentCodeState;
-import org.fenixedu.academic.domain.accounting.PaymentPlan;
-import org.fenixedu.academic.domain.accounting.events.AccountingEventsManager;
-import org.fenixedu.academic.domain.accounting.events.gratuity.GratuityEvent;
-import org.fenixedu.academic.domain.accounting.events.gratuity.GratuityEventWithPaymentPlan;
 import org.fenixedu.academic.domain.candidacy.IngressionType;
 import org.fenixedu.academic.domain.candidacy.StudentCandidacy;
 import org.fenixedu.academic.domain.degree.DegreeType;
@@ -49,7 +40,6 @@ import org.fenixedu.academic.domain.degreeStructure.CourseGroup;
 import org.fenixedu.academic.domain.degreeStructure.CycleType;
 import org.fenixedu.academic.domain.degreeStructure.OptionalCurricularCourse;
 import org.fenixedu.academic.domain.exceptions.DomainException;
-import org.fenixedu.academic.domain.exceptions.DomainExceptionWithInvocationResult;
 import org.fenixedu.academic.domain.student.registrationStates.RegistrationState;
 import org.fenixedu.academic.domain.student.registrationStates.RegistrationStateType;
 import org.fenixedu.academic.domain.studentCurriculum.Credits;
@@ -66,12 +56,6 @@ import org.fenixedu.academic.domain.studentCurriculum.ExtraCurriculumGroup;
 import org.fenixedu.academic.domain.studentCurriculum.OptionalDismissal;
 import org.fenixedu.academic.domain.studentCurriculum.Substitution;
 import org.fenixedu.academic.domain.studentCurriculum.TemporarySubstitution;
-import org.fenixedu.academic.predicate.AccessControl;
-import org.fenixedu.academic.util.Bundle;
-import org.fenixedu.academic.util.InvocationResult;
-import org.fenixedu.academic.util.Money;
-import org.fenixedu.bennu.core.i18n.BundleUtil;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.YearMonthDay;
 
@@ -143,8 +127,6 @@ public class SeparationCyclesManagement {
         moveExtraCurriculumGroupInformation(oldStudentCurricularPlan, newStudentCurricularPlan);
         moveExtraAttends(oldStudentCurricularPlan, newStudentCurricularPlan);
         tryRemoveOldSecondCycle(oldSecondCycle);
-        moveGratuityEventsInformation(oldStudentCurricularPlan, newStudentCurricularPlan);
-        createAdministrativeOfficeFeeAndInsurance(newStudentCurricularPlan);
 
         markOldRegistrationWithConcludedState(oldStudentCurricularPlan);
 
@@ -573,107 +555,6 @@ public class SeparationCyclesManagement {
                 RegistrationState.createRegistrationState(oldStudentCurricularPlan.getRegistration(), null,
                         stateDate.toDateTimeAtStartOfDay(), RegistrationStateType.CONCLUDED);
         state.setResponsiblePerson(null);
-    }
-
-    private void moveGratuityEventsInformation(final StudentCurricularPlan oldStudentCurricularPlan,
-            final StudentCurricularPlan newStudentCurricularPlan) {
-
-        if (!oldStudentCurricularPlan.hasGratuityEvent(getExecutionYear(), GratuityEventWithPaymentPlan.class)
-                || oldStudentCurricularPlan.getGratuityEvent(getExecutionYear(), GratuityEventWithPaymentPlan.class)
-                        .isCancelled()) {
-            return;
-        }
-
-        if (!newStudentCurricularPlan.hasGratuityEvent(getExecutionYear(), GratuityEventWithPaymentPlan.class)) {
-            correctRegistrationRegime(oldStudentCurricularPlan, newStudentCurricularPlan);
-            createGratuityEvent(newStudentCurricularPlan);
-        }
-
-        final GratuityEvent firstEvent =
-                oldStudentCurricularPlan.getGratuityEvent(getExecutionYear(), GratuityEventWithPaymentPlan.class);
-        final GratuityEvent secondEvent =
-                newStudentCurricularPlan.getGratuityEvent(getExecutionYear(), GratuityEventWithPaymentPlan.class);
-
-        if (!firstEvent.isGratuityEventWithPaymentPlan() || !secondEvent.isGratuityEventWithPaymentPlan()) {
-            throw new DomainException("error.SeparationCyclesManagement.unexpected.event.types");
-        }
-
-        movePayments((GratuityEventWithPaymentPlan) firstEvent, (GratuityEventWithPaymentPlan) secondEvent);
-    }
-
-    private void createGratuityEvent(final StudentCurricularPlan newStudentCurricularPlan) {
-        final InvocationResult result =
-                new AccountingEventsManager().createGratuityEvent(newStudentCurricularPlan, getExecutionYear(), false);
-        if (!result.isSuccess()) {
-            throw new DomainExceptionWithInvocationResult(result);
-        }
-    }
-
-    private void movePayments(final GratuityEventWithPaymentPlan firstEvent, final GratuityEventWithPaymentPlan secondEvent) {
-
-        if (mustConfigurateToDefault(secondEvent)) {
-            secondEvent.configurateDefaultPaymentPlan();
-        }
-
-        if (firstEvent.hasCustomGratuityPaymentPlan()) {
-            return;
-        }
-
-        if (!firstEvent.hasAnyPayments()) {
-            firstEvent.cancel(getNoPaymentsReason(secondEvent));
-            return;
-        }
-
-        // First Event
-        final Money amountLessPenalty = firstEvent.getPayedAmountLessPenalty();
-        firstEvent.configurateCustomPaymentPlan();
-        createInstallment(firstEvent, firstEvent.getGratuityPaymentPlan(), firstEvent.getPayedAmount());
-        for (final PaymentCode paymentCode : firstEvent.getNonProcessedPaymentCodes()) {
-            paymentCode.setState(PaymentCodeState.INVALID);
-        }
-        firstEvent.recalculateState(new DateTime());
-
-        // Second Event
-        final Money originalTotalAmount = secondEvent.getGratuityPaymentPlan().calculateOriginalTotalAmount();
-        secondEvent.addDiscount(getPerson(), Money.min(amountLessPenalty, originalTotalAmount));
-        secondEvent.recalculateState(new DateTime());
-    }
-
-    private boolean mustConfigurateToDefault(GratuityEventWithPaymentPlan secondEvent) {
-        return !secondEvent.getRegistration().isPartialRegime(getExecutionYear());
-    }
-
-    private void correctRegistrationRegime(final StudentCurricularPlan oldStudentCurricularPlan,
-            final StudentCurricularPlan newStudentCurricularPlan) {
-
-        if (oldStudentCurricularPlan.getRegistration().isPartialRegime(getExecutionYear())
-                && !newStudentCurricularPlan.getRegistration().isPartialRegime(getExecutionYear())) {
-
-            new RegistrationRegime(newStudentCurricularPlan.getRegistration(), getExecutionYear(),
-                    RegistrationRegimeType.PARTIAL_TIME);
-
-        }
-    }
-
-    private Person getPerson() {
-        return AccessControl.getPerson();
-    }
-
-    private void createInstallment(final GratuityEvent event, final PaymentPlan paymentPlan, final Money amount) {
-        new Installment(paymentPlan, amount, event.getStartDate().toYearMonthDay(), event.getLastPaymentDate().toYearMonthDay());
-    }
-
-    private String getNoPaymentsReason(final GratuityEvent second) {
-        final String message = BundleUtil.getString(Bundle.APPLICATION, "label.SeparationCyclesManagement.noPayments.reason");
-        return MessageFormat.format(message, second.getStudentCurricularPlan().getName());
-    }
-
-    private void createAdministrativeOfficeFeeAndInsurance(final StudentCurricularPlan newStudentCurricularPlan) {
-        if (!newStudentCurricularPlan.getPerson().hasAdministrativeOfficeFeeInsuranceEventFor(getExecutionYear())
-                && newStudentCurricularPlan.hasEnrolments(getExecutionYear())) {
-            new AccountingEventsManager().createAdministrativeOfficeFeeAndInsuranceEvent(newStudentCurricularPlan,
-                    getExecutionYear(), false);
-        }
     }
 
     protected ExecutionSemester getExecutionPeriod() {

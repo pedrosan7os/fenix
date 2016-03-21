@@ -29,7 +29,6 @@ import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.accessControl.academicAdministration.AcademicAccessRule;
 import org.fenixedu.academic.domain.accessControl.academicAdministration.AcademicOperationType;
-import org.fenixedu.academic.domain.accounting.events.AccountingEventsManager;
 import org.fenixedu.academic.domain.curricularRules.ICurricularRule;
 import org.fenixedu.academic.domain.curricularRules.MaximumNumberOfEctsInStandaloneCurriculumGroup;
 import org.fenixedu.academic.domain.curricularRules.executors.RuleResult;
@@ -191,10 +190,6 @@ public class StudentCurricularPlanStandaloneEnrolmentManager extends StudentCurr
                             getExecutionSemester(), EnrollmentCondition.VALIDATED, getResponsiblePerson().getUsername());
                 }
             }
-        }
-
-        if (getStudentCurricularPlan().getRegistration().getRegistrationProtocol().isToPayGratuity()) {
-            new AccountingEventsManager().createStandaloneEnrolmentGratuityEvent(getStudentCurricularPlan(), getExecutionYear());
         }
 
         getRegistration().updateEnrolmentDate(getExecutionYear());

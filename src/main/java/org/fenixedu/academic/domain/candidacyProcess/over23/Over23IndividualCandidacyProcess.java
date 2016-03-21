@@ -279,10 +279,6 @@ public class Over23IndividualCandidacyProcess extends Over23IndividualCandidacyP
                 throw new PreConditionNotValidException();
             }
 
-            if (!process.isCandidacyDebtPayed()) {
-                throw new PreConditionNotValidException();
-            }
-
             if (!process.isSentToJury()) {
                 throw new PreConditionNotValidException();
             }
@@ -305,7 +301,7 @@ public class Over23IndividualCandidacyProcess extends Over23IndividualCandidacyP
                 throw new PreConditionNotValidException();
             }
 
-            if (process.hasAnyPaymentForCandidacy() || !process.isCandidacyInStandBy()) {
+            if (!process.isCandidacyInStandBy()) {
                 throw new PreConditionNotValidException();
             }
         }

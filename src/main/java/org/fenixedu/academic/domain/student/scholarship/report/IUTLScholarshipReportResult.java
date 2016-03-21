@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.fenixedu.academic.domain.QualificationType;
-import org.fenixedu.academic.util.Money;
 
 public interface IUTLScholarshipReportResult {
 
@@ -102,8 +101,6 @@ public interface IUTLScholarshipReportResult {
     public String getDegreeConcluded();
 
     public String getFinalResult();
-
-    public Money getGratuityAmount();
 
     public Integer getNumberOfMonthsInExecutionYear();
 

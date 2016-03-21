@@ -39,11 +39,8 @@ package org.fenixedu.academic.domain.serviceRequests.documentRequests;
 import static org.fenixedu.academic.predicate.AccessControl.check;
 
 import java.util.Locale;
-import java.util.Set;
 
 import org.fenixedu.academic.domain.ExecutionYear;
-import org.fenixedu.academic.domain.accounting.EventType;
-import org.fenixedu.academic.domain.accounting.events.serviceRequests.DiplomaRequestEvent;
 import org.fenixedu.academic.domain.degreeStructure.CycleType;
 import org.fenixedu.academic.domain.degreeStructure.ProgramConclusion;
 import org.fenixedu.academic.domain.exceptions.DomainException;
@@ -61,8 +58,6 @@ import org.joda.time.LocalDate;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 public class DiplomaRequest extends DiplomaRequest_Base implements IDiplomaRequest, IRectorateSubmissionBatchDocumentEntry {
 
@@ -76,9 +71,6 @@ public class DiplomaRequest extends DiplomaRequest_Base implements IDiplomaReque
 
         checkParameters(bean);
         setProgramConclusion(bean.getProgramConclusion());
-        if (isPayedUponCreation() && !isFree()) {
-            DiplomaRequestEvent.create(getAdministrativeOffice(), getRegistration().getPerson(), this);
-        }
     }
 
     @Override
@@ -92,9 +84,6 @@ public class DiplomaRequest extends DiplomaRequest_Base implements IDiplomaReque
             final RegistryDiplomaRequest registryRequest = getRegistration().getRegistryDiplomaRequest(getProgramConclusion());
             if (registryRequest == null) {
                 throw new DomainException("DiplomaRequest.registration.withoutRegistryRequest");
-            } else if (registryRequest.isPayedUponCreation() && registryRequest.getEvent() != null
-                    && !registryRequest.getEvent().isPayed()) {
-                throw new DomainException("DiplomaRequest.registration.withoutPayedRegistryRequest");
             }
         }
 
@@ -145,23 +134,6 @@ public class DiplomaRequest extends DiplomaRequest_Base implements IDiplomaReque
         return key;
     }
 
-    public static Set<EventType> getPossibleEventTypes() {
-        return ImmutableSet.of(EventType.BOLONHA_DEGREE_DIPLOMA_REQUEST, EventType.BOLONHA_MASTER_DEGREE_DIPLOMA_REQUEST,
-                EventType.BOLONHA_ADVANCED_FORMATION_DIPLOMA_REQUEST, EventType.BOLONHA_ADVANCED_SPECIALIZATION_DIPLOMA_REQUEST);
-    }
-
-    @Override
-    final public EventType getEventType() {
-        final Set<EventType> eventTypesToUse =
-                Sets.intersection(getPossibleEventTypes(), getProgramConclusion().getEventTypes().getTypes());
-
-        if (eventTypesToUse.size() != 1) {
-            throw new DomainException("error.program.conclusion.many.event.types");
-        }
-
-        return eventTypesToUse.iterator().next();
-    }
-
     @Override
     public AcademicServiceRequestType getAcademicServiceRequestType() {
         return AcademicServiceRequestType.DIPLOMA_REQUEST;
@@ -182,18 +154,6 @@ public class DiplomaRequest extends DiplomaRequest_Base implements IDiplomaReque
 
             if (hasDissertationTitle() && !getRegistration().hasDissertationThesis()) {
                 throw new DomainException("DiplomaRequest.registration.doesnt.have.dissertation.thesis");
-            }
-
-            if (!getFreeProcessed()) {
-                if (hasCurriculumGroup()) {
-                    assertPayedEvents(getCurriculumGroup().getIEnrolmentsLastExecutionYear());
-                } else {
-                    assertPayedEvents();
-                }
-            }
-
-            if (isPayable() && !isPayed()) {
-                throw new DomainException("AcademicServiceRequest.hasnt.been.payed");
             }
 
             if (!getRegistration().getDegreeType().isAdvancedFormationDiploma()
@@ -218,14 +178,6 @@ public class DiplomaRequest extends DiplomaRequest_Base implements IDiplomaReque
             if (getLastGeneratedDocument() == null) {
                 generateDocument();
             }
-        }
-
-        if (academicServiceRequestBean.isToConclude() && !isFree() && getEvent() == null && !isPayedUponCreation()) {
-            DiplomaRequestEvent.create(getAdministrativeOffice(), getRegistration().getPerson(), this);
-        }
-
-        if (academicServiceRequestBean.isToCancelOrReject() && getEvent() != null && getEvent().isOpen()) {
-            getEvent().cancel(academicServiceRequestBean.getResponsible());
         }
     }
 

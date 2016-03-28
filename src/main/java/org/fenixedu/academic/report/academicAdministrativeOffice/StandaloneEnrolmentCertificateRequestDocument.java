@@ -69,8 +69,6 @@ public class StandaloneEnrolmentCertificateRequestDocument extends Administrativ
         fillSeventhParagraph();
 
         fillTrailer(registration);
-
-        fillPriceTags();
     }
 
     protected void fillFirstParagraph() {
@@ -167,16 +165,4 @@ public class StandaloneEnrolmentCertificateRequestDocument extends Administrativ
         addParameter("checkedBy", BundleUtil.getString(Bundle.ACADEMIC, getLocale(),
                 "label.academicDocument.standaloneEnrolmentCertificate.checkedBy"));
     }
-
-    protected void fillPriceTags() {
-        addParameter("priceTagsPrinting",
-                BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.academicDocument.certificate.printingPriceLabel"));
-        addParameter("priceTagsIssuing",
-                BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.academicDocument.certificate.issuingPriceLabel"));
-        addParameter("priceTagsFastDelivery",
-                BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.academicDocument.certificate.fastDeliveryPriceLabel"));
-        addParameter("priceTagsTotal",
-                BundleUtil.getString(Bundle.ACADEMIC, getLocale(), "label.academicDocument.certificate.totalsPriceLabel"));
-    }
-
 }

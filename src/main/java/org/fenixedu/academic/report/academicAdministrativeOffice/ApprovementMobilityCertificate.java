@@ -32,12 +32,10 @@ import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Grade;
 import org.fenixedu.academic.domain.IEnrolment;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.accounting.postingRules.serviceRequests.CertificateRequestPR;
 import org.fenixedu.academic.domain.degreeStructure.NoEctsComparabilityTableFound;
 import org.fenixedu.academic.domain.degreeStructure.ProgramConclusion;
 import org.fenixedu.academic.domain.organizationalStructure.Unit;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.ApprovementMobilityCertificateRequest;
-import org.fenixedu.academic.domain.serviceRequests.documentRequests.CertificateRequest;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.IDocumentRequest;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.RegistrationProtocol;
@@ -48,7 +46,6 @@ import org.fenixedu.academic.domain.studentCurriculum.CycleCurriculumGroup;
 import org.fenixedu.academic.domain.studentCurriculum.Dismissal;
 import org.fenixedu.academic.dto.administrativeOffice.documents.ApprovementMobilityCertificateBean;
 import org.fenixedu.academic.util.Bundle;
-import org.fenixedu.academic.util.Money;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.joda.time.DateTime;
 
@@ -66,7 +63,6 @@ public class ApprovementMobilityCertificate extends AdministrativeOfficeDocument
         // addParameter("approvementsInfo", getApprovementsInfo());
         addParameter("mobilityProgram", getMobilityProgramDescription());
         addDataSourceElements(createApprovementsBean());
-        addParameter("printPriceFieldsCert", !isMobility());
     }
 
     @Override
@@ -246,23 +242,6 @@ public class ApprovementMobilityCertificate extends AdministrativeOfficeDocument
         }
 
         return result.toString();
-    }
-
-    @Override
-    protected void addPriceFields() {
-        final CertificateRequest certificateRequest = getDocumentRequest();
-        final CertificateRequestPR certificateRequestPR = (CertificateRequestPR) getPostingRule();
-
-        final Money amountPerPage = certificateRequestPR.getAmountPerPage();
-        final Money baseAmountPlusAmountForUnits =
-                certificateRequestPR.getBaseAmount().add(
-                        certificateRequestPR.getAmountForUnits(certificateRequest.getNumberOfUnits()));
-        final Money urgencyAmount = certificateRequest.getUrgentRequest() ? certificateRequestPR.getBaseAmount() : Money.ZERO;
-
-        addParameter("amountPerPage", amountPerPage);
-        addParameter("baseAmountPlusAmountForUnits", baseAmountPlusAmountForUnits);
-        addParameter("urgencyAmount", urgencyAmount);
-        addParameter("printPriceFields", printPriceParameters(certificateRequest));
     }
 
     @Override

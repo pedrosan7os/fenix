@@ -77,11 +77,6 @@ public class ExternalProgramCertificateRequestDocument extends AdministrativeOff
     }
 
     @Override
-    protected boolean showPriceFields() {
-        return false;
-    }
-
-    @Override
     protected void setPersonFields() {
         addParameter("name", getDocumentRequest().getPerson().getName());
     }

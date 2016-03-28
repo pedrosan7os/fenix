@@ -24,15 +24,12 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.Person;
-import org.fenixedu.academic.domain.accounting.events.serviceRequests.AcademicServiceRequestEvent;
-import org.fenixedu.academic.domain.accounting.postingRules.serviceRequests.phd.PhdFinalizationCertificateRequestPR;
 import org.fenixedu.academic.domain.phd.PhdIndividualProgramProcess;
 import org.fenixedu.academic.domain.phd.serviceRequests.documentRequests.certificates.PhdFinalizationCertificateRequest;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.DocumentRequestType;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.IDocumentRequest;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academic.util.FenixStringTools;
-import org.fenixedu.academic.util.Money;
 import org.fenixedu.academic.util.MultiLanguageString;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.joda.time.DateTime;
@@ -54,16 +51,6 @@ public class PhdFinalizationCertificate extends AdministrativeOfficeDocument {
     protected String getDegreeDescription() {
         PhdIndividualProgramProcess phdIndividualProgramProcess = getDocumentRequest().getPhdIndividualProgramProcess();
         return phdIndividualProgramProcess.getPhdProgram().getName().getContent(getLanguage());
-    }
-
-    @Override
-    protected void addPriceFields() {
-        AcademicServiceRequestEvent event = getDocumentRequest().getEvent();
-        PhdFinalizationCertificateRequestPR postingRule = (PhdFinalizationCertificateRequestPR) event.getPostingRule();
-        addParameter("originalAmount", postingRule.getFixedAmount().toString());
-        addParameter("urgentAmount",
-                getDocumentRequest().isUrgentRequest() ? postingRule.getFixedAmount().toString() : Money.ZERO.toString());
-        addParameter("totalAmount", event.getOriginalAmountToPay().toString());
     }
 
     @Override

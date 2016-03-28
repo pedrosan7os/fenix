@@ -173,11 +173,6 @@ public class CourseLoadRequestDocument extends AdministrativeOfficeDocument {
     static final protected String MMMM_YYYY = "MMMM yyyy";
 
     @Override
-    protected boolean showPriceFields() {
-        return false;
-    }
-
-    @Override
     protected void setPersonFields() {
         addParameter("name", getDocumentRequest().getPerson().getName());
     }

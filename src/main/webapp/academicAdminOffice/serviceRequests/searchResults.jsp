@@ -58,9 +58,6 @@
 <bean:define id="deliveredRequestUrl">
 	/academicServiceRequestsManagement.do?method=deliveredAcademicServiceRequest
 </bean:define>
-<bean:define id="paymentsUrl">
-	/payments.do?method=showOperations
-</bean:define>
 
 <%
 	String sortCriteria = request.getParameter("sortBy");
@@ -133,12 +130,6 @@
 			<fr:property name="bundle(delivered)" value="APPLICATION_RESOURCES"/>
 			<fr:property name="visibleIf(delivered)" value="concluded"/>
 
-			<fr:property name="linkFormat(payments)" value="<%= paymentsUrl + "&personId=${registration.person.externalId}" %>"/>
-			<fr:property name="key(payments)" value="payments"/>
-			<fr:property name="bundle(payments)" value="APPLICATION_RESOURCES"/>
-			<fr:property name="visibleIfNot(payments)" value="isPayed"/>
-			<fr:property name="visibleIf(payments)" value="paymentsAccessible"/>
-			
 			<fr:property name="sortBy" value="<%= sortCriteria %>"/>
 			<fr:property name="sortUrl" value="<%= "/academicServiceRequestsManagement.do?method=search&academicSituationType=" + academicSituationType.getName() + "&serviceRequestYear=" + bean.getServiceRequestYear() %>"/>
 			<fr:property name="sortParameter" value="sortBy"/>
@@ -186,12 +177,6 @@
 			<fr:property name="bundle(delivered)" value="APPLICATION_RESOURCES"/>
 			<fr:property name="visibleIf(delivered)" value="concluded"/>
 
-			<fr:property name="linkFormat(payments)" value="<%= paymentsUrl + "&personId=${registration.person.externalId}" %>"/>
-			<fr:property name="key(payments)" value="payments"/>
-			<fr:property name="bundle(payments)" value="APPLICATION_RESOURCES"/>
-			<fr:property name="visibleIfNot(payments)" value="isPayed"/>
-			<fr:property name="visibleIf(payments)" value="paymentsAccessible"/>
-			
 			<fr:property name="sortBy" value="<%= sortCriteria %>"/>
 			<fr:property name="sortUrl" value="<%= "/academicServiceRequestsManagement.do?method=search&academicSituationType=" + academicSituationType.getName() + "&serviceRequestYear=" + bean.getServiceRequestYear() %>"/>
 			<fr:property name="sortParameter" value="sortBy"/>

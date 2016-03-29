@@ -42,9 +42,6 @@
                         <fr:property name="visibleIf(cancel)" value="loggedPersonCanCancel"/>
                         <fr:property name="visibleIfNot(cancel)" value="piggyBackedOnRegistry"/>
 						
-						<fr:link name="payments" label="payments,APPLICATION_RESOURCES" link="<%="/payments.do?method=showOperations" + "&personId=${process.person.externalId}" %>" condition="!isPayed" />
-						<fr:property name="visibleIf(payments)" value="paymentsAccessible" />
-						
                         <fr:property name="linkFormat(processing)" value="/phdAcademicServiceRequestManagement.do?method=prepareProcess&amp;phdAcademicServiceRequestId=${externalId}"/>
                         <fr:property name="key(processing)" value="processing"/>
                         <fr:property name="visibleIf(processing)" value="processingSituationAccepted"/>
@@ -68,13 +65,12 @@
     					<fr:property name="order(view)" value="1" />
                         <fr:property name="order(reject)" value="2" />
                         <fr:property name="order(cancel)" value="3" />
-                        <fr:property name="order(payments)" value="4" />
-                        <fr:property name="order(processing)" value="5" />
-                        <fr:property name="order(send)" value="6" />
-                        <fr:property name="order(receiveFrom)" value="7" />
-                        <fr:property name="order(print)" value="8" />
-                        <fr:property name="order(deliver)" value="9" />
-                        <fr:property name="order(conclude)" value="10" />
+                        <fr:property name="order(processing)" value="4" />
+                        <fr:property name="order(send)" value="5" />
+                        <fr:property name="order(receiveFrom)" value="6" />
+                        <fr:property name="order(print)" value="7" />
+                        <fr:property name="order(deliver)" value="8" />
+                        <fr:property name="order(conclude)" value="9" />
 
                         <fr:property name="sortBy" value="requestDate=desc, activeSituation.situationDate=desc, urgentRequest=desc, description=asc"/>
                     </fr:layout>

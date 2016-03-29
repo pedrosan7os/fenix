@@ -96,11 +96,6 @@ abstract public class CertificateRequest extends CertificateRequest_Base {
     abstract public Integer getNumberOfUnits();
 
     final public void edit(final DocumentRequestBean certificateRequestBean) {
-
-        if (isPayable() && isPayed() && !getNumberOfPages().equals(certificateRequestBean.getNumberOfPages())) {
-            throw new DomainException("error.serviceRequests.documentRequests.cannot.change.numberOfPages.on.payed.documents");
-        }
-
         super.edit(certificateRequestBean);
         super.setNumberOfPages(certificateRequestBean.getNumberOfPages());
     }

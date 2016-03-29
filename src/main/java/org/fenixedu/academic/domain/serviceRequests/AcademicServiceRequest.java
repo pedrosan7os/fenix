@@ -666,7 +666,6 @@ abstract public class AcademicServiceRequest extends AcademicServiceRequest_Base
     @Deprecated
     final public boolean getLoggedPersonCanCancel() {
         return isCancelledSituationAccepted()
-                && (!isPayable() || getEvent() == null || !isPayed())
                 && (createdByStudent() && !isConcluded() || AcademicAccessRule.isProgramAccessibleToFunction(
                         AcademicOperationType.SERVICE_REQUESTS, this.getAcademicProgram(), Authenticate.getUser()));
     }

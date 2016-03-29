@@ -71,11 +71,6 @@ abstract public class DeclarationRequest extends DeclarationRequest_Base {
     }
 
     final public void edit(final DocumentRequestBean documentRequestBean) {
-
-        if (isPayable() && isPayed() && !getNumberOfPages().equals(documentRequestBean.getNumberOfPages())) {
-            throw new DomainException("error.serviceRequests.documentRequests.cannot.change.numberOfPages.on.payed.documents");
-        }
-
         super.edit(documentRequestBean);
         super.setNumberOfPages(documentRequestBean.getNumberOfPages());
     }

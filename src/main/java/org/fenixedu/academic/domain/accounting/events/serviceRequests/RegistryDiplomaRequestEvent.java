@@ -22,7 +22,7 @@ import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.accounting.EntryType;
 import org.fenixedu.academic.domain.accounting.EventType;
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOffice;
-import org.fenixedu.academic.domain.exceptions.DomainException;
+import org.fenixedu.academic.domain.serviceRequests.AcademicServiceRequest;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.RegistryDiplomaRequest;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academic.util.LabelFormatter;
@@ -33,23 +33,10 @@ public class RegistryDiplomaRequestEvent extends RegistryDiplomaRequestEvent_Bas
         super();
     }
 
-    protected RegistryDiplomaRequestEvent(final AdministrativeOffice administrativeOffice, final EventType eventType,
-            final Person person, final RegistryDiplomaRequest registryDiplomaRequest) {
+    public RegistryDiplomaRequestEvent(final AdministrativeOffice administrativeOffice, final EventType eventType,
+            final Person person, final AcademicServiceRequest registryDiplomaRequest) {
         this();
         super.init(administrativeOffice, eventType, person, registryDiplomaRequest);
-    }
-
-    final static public RegistryDiplomaRequestEvent create(final AdministrativeOffice administrativeOffice, final Person person,
-            final RegistryDiplomaRequest registryDiplomaRequest) {
-        switch (registryDiplomaRequest.getEventType()) {
-        case BOLONHA_DEGREE_REGISTRY_DIPLOMA_REQUEST:
-        case BOLONHA_MASTER_DEGREE_REGISTRY_DIPLOMA_REQUEST:
-        case BOLONHA_ADVANCED_FORMATION_REGISTRY_DIPLOMA_REQUEST:
-            return new RegistryDiplomaRequestEvent(administrativeOffice, registryDiplomaRequest.getEventType(), person,
-                    registryDiplomaRequest);
-        default:
-            throw new DomainException("error.registryDiplomaRequestEvent.invalid.event.type.in.creation");
-        }
     }
 
     @Override

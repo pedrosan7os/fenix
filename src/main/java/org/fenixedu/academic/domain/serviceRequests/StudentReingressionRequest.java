@@ -25,8 +25,6 @@ import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.ReingressionPeriod;
-import org.fenixedu.academic.domain.accounting.EventType;
-import org.fenixedu.academic.domain.accounting.events.serviceRequests.StudentReingressionRequestEvent;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.AcademicServiceRequestType;
 import org.fenixedu.academic.domain.student.Registration;
@@ -128,19 +126,10 @@ public class StudentReingressionRequest extends StudentReingressionRequest_Base 
     }
 
     @Override
-    public EventType getEventType() {
-        return EventType.STUDENT_REINGRESSION_REQUEST;
-    }
-
-    @Override
     protected void createAcademicServiceRequestSituations(AcademicServiceRequestBean academicServiceRequestBean) {
         super.createAcademicServiceRequestSituations(academicServiceRequestBean);
 
-        if (academicServiceRequestBean.isNew()) {
-            if (!isFree()) {
-                new StudentReingressionRequestEvent(getAdministrativeOffice(), getPerson(), this);
-            }
-        } else if (academicServiceRequestBean.isToConclude()) {
+        if (academicServiceRequestBean.isToConclude()) {
             AcademicServiceRequestSituation.create(this, new AcademicServiceRequestBean(
                     AcademicServiceRequestSituationType.DELIVERED, academicServiceRequestBean.getResponsible()));
         }
@@ -148,13 +137,7 @@ public class StudentReingressionRequest extends StudentReingressionRequest_Base 
 
     @Override
     protected void internalChangeState(AcademicServiceRequestBean academicServiceRequestBean) {
-        if (academicServiceRequestBean.isToCancelOrReject() && getEvent() != null) {
-            getEvent().cancel(academicServiceRequestBean.getResponsible());
-
-        } else if (academicServiceRequestBean.isToProcess()) {
-            if (isPayable() && !isPayed()) {
-                throw new DomainException("AcademicServiceRequest.hasnt.been.payed");
-            }
+        if (academicServiceRequestBean.isToProcess()) {
             academicServiceRequestBean.setSituationDate(getActiveSituation().getSituationDate().toYearMonthDay());
 
         } else if (academicServiceRequestBean.isToConclude() && hasExecutionDegree()) {

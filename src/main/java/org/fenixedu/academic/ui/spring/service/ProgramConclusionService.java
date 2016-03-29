@@ -23,12 +23,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.fenixedu.academic.domain.accounting.AcademicServiceRequestEventTable;
 import org.fenixedu.academic.domain.accounting.EventType;
 import org.fenixedu.academic.domain.accounting.EventTypes;
 import org.fenixedu.academic.domain.degreeStructure.ProgramConclusion;
-import org.fenixedu.academic.domain.serviceRequests.documentRequests.DegreeFinalizationCertificateRequest;
-import org.fenixedu.academic.domain.serviceRequests.documentRequests.DiplomaRequest;
-import org.fenixedu.academic.domain.serviceRequests.documentRequests.RegistryDiplomaRequest;
 import org.fenixedu.academic.domain.student.registrationStates.RegistrationStateType;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.commons.i18n.LocalizedString;
@@ -52,9 +50,9 @@ public class ProgramConclusionService {
 
     public ProgramConclusionService() {
         eventTypes = new TreeSet<EventType>();
-        eventTypes.addAll(DegreeFinalizationCertificateRequest.getPossibleEventTypes());
-        eventTypes.addAll(DiplomaRequest.getPossibleEventTypes());
-        eventTypes.addAll(RegistryDiplomaRequest.getPossibleEventTypes());
+        eventTypes.addAll(AcademicServiceRequestEventTable.getPossibleDegreeFinalizationCertificateEventTypes());
+        eventTypes.addAll(AcademicServiceRequestEventTable.getPossibleDiplomaEventTypes());
+        eventTypes.addAll(AcademicServiceRequestEventTable.getPossibleRegistryDiplomaEventTypes());
     }
 
     public List<ProgramConclusion> getProgramConclusions() {

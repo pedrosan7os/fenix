@@ -24,11 +24,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.Set;
 
 import org.fenixedu.academic.domain.ExecutionYear;
-import org.fenixedu.academic.domain.accounting.EventType;
-import org.fenixedu.academic.domain.accounting.events.serviceRequests.DegreeFinalizationCertificateRequestEvent;
 import org.fenixedu.academic.domain.degreeStructure.CycleType;
 import org.fenixedu.academic.domain.degreeStructure.ProgramConclusion;
 import org.fenixedu.academic.domain.exceptions.DomainException;
@@ -36,7 +33,6 @@ import org.fenixedu.academic.domain.serviceRequests.AcademicServiceRequestSituat
 import org.fenixedu.academic.domain.serviceRequests.IProgramConclusionRequest;
 import org.fenixedu.academic.domain.serviceRequests.RegistryCode;
 import org.fenixedu.academic.domain.student.MobilityProgram;
-import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.curriculum.ConclusionProcess;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculum;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculumEntry;
@@ -54,7 +50,6 @@ import org.joda.time.YearMonthDay;
 import pt.ist.fenixframework.Atomic;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableSet;
 
 public class DegreeFinalizationCertificateRequest extends DegreeFinalizationCertificateRequest_Base implements
         IProgramConclusionRequest {
@@ -115,35 +110,10 @@ public class DegreeFinalizationCertificateRequest extends DegreeFinalizationCert
     }
 
     protected void checkSpecificConditions(ProgramConclusion programConclusion) {
-        if (!programConclusion.getGraduationTitle().isEmpty()) {
-            checkForDiplomaRequest(getRegistration(), programConclusion);
-        } else {
+        if (programConclusion.getGraduationTitle().isEmpty()) {
             if (!programConclusion.isConclusionProcessed(getRegistration())) {
                 throw new DomainException("DiplomaRequest.registration.not.submited.to.conclusion.process");
             }
-        }
-    }
-
-    static public void checkForDiplomaRequest(final Registration registration, final ProgramConclusion programConclusion) {
-        final DiplomaRequest diplomaRequest = registration.getDiplomaRequest(programConclusion);
-        final PastDiplomaRequest pastDiplomaRequest = registration.getPastDiplomaRequest();
-        if (diplomaRequest == null) {
-            if (pastDiplomaRequest == null) {
-                checkForRegistryRequest(registration, programConclusion);
-            }
-        } else if (diplomaRequest.isPayedUponCreation() && diplomaRequest.getEvent() != null
-                && !diplomaRequest.getEvent().isPayed()) {
-            throw new DomainException("DegreeFinalizationCertificateRequest.registration.withoutPayedDiplomaRequest");
-        }
-    }
-
-    static public void checkForRegistryRequest(final Registration registration, final ProgramConclusion programConclusion) {
-        final RegistryDiplomaRequest registryRequest = registration.getRegistryDiplomaRequest(programConclusion);
-        if (registryRequest == null) {
-            throw new DomainException("DegreeFinalizationCertificateRequest.registration.withoutRegistryRequest");
-        } else if (registryRequest.isPayedUponCreation() && registryRequest.getEvent() != null
-                && !registryRequest.getEvent().isPayed()) {
-            throw new DomainException("DegreeFinalizationCertificateRequest.registration.withoutPayedRegistryRequest");
         }
     }
 
@@ -179,16 +149,8 @@ public class DegreeFinalizationCertificateRequest extends DegreeFinalizationCert
         }
 
         if (academicServiceRequestBean.isToConclude()) {
-            tryConcludeServiceRequest(academicServiceRequestBean);
-        }
-
-        if (academicServiceRequestBean.isToCancelOrReject() && getEvent() != null) {
-            getEvent().cancel(academicServiceRequestBean.getResponsible());
-        }
-
-        if (academicServiceRequestBean.isToDeliver()) {
-            if (isPayable() && !isPayed()) {
-                throw new DomainException("AcademicServiceRequest.hasnt.been.payed");
+            if (!hasNumberOfPages()) {
+                throw new DomainException("error.serviceRequests.documentRequests.numberOfPages.must.be.set");
             }
         }
     }
@@ -258,15 +220,6 @@ public class DegreeFinalizationCertificateRequest extends DegreeFinalizationCert
     public CycleType getRequestedCycle() {
         return getProgramConclusion().groupFor(getRegistration()).filter(CurriculumGroup::isCycleCurriculumGroup)
                 .map(ccg -> ((CycleCurriculumGroup) ccg).getCycleType()).orElse(null);
-    }
-
-    public static Set<EventType> getPossibleEventTypes() {
-        return ImmutableSet.of(EventType.DEGREE_FINALIZATION_CERTIFICATE_REQUEST);
-    }
-
-    @Override
-    final public EventType getEventType() {
-        return EventType.DEGREE_FINALIZATION_CERTIFICATE_REQUEST;
     }
 
     @Override
@@ -341,11 +294,6 @@ public class DegreeFinalizationCertificateRequest extends DegreeFinalizationCert
     public void revertToProcessingState() {
         check(this, AcademicPredicates.SERVICE_REQUESTS_REVERT_TO_PROCESSING_STATE);
         internalRevertToProcessingState();
-    }
-
-    @Override
-    protected void createCertificateRequestEvent() {
-        new DegreeFinalizationCertificateRequestEvent(getAdministrativeOffice(), getRegistration().getPerson(), this);
     }
 
     public ExecutionYear getConclusionYear() {

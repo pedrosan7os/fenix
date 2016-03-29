@@ -22,6 +22,7 @@ import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.accounting.EntryType;
 import org.fenixedu.academic.domain.accounting.EventType;
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOffice;
+import org.fenixedu.academic.domain.serviceRequests.AcademicServiceRequest;
 import org.fenixedu.academic.domain.serviceRequests.EquivalencePlanRequest;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.util.Bundle;
@@ -33,10 +34,10 @@ public class EquivalencePlanRequestEvent extends EquivalencePlanRequestEvent_Bas
         super();
     }
 
-    public EquivalencePlanRequestEvent(final AdministrativeOffice administrativeOffice, final Person person,
-            final EquivalencePlanRequest academicServiceRequest) {
+    public EquivalencePlanRequestEvent(final AdministrativeOffice administrativeOffice, EventType eventType, final Person person,
+            final AcademicServiceRequest academicServiceRequest) {
         this();
-        super.init(administrativeOffice, EventType.EQUIVALENCE_PLAN_REQUEST, person, academicServiceRequest);
+        super.init(administrativeOffice, eventType, person, academicServiceRequest);
     }
 
     @Override

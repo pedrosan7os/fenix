@@ -25,9 +25,11 @@ import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.dto.serviceRequests.AcademicServiceRequestBean;
 import org.fenixedu.bennu.core.domain.Bennu;
+import org.fenixedu.bennu.signals.Signal;
 import org.joda.time.DateTime;
 
 public class AcademicServiceRequestSituation extends AcademicServiceRequestSituation_Base {
+    public static final String ACADEMIC_SERVICE_REQUEST_SITUATION_CHANGED_EVENT = "academic.service.request.situation.changed";
 
     public static Comparator<AcademicServiceRequestSituation> COMPARATOR_BY_MOST_RECENT_SITUATION_DATE_AND_ID =
             new Comparator<AcademicServiceRequestSituation>() {
@@ -189,16 +191,21 @@ public class AcademicServiceRequestSituation extends AcademicServiceRequestSitua
 
     static AcademicServiceRequestSituation create(final AcademicServiceRequest academicServiceRequest,
             final AcademicServiceRequestBean academicServiceRequestBean) {
-
+        AcademicServiceRequestSituation situation = null;
         switch (academicServiceRequestBean.getAcademicServiceRequestSituationType()) {
         case SENT_TO_EXTERNAL_ENTITY:
-            return new SentToExternalEntityAcademicServiceRequestSituation(academicServiceRequest, academicServiceRequestBean);
+            situation = new SentToExternalEntityAcademicServiceRequestSituation(academicServiceRequest, academicServiceRequestBean);
+            break;
         case RECEIVED_FROM_EXTERNAL_ENTITY:
-            return new ReceivedFromExternalEntityAcademicServiceRequestSituation(academicServiceRequest,
+            situation = new ReceivedFromExternalEntityAcademicServiceRequestSituation(academicServiceRequest,
                     academicServiceRequestBean);
+            break;
         default:
-            return new AcademicServiceRequestSituation(academicServiceRequest, academicServiceRequestBean);
+            situation = new AcademicServiceRequestSituation(academicServiceRequest, academicServiceRequestBean);
+            break;
         }
-    }
+        Signal.emit(ACADEMIC_SERVICE_REQUEST_SITUATION_CHANGED_EVENT, academicServiceRequest);
+        return situation;
 
+    }
 }

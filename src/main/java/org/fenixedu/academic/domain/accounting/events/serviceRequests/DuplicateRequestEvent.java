@@ -22,7 +22,7 @@ import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.accounting.EntryType;
 import org.fenixedu.academic.domain.accounting.EventType;
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOffice;
-import org.fenixedu.academic.domain.serviceRequests.RegistrationAcademicServiceRequest;
+import org.fenixedu.academic.domain.serviceRequests.AcademicServiceRequest;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academic.util.LabelFormatter;
 
@@ -32,11 +32,11 @@ public class DuplicateRequestEvent extends DuplicateRequestEvent_Base {
         super();
     }
 
-    public DuplicateRequestEvent(final AdministrativeOffice administrativeOffice, final Person person,
-            final RegistrationAcademicServiceRequest academicServiceRequest) {
+    public DuplicateRequestEvent(final AdministrativeOffice administrativeOffice, EventType eventType, final Person person,
+            final AcademicServiceRequest academicServiceRequest) {
         this();
 
-        super.init(administrativeOffice, EventType.DUPLICATE_REQUEST, person, academicServiceRequest);
+        super.init(administrativeOffice, eventType, person, academicServiceRequest);
     }
 
     @Override

@@ -28,6 +28,7 @@ import org.fenixedu.academic.domain.accounting.EventType;
 import org.fenixedu.academic.domain.accounting.PostingRule;
 import org.fenixedu.academic.domain.accounting.postingRules.PartialRegistrationRegimeRequestPR;
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOffice;
+import org.fenixedu.academic.domain.serviceRequests.AcademicServiceRequest;
 import org.fenixedu.academic.domain.serviceRequests.PartialRegistrationRegimeRequest;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academic.util.LabelFormatter;
@@ -38,10 +39,10 @@ public class PartialRegistrationRegimeRequestEvent extends PartialRegistrationRe
         super();
     }
 
-    public PartialRegistrationRegimeRequestEvent(final AdministrativeOffice administrativeOffice, final Person person,
-            final PartialRegistrationRegimeRequest request) {
+    public PartialRegistrationRegimeRequestEvent(final AdministrativeOffice administrativeOffice, EventType eventType,
+            final Person person, final AcademicServiceRequest academicServiceRequest) {
         this();
-        super.init(administrativeOffice, EventType.PARTIAL_REGISTRATION_REGIME_REQUEST, person, request);
+        super.init(administrativeOffice, eventType, person, academicServiceRequest);
     }
 
     @Override

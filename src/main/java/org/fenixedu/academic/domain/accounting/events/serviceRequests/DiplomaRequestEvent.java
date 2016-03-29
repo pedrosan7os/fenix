@@ -23,7 +23,6 @@ import org.fenixedu.academic.domain.accounting.EntryType;
 import org.fenixedu.academic.domain.accounting.EventType;
 import org.fenixedu.academic.domain.accounting.PostingRule;
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOffice;
-import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.DiplomaRequest;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academic.util.LabelFormatter;
@@ -34,30 +33,10 @@ abstract public class DiplomaRequestEvent extends DiplomaRequestEvent_Base {
         super();
     }
 
-    protected DiplomaRequestEvent(final AdministrativeOffice administrativeOffice, final EventType eventType,
-            final Person person, final DiplomaRequest diplomaRequest) {
+    public DiplomaRequestEvent(final AdministrativeOffice administrativeOffice, final EventType eventType, final Person person,
+            final DiplomaRequest diplomaRequest) {
         this();
         super.init(administrativeOffice, eventType, person, diplomaRequest);
-    }
-
-    final static public DiplomaRequestEvent create(final AdministrativeOffice administrativeOffice, final Person person,
-            final DiplomaRequest diplomaRequest) {
-        switch (diplomaRequest.getEventType()) {
-        case BOLONHA_DEGREE_DIPLOMA_REQUEST:
-            return new BolonhaDegreeDiplomaRequestEvent(administrativeOffice, diplomaRequest.getEventType(), person,
-                    diplomaRequest);
-        case BOLONHA_MASTER_DEGREE_DIPLOMA_REQUEST:
-            return new BolonhaMasterDegreeDiplomaRequestEvent(administrativeOffice, diplomaRequest.getEventType(), person,
-                    diplomaRequest);
-        case BOLONHA_ADVANCED_FORMATION_DIPLOMA_REQUEST:
-            return new BolonhaAdvancedFormationDiplomaRequestEvent(administrativeOffice, diplomaRequest.getEventType(), person,
-                    diplomaRequest);
-        case BOLONHA_ADVANCED_SPECIALIZATION_DIPLOMA_REQUEST:
-            return new BolonhaAdvancedSpecializationDiplomaRequestEvent(administrativeOffice, diplomaRequest.getEventType(),
-                    person, diplomaRequest);
-        default:
-            throw new DomainException("DiplomaRequestEvent.invalid.event.type.in.creation");
-        }
     }
 
     @Override

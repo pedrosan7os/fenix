@@ -18,7 +18,6 @@
  */
 package org.fenixedu.academic.domain.phd.serviceRequests;
 
-import org.fenixedu.academic.domain.accounting.EventType;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.phd.PhdIndividualProgramProcess;
 import org.fenixedu.academic.domain.phd.PhdProgramProcessState;
@@ -64,11 +63,6 @@ public class PhdStudentReingressionRequest extends PhdStudentReingressionRequest
     @Override
     public AcademicServiceRequestType getAcademicServiceRequestType() {
         return AcademicServiceRequestType.PHD_STUDENT_REINGRESSION;
-    }
-
-    @Override
-    public EventType getEventType() {
-        return null;
     }
 
     @Override

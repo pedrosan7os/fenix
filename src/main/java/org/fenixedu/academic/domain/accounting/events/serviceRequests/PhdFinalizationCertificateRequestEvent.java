@@ -34,8 +34,8 @@ public class PhdFinalizationCertificateRequestEvent extends PhdFinalizationCerti
         super();
     }
 
-    protected PhdFinalizationCertificateRequestEvent(AdministrativeOffice administrativeOffice, EventType eventType,
-            Person person, PhdFinalizationCertificateRequest academicServiceRequest) {
+    public PhdFinalizationCertificateRequestEvent(AdministrativeOffice administrativeOffice, EventType eventType, Person person,
+            AcademicServiceRequest academicServiceRequest) {
         this();
 
         init(administrativeOffice, eventType, person, academicServiceRequest);
@@ -55,12 +55,6 @@ public class PhdFinalizationCertificateRequestEvent extends PhdFinalizationCerti
     protected void init(AdministrativeOffice administrativeOffice, EventType eventType, Person person,
             PhdFinalizationCertificateRequest academicServiceRequest) {
         super.init(administrativeOffice, eventType, person, academicServiceRequest);
-    }
-
-    public static PhdFinalizationCertificateRequestEvent create(AdministrativeOffice administrativeOffice, Person person,
-            PhdFinalizationCertificateRequest academicServiceRequest) {
-        return new PhdFinalizationCertificateRequestEvent(administrativeOffice, EventType.PHD_FINALIZATION_CERTIFICATE_REQUEST,
-                person, academicServiceRequest);
     }
 
     @Override

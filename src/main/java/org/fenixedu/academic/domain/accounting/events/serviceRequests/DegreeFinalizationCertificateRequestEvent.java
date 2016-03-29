@@ -21,6 +21,7 @@ package org.fenixedu.academic.domain.accounting.events.serviceRequests;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.accounting.EventType;
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOffice;
+import org.fenixedu.academic.domain.serviceRequests.AcademicServiceRequest;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.DegreeFinalizationCertificateRequest;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academic.util.LabelFormatter;
@@ -31,10 +32,10 @@ public class DegreeFinalizationCertificateRequestEvent extends DegreeFinalizatio
         super();
     }
 
-    public DegreeFinalizationCertificateRequestEvent(final AdministrativeOffice administrativeOffice, final Person person,
-            final DegreeFinalizationCertificateRequest certificateRequest) {
+    public DegreeFinalizationCertificateRequestEvent(final AdministrativeOffice administrativeOffice, EventType eventType,
+            final Person person, final AcademicServiceRequest academicServiceRequest) {
         this();
-        super.init(administrativeOffice, EventType.DEGREE_FINALIZATION_CERTIFICATE_REQUEST, person, certificateRequest);
+        super.init(administrativeOffice, eventType, person, academicServiceRequest);
     }
 
     @Override

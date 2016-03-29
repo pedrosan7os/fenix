@@ -34,7 +34,7 @@ public class PhdDiplomaRequestEvent extends PhdDiplomaRequestEvent_Base {
         super();
     }
 
-    protected PhdDiplomaRequestEvent(final AdministrativeOffice administrativeOffice, final EventType eventType,
+    public PhdDiplomaRequestEvent(final AdministrativeOffice administrativeOffice, final EventType eventType,
             final Person person, final AcademicServiceRequest academicServiceRequest) {
         this();
 
@@ -47,11 +47,6 @@ public class PhdDiplomaRequestEvent extends PhdDiplomaRequestEvent_Base {
         }
 
         super.init(administrativeOffice, eventType, person, academicServiceRequest);
-    }
-
-    final static public PhdDiplomaRequestEvent create(final AdministrativeOffice administrativeOffice, final Person person,
-            final PhdDiplomaRequest phdDiplomaRequest) {
-        return new PhdDiplomaRequestEvent(administrativeOffice, phdDiplomaRequest.getEventType(), person, phdDiplomaRequest);
     }
 
     @Override

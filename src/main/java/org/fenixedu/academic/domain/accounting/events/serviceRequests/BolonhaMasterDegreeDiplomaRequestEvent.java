@@ -21,7 +21,7 @@ package org.fenixedu.academic.domain.accounting.events.serviceRequests;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.accounting.EventType;
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOffice;
-import org.fenixedu.academic.domain.serviceRequests.documentRequests.DiplomaRequest;
+import org.fenixedu.academic.domain.serviceRequests.AcademicServiceRequest;
 
 public class BolonhaMasterDegreeDiplomaRequestEvent extends BolonhaMasterDegreeDiplomaRequestEvent_Base {
 
@@ -30,9 +30,9 @@ public class BolonhaMasterDegreeDiplomaRequestEvent extends BolonhaMasterDegreeD
     }
 
     public BolonhaMasterDegreeDiplomaRequestEvent(final AdministrativeOffice administrativeOffice, final EventType eventType,
-            final Person person, final DiplomaRequest diplomaRequest) {
+            final Person person, final AcademicServiceRequest academicServiceRequest) {
         this();
-        super.init(administrativeOffice, eventType, person, diplomaRequest);
+        super.init(administrativeOffice, eventType, person, academicServiceRequest);
     }
 
 }

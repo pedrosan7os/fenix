@@ -23,10 +23,8 @@ import java.util.HashSet;
 
 import org.fenixedu.academic.domain.Enrolment;
 import org.fenixedu.academic.domain.IEnrolment;
-import org.fenixedu.academic.domain.accounting.EventType;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.student.Registration;
-import org.fenixedu.academic.domain.student.RegistrationProtocol;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculum;
 import org.fenixedu.academic.domain.student.curriculum.ICurriculumEntry;
 import org.fenixedu.academic.domain.studentCurriculum.CurriculumLine;
@@ -127,11 +125,6 @@ public class ApprovementMobilityCertificateRequest extends ApprovementMobilityCe
     }
 
     @Override
-    protected boolean isPayed() {
-        return super.isPayed() || getEvent().isCancelled();
-    }
-
-    @Override
     final public DocumentRequestType getDocumentRequestType() {
         return DocumentRequestType.APPROVEMENT_MOBILITY_CERTIFICATE;
     }
@@ -139,12 +132,6 @@ public class ApprovementMobilityCertificateRequest extends ApprovementMobilityCe
     @Override
     final public String getDocumentTemplateKey() {
         return getClass().getName();
-    }
-
-    @Override
-    final public EventType getEventType() {
-        final RegistrationProtocol protocol = getRegistration().getRegistrationProtocol();
-        return protocol.isExempted() || protocol.isMobilityAgreement() ? null : EventType.APPROVEMENT_CERTIFICATE_REQUEST;
     }
 
     @Override

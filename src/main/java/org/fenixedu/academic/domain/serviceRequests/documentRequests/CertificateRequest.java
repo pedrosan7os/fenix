@@ -18,8 +18,6 @@
  */
 package org.fenixedu.academic.domain.serviceRequests.documentRequests;
 
-import org.fenixedu.academic.domain.ExecutionYear;
-import org.fenixedu.academic.domain.accounting.events.serviceRequests.CertificateRequestEvent;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.dto.serviceRequests.AcademicServiceRequestBean;
 import org.fenixedu.academic.dto.serviceRequests.DocumentRequestBean;
@@ -106,58 +104,15 @@ abstract public class CertificateRequest extends CertificateRequest_Base {
         super.internalChangeState(academicServiceRequestBean);
 
         if (academicServiceRequestBean.isToConclude()) {
-            tryConcludeServiceRequest(academicServiceRequestBean);
-        }
-    }
-
-    protected void tryConcludeServiceRequest(final AcademicServiceRequestBean academicServiceRequestBean) {
-        if (!hasNumberOfPages()) {
-            throw new DomainException("error.serviceRequests.documentRequests.numberOfPages.must.be.set");
-        }
-
-        if (!isFree()) {
-            if (getEvent() == null) {
-                createCertificateRequestEvent();
-            } else {
-                getEvent().recalculateState(academicServiceRequestBean.getFinalSituationDate());
+            if (!hasNumberOfPages()) {
+                throw new DomainException("error.serviceRequests.documentRequests.numberOfPages.must.be.set");
             }
         }
-    }
-
-    protected void createCertificateRequestEvent() {
-        new CertificateRequestEvent(getAdministrativeOffice(), getEventType(), getRegistration().getPerson(), this);
-    }
-
-    /**
-     * Important: Notice that this method's return value may not be the same
-     * before and after conclusion of the academic service request.
-     */
-    @Override
-    public boolean isFree() {
-        if (getDocumentRequestType() == DocumentRequestType.APPROVEMENT_MOBILITY_CERTIFICATE
-                && getRegistration().getRegistrationProtocol().isMobilityAgreement()) {
-            return true;
-        }
-        if (getDocumentRequestType() == DocumentRequestType.SCHOOL_REGISTRATION_CERTIFICATE
-                || getDocumentRequestType() == DocumentRequestType.ENROLMENT_CERTIFICATE) {
-            return super.isFree() || (!isRequestForPreviousExecutionYear() && isFirstRequestOfCurrentExecutionYear());
-        }
-
-        return super.isFree();
     }
 
     @Override
     public boolean isPayedUponCreation() {
         return false;
-    }
-
-    private boolean isRequestForPreviousExecutionYear() {
-        return getExecutionYear() != ExecutionYear.readCurrentExecutionYear();
-    }
-
-    private boolean isFirstRequestOfCurrentExecutionYear() {
-        return getRegistration().getSucessfullyFinishedDocumentRequestsBy(ExecutionYear.readCurrentExecutionYear(),
-                getDocumentRequestType(), false).isEmpty();
     }
 
     @Override

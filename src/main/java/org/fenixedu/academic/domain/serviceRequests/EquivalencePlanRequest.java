@@ -18,8 +18,6 @@
  */
 package org.fenixedu.academic.domain.serviceRequests;
 
-import org.fenixedu.academic.domain.accounting.EventType;
-import org.fenixedu.academic.domain.accounting.events.serviceRequests.EquivalencePlanRequestEvent;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.AcademicServiceRequestType;
 import org.fenixedu.academic.dto.serviceRequests.AcademicServiceRequestBean;
@@ -66,30 +64,8 @@ public class EquivalencePlanRequest extends EquivalencePlanRequest_Base {
     }
 
     @Override
-    public EventType getEventType() {
-        return EventType.EQUIVALENCE_PLAN_REQUEST;
-    }
-
-    @Override
-    protected void createAcademicServiceRequestSituations(AcademicServiceRequestBean academicServiceRequestBean) {
-        super.createAcademicServiceRequestSituations(academicServiceRequestBean);
-
-        if (academicServiceRequestBean.isNew()) {
-            if (!isFree()) {
-                new EquivalencePlanRequestEvent(getAdministrativeOffice(), getPerson(), this);
-            }
-        }
-    }
-
-    @Override
     protected void internalChangeState(final AcademicServiceRequestBean academicServiceRequestBean) {
-        if (academicServiceRequestBean.isToCancelOrReject() && getEvent() != null) {
-            getEvent().cancel(academicServiceRequestBean.getResponsible());
-
-        } else if (academicServiceRequestBean.isToProcess()) {
-            if (isPayable() && !isPayed()) {
-                throw new DomainException("AcademicServiceRequest.hasnt.been.payed");
-            }
+        if (academicServiceRequestBean.isToProcess()) {
             academicServiceRequestBean.setSituationDate(getActiveSituation().getSituationDate().toYearMonthDay());
         }
     }

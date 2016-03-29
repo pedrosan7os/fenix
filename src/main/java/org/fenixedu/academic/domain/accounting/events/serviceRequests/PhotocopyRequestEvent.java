@@ -21,7 +21,9 @@ package org.fenixedu.academic.domain.accounting.events.serviceRequests;
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.accounting.EntryType;
+import org.fenixedu.academic.domain.accounting.EventType;
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOffice;
+import org.fenixedu.academic.domain.serviceRequests.AcademicServiceRequest;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.PhotocopyRequest;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academic.util.LabelFormatter;
@@ -32,10 +34,10 @@ public class PhotocopyRequestEvent extends PhotocopyRequestEvent_Base {
         super();
     }
 
-    public PhotocopyRequestEvent(final AdministrativeOffice administrativeOffice, final Person person,
-            final PhotocopyRequest request) {
+    public PhotocopyRequestEvent(final AdministrativeOffice administrativeOffice, EventType eventType, final Person person,
+            final AcademicServiceRequest academicServiceRequest) {
         this();
-        super.init(administrativeOffice, request.getEventType(), person, request);
+        super.init(administrativeOffice, eventType, person, academicServiceRequest);
     }
 
     @Override

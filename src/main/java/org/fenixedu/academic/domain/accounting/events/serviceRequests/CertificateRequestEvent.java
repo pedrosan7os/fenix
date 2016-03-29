@@ -22,6 +22,7 @@ import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.accounting.EntryType;
 import org.fenixedu.academic.domain.accounting.EventType;
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOffice;
+import org.fenixedu.academic.domain.serviceRequests.AcademicServiceRequest;
 import org.fenixedu.academic.domain.serviceRequests.documentRequests.CertificateRequest;
 import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.academic.util.LabelFormatter;
@@ -33,9 +34,9 @@ public class CertificateRequestEvent extends CertificateRequestEvent_Base {
     }
 
     public CertificateRequestEvent(final AdministrativeOffice administrativeOffice, final EventType eventType,
-            final Person person, final CertificateRequest certificateRequest) {
+            final Person person, final AcademicServiceRequest academicServiceRequest) {
         this();
-        super.init(administrativeOffice, eventType, person, certificateRequest);
+        super.init(administrativeOffice, eventType, person, academicServiceRequest);
     }
 
     @Override

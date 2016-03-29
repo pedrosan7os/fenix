@@ -18,17 +18,11 @@
  */
 package org.fenixedu.academic.domain.serviceRequests.documentRequests;
 
-import java.util.Set;
-
 import org.fenixedu.academic.domain.ExecutionYear;
-import org.fenixedu.academic.domain.accounting.EventType;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.dto.serviceRequests.DocumentRequestCreateBean;
 
 public class EnrolmentDeclarationRequest extends EnrolmentDeclarationRequest_Base {
-
-    private static final int MAX_FREE_DECLARATIONS_PER_EXECUTION_YEAR = 4;
-
     protected EnrolmentDeclarationRequest() {
         super();
     }
@@ -58,28 +52,7 @@ public class EnrolmentDeclarationRequest extends EnrolmentDeclarationRequest_Bas
     }
 
     @Override
-    final public EventType getEventType() {
-        return EventType.ENROLMENT_DECLARATION_REQUEST;
-    }
-
-    @Override
     public boolean hasPersonalInfo() {
         return true;
     }
-
-    @Override
-    protected boolean hasFreeDeclarationRequests() {
-        final ExecutionYear currentExecutionYear = ExecutionYear.readCurrentExecutionYear();
-
-        final Set<DocumentRequest> schoolRegistrationDeclarations =
-                getRegistration().getSucessfullyFinishedDocumentRequestsBy(currentExecutionYear,
-                        DocumentRequestType.SCHOOL_REGISTRATION_DECLARATION, false);
-
-        final Set<DocumentRequest> enrolmentDeclarations =
-                getRegistration().getSucessfullyFinishedDocumentRequestsBy(currentExecutionYear,
-                        DocumentRequestType.ENROLMENT_DECLARATION, false);
-
-        return ((schoolRegistrationDeclarations.size() + enrolmentDeclarations.size()) < MAX_FREE_DECLARATIONS_PER_EXECUTION_YEAR);
-    }
-
 }

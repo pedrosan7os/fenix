@@ -22,8 +22,6 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.fenixedu.academic.domain.Enrolment;
-import org.fenixedu.academic.domain.accounting.EventType;
-import org.fenixedu.academic.domain.accounting.events.serviceRequests.CertificateRequestEvent;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.dto.serviceRequests.DocumentRequestCreateBean;
 
@@ -71,11 +69,6 @@ public class EnrolmentCertificateRequest extends EnrolmentCertificateRequest_Bas
     }
 
     @Override
-    final public EventType getEventType() {
-        return EventType.ENROLMENT_CERTIFICATE_REQUEST;
-    }
-
-    @Override
     final public Integer getNumberOfUnits() {
         return getEntriesToReport().size() + getExtraCurricularEntriesToReport().size() + getPropaedeuticEntriesToReport().size();
     }
@@ -113,10 +106,4 @@ public class EnrolmentCertificateRequest extends EnrolmentCertificateRequest_Bas
     public boolean hasPersonalInfo() {
         return true;
     }
-
-    @Override
-    public CertificateRequestEvent getEvent() {
-        return (CertificateRequestEvent) super.getEvent();
-    }
-
 }

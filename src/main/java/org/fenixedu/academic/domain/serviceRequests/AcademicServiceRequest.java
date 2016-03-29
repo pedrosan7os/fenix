@@ -34,8 +34,6 @@ import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.accessControl.academicAdministration.AcademicAccessRule;
 import org.fenixedu.academic.domain.accessControl.academicAdministration.AcademicOperationType;
-import org.fenixedu.academic.domain.accounting.EventType;
-import org.fenixedu.academic.domain.accounting.events.serviceRequests.AcademicServiceRequestEvent;
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOffice;
 import org.fenixedu.academic.domain.documents.GeneratedDocument;
 import org.fenixedu.academic.domain.exceptions.DomainException;
@@ -167,22 +165,6 @@ abstract public class AcademicServiceRequest extends AcademicServiceRequest_Base
 
     public boolean isFreeProcessed() {
         return getFreeProcessed();
-    }
-
-    public boolean isFree() {
-        return !isPayable() || isFreeProcessed();
-    }
-
-    final protected boolean isPayable() {
-        return getEventType() != null;
-    }
-
-    protected boolean isPayed() {
-        return getEvent() == null || getEvent().isPayed();
-    }
-
-    final public boolean getIsPayed() {
-        return isPayed();
     }
 
     abstract public boolean isPayedUponCreation();
@@ -371,11 +353,6 @@ abstract public class AcademicServiceRequest extends AcademicServiceRequest_Base
     }
 
     @Override
-    final public void setEvent(AcademicServiceRequestEvent event) {
-        throw new DomainException("error.serviceRequests.AcademicServiceRequest.cannot.modify.event");
-    }
-
-    @Override
     final public Set<AcademicServiceRequestSituation> getAcademicServiceRequestSituationsSet() {
         return Collections.unmodifiableSet(super.getAcademicServiceRequestSituationsSet());
     }
@@ -421,7 +398,6 @@ abstract public class AcademicServiceRequest extends AcademicServiceRequest_Base
             checkRulesToChangeState(academicServiceRequestBean.getAcademicServiceRequestSituationType());
             internalChangeState(academicServiceRequestBean);
             createAcademicServiceRequestSituations(academicServiceRequestBean);
-
         } else {
             getActiveSituation().edit(academicServiceRequestBean);
         }
@@ -536,22 +512,7 @@ abstract public class AcademicServiceRequest extends AcademicServiceRequest_Base
 
     /** This method is overwritten in the subclasses */
     protected void internalChangeState(final AcademicServiceRequestBean academicServiceRequestBean) {
-
-        if (academicServiceRequestBean.isToCancelOrReject() && getEvent() != null) {
-            getEvent().cancel(academicServiceRequestBean.getResponsible());
-        }
-
         verifyIsToProcessAndHasPersonalInfo(academicServiceRequestBean);
-
-        verifyIsToDeliveredAndIsPayed(academicServiceRequestBean);
-    }
-
-    protected void verifyIsToDeliveredAndIsPayed(final AcademicServiceRequestBean academicServiceRequestBean) {
-        if (academicServiceRequestBean.isToDeliver()) {
-            if (isPayable() && !isPayed()) {
-                throw new DomainException("AcademicServiceRequest.hasnt.been.payed");
-            }
-        }
     }
 
     protected void verifyIsToProcessAndHasPersonalInfo(final AcademicServiceRequestBean academicServiceRequestBean) {
@@ -701,8 +662,6 @@ abstract public class AcademicServiceRequest extends AcademicServiceRequest_Base
     }
 
     abstract public Person getPerson();
-
-    abstract public EventType getEventType();
 
     abstract public AcademicServiceRequestType getAcademicServiceRequestType();
 

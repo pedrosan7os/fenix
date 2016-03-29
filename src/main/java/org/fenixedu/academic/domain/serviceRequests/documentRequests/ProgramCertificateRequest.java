@@ -19,7 +19,6 @@
 package org.fenixedu.academic.domain.serviceRequests.documentRequests;
 
 import org.fenixedu.academic.domain.Enrolment;
-import org.fenixedu.academic.domain.accounting.EventType;
 import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.academic.dto.serviceRequests.AcademicServiceRequestBean;
 import org.fenixedu.academic.dto.serviceRequests.DocumentRequestCreateBean;
@@ -72,11 +71,6 @@ public class ProgramCertificateRequest extends ProgramCertificateRequest_Base {
     }
 
     @Override
-    public EventType getEventType() {
-        return EventType.PROGRAM_CERTIFICATE_REQUEST;
-    }
-
-    @Override
     protected void disconnect() {
         getEnrolmentsSet().clear();
         super.disconnect();
@@ -92,10 +86,4 @@ public class ProgramCertificateRequest extends ProgramCertificateRequest_Base {
             }
         }
     }
-
-    @Override
-    public boolean isFree() {
-        return getRegistration().getRegistrationProtocol().isMilitaryAgreement() || super.isFree();
-    }
-
 }
